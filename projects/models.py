@@ -21,6 +21,8 @@ class Usuario(AbstractUser):
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
   perfil = models.CharField(verbose_name="Peril", max_length=3, null=False, blank=False, choices=PERFIS)
 
+  class Meta:
+    verbose_name_plural = "Usuários"
 
 class Niveis(models.Model):
   SN = (
@@ -47,6 +49,9 @@ class Empresa(models.Model):
   def __str__(self):
     return self.nome
   
+  class Meta:
+    verbose_name_plural = "Empresas"
+
 class Servicos(models.Model):
   TIPOS = (
     ('pontual', 'Pontual'),
@@ -63,3 +68,6 @@ class Servicos(models.Model):
   nomeCliente = models.CharField(verbose_name="Nome", max_length=80, null=False, blank=False)
   tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=TIPOS)
   observacao = models.TextField(verbose_name="Observações")
+
+  class Meta:
+    verbose_name_plural = "Serviços"
