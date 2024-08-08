@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Usuario(AbstractUser):
+  
   STATUS = (('B', "Bloqueado"), ("L", "Liberado"))
   TIPO = (('1', "Colaborador"), ("2", "Cliente"))
   PERFIS = (
