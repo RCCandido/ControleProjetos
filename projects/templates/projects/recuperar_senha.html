@@ -1,0 +1,46 @@
+{% extends "base_sem_nav.html" %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Recuperação de Senha{% endblock page_title %}
+
+{% block content %}
+<h1>Recuperação de Senha</h1>
+<hr class="col-md-8">
+<div class="content">
+	<form method="POST" class="row g-3">
+		{% csrf_token %}
+		
+		<div class="row">
+			<div class="col-xs-4 mb-2 mt-2 p-2">
+
+				{% if sucess %}
+					<p>E-mail de recuperação enviado com Sucesso!</p>
+				
+					<a href="{% url 'home' %}" class="btn btn-danger mt-2">Voltar</a>
+				{% else %}
+			
+					<form method="post">{% csrf_token %}
+							<div class="form-group">
+								<label for="email">Email</label>
+								<input type="email" class="form-control mb-2" name="email" placeholder="email@email.com.br">
+							</div>
+		
+							{% if invalidEmail  %}
+								<div class="text-danger">
+									E-mail inválido, não consta na base de dados.
+								</div>
+							{% endif %}
+							
+						<div class="form-group">
+								<input type="submit" value="Enviar" class="btn btn-primary mt-4" >
+								<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a></p>
+						</div>
+				</form>
+				
+				{% endif %}
+
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock content %}

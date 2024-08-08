@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block page_title %}Empresas{% endblock page_title %}
+
+{% block content %}
+	<h1>Editar Empresa</h1>
+	<hr class="col-md-8">
+	<div class="content">
+		<form method="POST" class="row g-3" >{% csrf_token %}
+			
+			<p>Inserir inputs, form e submit</p>
+			{% for e in empresa %}
+				<tr>
+					<td>{{ e.codigo }}</td>
+					<td>{{ e.nome }}</td>
+					<td>
+					</td>
+				</tr>
+				{% endfor %}
+
+			</div>
+			<input type="submit" class="btn btn-primary mt-2" value="Confirmar">
+		</form>
+		<a href="{% url 'empresas' %}" class="btn btn-danger mt-2">Cancelar</a>
+{% endblock content %}

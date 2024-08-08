@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Serviços{% endblock page_title %}
+
+{% block content %}
+<h1>Cadastro de Serviços</h1>
+<hr class="col-md-8">
+<div class="content">
+	<form method="POST">{% csrf_token %}
+
+		<div class="row">
+			<div class="col-xs-4 mb-2 mt-2 p-2">
+				
+				{{ form|crispy }}
+				
+				<div class="mt-4" >
+					<input type="submit" class="btn btn-primary" value="Confirmar">
+					<a href="{% url 'servicos' %}" class="btn btn-danger">Cancelar</a>
+				</div>
+
+			</div>
+		</div>
+
+		<!--<div class="col-md-2">
+				<label for="nome">Código</label>
+				<input type="text" class="form-control mb-2" id="codigo" placeholder="Ex: 010101">
+			</div>
+			<div class="col-md-6">
+				<label for="nome">Empresa</label>
+				<input type="text" class="form-control mb-2" id="nome" placeholder="Nome da Empresa">
+			</div>
+			<div class="col-md-4">
+				<label for="cnpj">CNPJ</label>
+				<input type="text" class="form-control mb-2" id="cnpj" placeholder="CNPJ da Empresa">
+			</div>
+			<div class="form-group">
+					<a href="{% url 'empresas' %}" class="btn btn-danger mt-4">Cancelar</a>
+			</div>-->
+	</form>
+</div>
+{% endblock content %}

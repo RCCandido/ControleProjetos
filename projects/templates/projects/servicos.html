@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block page_title %} Serviços {% endblock page_title %}
+
+{% block content %}
+<h1>Serviços</h1>
+<hr>
+<div class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Codigo</th>
+							<th>Descrição</th>
+							<th>Versão</th>
+							<th>Cliente</th>
+							<th>Nome</th>
+							<th>Tipo</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for servicos in servicos %}
+						<tr>
+							<td>{{ servicos.codigo }}</td>
+							<td>{{ servicos.descricao }}</td>
+							<td>{{ servicos.versao }}</td>
+							<td>{{ servicos.cliente }}</td>
+							<td>{{ servicos.nomeCliente }}</td>
+							<td>{{ servicos.tipo }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<a href="{% url 'cadastrar_servico' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
+{% endblock content %}
