@@ -6,6 +6,9 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from .models import Usuario, Empresa, Servicos, Niveis
 
 class UsuarioForm(forms.ModelForm):
+
+  password = forms.CharField(widget=forms.PasswordInput)
+  password2 = forms.CharField(widget=forms.PasswordInput)
   class Meta:
     model = Usuario
     fields = (
@@ -18,7 +21,6 @@ class UsuarioForm(forms.ModelForm):
               'perfil',
             )
   
-
 class NivelForm(forms.ModelForm):
   class Meta:
     model = Niveis

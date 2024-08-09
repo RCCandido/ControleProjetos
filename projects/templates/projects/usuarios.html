@@ -46,12 +46,15 @@
 						<tbody>
 							{% for usuario in usuarios %}
 							<tr>
-								<td>{{ usuario.get_full_name }}</td>
+								<td>{{ usuario.name }}</td>
 								<td>{{ usuario.email }}</td>
 								<td>{{ usuario.bloqueado }}</td>
 								<td>{{ usuario.tipo }}</td>
 								<td>{{ usuario.perfil }}</td>
-								<td><a href="{% url "usuarios" opc='alterar' pk=usuario.email %}" class="btn btn-sm btn-secondary">Editar</a></td>
+								<td>
+									<a href="{% url "usuarios" opc='alterar' pk=usuario.email %}" class="btn btn-sm btn-secondary">Editar</a>
+									<a href="{% url "usuarios" opc='delete' pk=usuario.email %}" class="btn btn-sm btn-danger">Excluir</a>
+								</td>
 							</tr>
 							{% endfor %}
 						</tbody>

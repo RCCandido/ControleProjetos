@@ -1,8 +1,11 @@
+import random
+
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm 
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password, check_password
 
 from .models import Usuario, Empresa, Servicos, Niveis
 from .forms import UsuarioForm, EmpresaForm, ServicosForm, NivelForm
@@ -47,7 +50,15 @@ def cadastrar_usuario(request):
     if request.method == "POST":
         form_usuario = UsuarioForm(request.POST)
         if form_usuario.is_valid():
+            
+            nova_senha = request.POST['password']
+            form_usuario.password = make_password(password=nova_senha, salt=None, hasher='pbkdf2_sha256')
+            
+            nova_senha = request.POST['password2']
+            form_usuario.password2 = make_password(password=nova_senha, salt=None, hasher='pbkdf2_sha256')
+            
             form_usuario.save()
+            
             return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'invalidPassword': invalidPassword, 'sucess': sucess})
         else:
             invalidPassword = True
@@ -60,24 +71,40 @@ def recuperar_senha(request):
     sucess = False
     invalidEmail = False
     if request.method == "POST":
+
         destinatario = request.POST['email']
         if destinatario:
 
             # verifica se o destinatario tem o email cadastrado
+            user = Usuario.objects.filter(email=destinatario).first()
+            if user:
+                
+                # cria nova senha aleatoria
+                nova_senha = SenhaAleatoria()
+                
+                senha_criptografada = make_password(password=nova_senha, salt=None, hasher='pbkdf2_sha256')
 
-            mensagem = ""
-            
-            # envia email de recuperação de senha
-            send_mail(
-                "Recuperação de Senha",
-                mensagem,
-                "rodrigo.candido@alphaerp.com.br",
-                [destinatario],
-                fail_silently=False,
-            )
-            sucess = True
-            invalidEmail = False
-            return render(request, 'projects/recuperar_senha.html', {'sucess': sucess, 'invalidEmail': invalidEmail})
+                user.password = senha_criptografada
+                user.save()
+
+                mensagem = "Olá "+ user.name +" Sua nova senha é: "+ nova_senha
+
+                # envia email de recuperação de senha
+                send_mail(
+                    "Recuperação de Senha",
+                    mensagem,
+                    "rodrigo.candido@alphaerp.com.br",
+                    [destinatario],
+                    fail_silently=False,
+                )
+                sucess = True
+                invalidEmail = False
+                return render(request, 'projects/recuperar_senha.html', {'sucess': sucess, 'invalidEmail': invalidEmail})
+            else:
+                sucess = False
+                invalidEmail = True
+                return render(request, 'projects/recuperar_senha.html', {'sucess': sucess, 'invalidEmail': invalidEmail})
+
         else:
             sucess = False
             invalidEmail = True
@@ -156,6 +183,14 @@ def usuarios(request, opc=False, pk=False):
                 usuario = Usuario.objects.filter(email=pk).first()
                 userform = UsuarioForm(instance=usuario)
                 return render(request, 'projects/usuarios.html', {'altera': True, 'form': userform })
+        elif opc == "delete":
+            if pk:
+                usuario = Usuario.objects.filter(email=pk).first()
+                usuario.delete()
+                User = get_user_model()
+                users = User.objects.all()
+                return render(request, 'projects/usuarios.html', {'usuarios': users })
+
         else:
             User = get_user_model()
             users = User.objects.all()
@@ -191,3 +226,7 @@ def isInt(value):
     return True
   except:
     return False
+  
+def SenhaAleatoria():
+    numero = random.randrange(100000, 999999)
+    return str(numero)
