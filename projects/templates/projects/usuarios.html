@@ -16,14 +16,20 @@
 					
 					<div class="row">
 						<div class="col-xs-4 mb-2 mt-2 p-2">
-							<form method="POST">{% csrf_token %}
+							<form method="POST" >{% csrf_token %}
 								
-								{{ form.email|as_crispy_field }}
 								{{ form.name|as_crispy_field }}
+								{{ form.email|as_crispy_field }}
 								{{ form.bloqueado|as_crispy_field }}
 								{{ form.tipo|as_crispy_field }}
 								{{ form.perfil|as_crispy_field }}
 								
+								{% if erro %}
+									<div class="form-group">
+										<p class="text danger">{{ erro }}</p>
+									</div>
+								{% endif %}
+
 								<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
 								<a href="{% url 'usuarios' %}" class="btn btn-danger mt-4">Cancelar</a>
 								
@@ -44,16 +50,16 @@
 							</tr>
 						</thead>
 						<tbody>
-							{% for usuario in usuarios %}
+							{% for user in usuarios %}
 							<tr>
-								<td>{{ usuario.name }}</td>
-								<td>{{ usuario.email }}</td>
-								<td>{{ usuario.bloqueado }}</td>
-								<td>{{ usuario.tipo }}</td>
-								<td>{{ usuario.perfil }}</td>
+								<td>{{ user.name }}</td>
+								<td>{{ user.email }}</td>
+								<td>{{ user.bloqueado }}</td>
+								<td>{{ user.tipo }}</td>
+								<td>{{ user.perfil }}</td>
 								<td>
-									<a href="{% url "usuarios" opc='alterar' pk=usuario.email %}" class="btn btn-sm btn-secondary">Editar</a>
-									<a href="{% url "usuarios" opc='delete' pk=usuario.email %}" class="btn btn-sm btn-danger">Excluir</a>
+									<a href="{% url "usuarios" opc='editar' pk=user.email %}" class="btn btn-sm btn-secondary">Editar</a>
+									<a href="{% url "usuarios" opc='delete' pk=user.email %}" class="btn btn-sm btn-danger">Excluir</a>
 								</td>
 							</tr>
 							{% endfor %}

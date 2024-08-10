@@ -5,10 +5,22 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 from .models import Usuario, Empresa, Servicos, Niveis
 
+class NewUsuarioForm(forms.ModelForm):
+  class Meta:
+    model = Usuario
+    fields = (
+              'name',
+              'email',
+              'password',
+              'password2',
+              'bloqueado',
+              'tipo',
+              'perfil',
+            )
 class UsuarioForm(forms.ModelForm):
-
-  password = forms.CharField(widget=forms.PasswordInput)
-  password2 = forms.CharField(widget=forms.PasswordInput)
+  email = forms.CharField(disabled=True, required=False)
+  password = forms.CharField(disabled=True, required=False)
+  password2 = forms.CharField(disabled=True, required=False)
   class Meta:
     model = Usuario
     fields = (

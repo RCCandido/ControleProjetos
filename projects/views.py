@@ -8,65 +8,57 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 
 from .models import Usuario, Empresa, Servicos, Niveis
-from .forms import UsuarioForm, EmpresaForm, ServicosForm, NivelForm
+from .forms import UsuarioForm, NewUsuarioForm, EmpresaForm, ServicosForm, NivelForm
 
 def logar_usuario(request):
-    error = ""
     if request.method == "POST":
         email = request.POST["email"]
         password = request.POST["password"]
         usuario = authenticate(request, username=email, password=password)
         if usuario is not None:
-            login(request, usuario)
-            return redirect('home')
+            if usuario.bloqueado == "B":
+                error = "Usuário Bloqueado."
+                form_login = AuthenticationForm()
+                return render(request, 'projects/index.html', {"error": error, "form_login": form_login})
+            else:
+                login(request, usuario)
+                return redirect('home')
         else:
-            error = "Erro"
+            error = "Usuário ou Senha inválido(s)."
             form_login = AuthenticationForm()
+            return render(request, 'projects/index.html', {"error": error, "form_login": form_login})
     else:
         error = ""
         form_login = AuthenticationForm()
+        return render(request, 'projects/index.html', {"error": error, "form_login": form_login})
 
-    return render(request, 'projects/index.html', {"error": error, "form_login": form_login})
 
- 
-
-# def cadastrar_usuario(request):
-#     if request.method == "POST":
-#         form_usuario = UserCreationForm(request.POST)
-#         if form_usuario.is_valid():
-#             form_usuario.save()
-#             return redirect('index')
-#         else:
-#             invalidPassword = True
-#             return render(request, 'projects/cadastro_usuario.html', {'form_usuario': form_usuario, 'invalidPassword': invalidPassword})
-#     else:
-#         invalidPassword = False
-#         form_usuario = UserCreationForm()
-#         return render(request, 'projects/cadastro_usuario.html', {'form_usuario': form_usuario, 'invalidPassword': invalidPassword})
-
+@login_required(login_url='/index')
 def cadastrar_usuario(request):
-    invalidPassword = False
-    sucess = False
+
     if request.method == "POST":
-        form_usuario = UsuarioForm(request.POST)
-        if form_usuario.is_valid():
+        form = NewUsuarioForm(request.POST)
+        if form.is_valid():
             
-            nova_senha = request.POST['password']
-            form_usuario.password = make_password(password=nova_senha, salt=None, hasher='pbkdf2_sha256')
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            password = make_password(form.cleaned_data['password'])
+            password2 = make_password(form.cleaned_data['password2'])
+            bloqueado = form.cleaned_data['bloqueado']
+            tipo = form.cleaned_data['tipo']
+            perfil = form.cleaned_data['perfil']
             
-            nova_senha = request.POST['password2']
-            form_usuario.password2 = make_password(password=nova_senha, salt=None, hasher='pbkdf2_sha256')
-            
-            form_usuario.save()
-            
-            return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'invalidPassword': invalidPassword, 'sucess': sucess})
+            user = Usuario(name=name, email=email, password=password, password2=password2, bloqueado=bloqueado, tipo=tipo, perfil=perfil)
+            user.save()
+
+            return redirect('usuarios')
         else:
-            invalidPassword = True
-            return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'invalidPassword': invalidPassword, 'sucess': sucess})
+            return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'sucess': False})
     else:
-        form_usuario = UsuarioForm()
-        return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'invalidPassword': invalidPassword, 'sucess': sucess})
-    
+        form_usuario = NewUsuarioForm()
+        return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'sucess': True})
+
+
 def recuperar_senha(request):
     sucess = False
     invalidEmail = False
@@ -170,30 +162,39 @@ def cadastrar_empresa(request):
 @login_required(login_url='/index')
 def usuarios(request, opc=False, pk=False):
     if request.method == "POST":
-        userform = UsuarioForm(request.POST)
-        if userform.is_valid():
-            userform.save()
+        form = UsuarioForm(request.POST)
+        if form.is_valid():
+            
+            usuario = Usuario.objects.filter(email=pk).first()
+
+            usuario.name = form.cleaned_data['name']
+            usuario.bloqueado = form.cleaned_data['bloqueado']
+            usuario.tipo = form.cleaned_data['tipo']
+            usuario.perfil = form.cleaned_data['perfil']
+            
+            usuario.save()
+
             return redirect('usuarios')
         else:
-            return redirect('usuarios')
+            erro = form.errors
+            return render(request, 'projects/usuarios.html', {'altera': True, 'form': form, 'erro': erro })
 
     else:
-        if opc == "alterar":
+        if opc == "editar":
             if pk:
                 usuario = Usuario.objects.filter(email=pk).first()
-                userform = UsuarioForm(instance=usuario)
-                return render(request, 'projects/usuarios.html', {'altera': True, 'form': userform })
+                form = UsuarioForm(instance=usuario)
+                return render(request, 'projects/usuarios.html', {'altera': True, 'form': form })
+            
         elif opc == "delete":
             if pk:
                 usuario = Usuario.objects.filter(email=pk).first()
                 usuario.delete()
-                User = get_user_model()
-                users = User.objects.all()
+                users = Usuario.objects.all()
                 return render(request, 'projects/usuarios.html', {'usuarios': users })
 
         else:
-            User = get_user_model()
-            users = User.objects.all()
+            users = Usuario.objects.all()
             return render(request, 'projects/usuarios.html', {'usuarios': users })
 
 @login_required(login_url='/index')

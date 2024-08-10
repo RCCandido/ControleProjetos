@@ -24,11 +24,11 @@
           {{form_login.password}}
       </div>
       
-      <div class="form-group">
-        {% if sucess == 0 %}  
-          <p class="text danger">Usuário ou senha inválidos. sucess =  {{ sucess }}</p>
-        {% endif %}
-      </div>
+      {% if not sucess %}  
+        <div class="form-group">
+          <p class="text danger">Usuário ou senha inválidos.</p>
+        </div>
+      {% endif %}
 
       <div class="form-group">
           <input type="submit" value="Enviar" class="btn btn-primary">

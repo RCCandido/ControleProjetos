@@ -28,15 +28,23 @@
                   placeholder="E-mail" />
               </div>
              
-              <div data-mdb-input-init class="form-outline mb-3">
+              <div data-mdb-input-init class="form-outline mb-4">
                 <input type="password" name="password" id="password" 
                   class="form-control form-control-lg" 
                   placeholder="Password" />
               </div>
-    
-              <a href="{% url 'recuperar_senha' %}" class="text-body">Esqueci minha senha</a>
+              
+              {% if error %}
+                <div class="text-danger mb-2">
+                  {{ error }}
+                </div>
+              {% endif %}
+                
+                <div class="text-primary mt-2">
+                  <a href="{% url 'recuperar_senha' %}" >Esqueci minha senha</a>
+                </div>
                            
-              <div class="text-center text-lg-start mt-4 pt-2">
+              <div class="text-center text-lg-start mt-2 pt-2">
                 <input type="submit" value="Login" class="btn btn-primary">
               </div>
 
