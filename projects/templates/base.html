@@ -86,8 +86,7 @@
             <span class="ms-2">{% block nomeusuario %} {{ user.name }} {% endblock %}</span>
           </button>
           <div class="dropdown-menu" aria-labelledby="triggerId">
-            <button class="dropdown-item" href="#">Settings</button>
-            <button class="dropdown-item" href="#">Profile</button>
+            <a class="dropdown-item" href="{% url 'redefinir_senha' %}">Alterar Senha</a>
             <a class="dropdown-item" href="{% url 'deslogar_usuario' %}">Sair</a>
           </div>
         </div>

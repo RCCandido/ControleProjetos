@@ -1,0 +1,20 @@
+{% extends "base_sem_nav.html" %}
+{% load crispy_forms_tags %}
+{% block page_title %} Redefinir {% endblock page_title %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-4 mb-2 mt-2 p-2">
+				
+			{% if message %}
+				<div class="form-group">
+					<p class="text-{{ type }}">{{ message }}</p>
+				</div>
+			{% endif %}
+
+			<a href="{% url 'home' %}" class="btn btn-primary mt-4">Login</a>
+				
+		</div>
+	</div>
+
+{% endblock content %}

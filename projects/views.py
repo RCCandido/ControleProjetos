@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 
 from .models import Usuario, Empresa, Servicos, Niveis
-from .forms import UsuarioForm, NewUsuarioForm, EmpresaForm, ServicosForm, NivelForm
+from .forms import UsuarioForm, NewUsuarioForm, EmpresaForm, ServicosForm, NivelForm, RedefinirSenhaForm
 
 def logar_usuario(request):
     if request.method == "POST":
@@ -57,7 +57,26 @@ def cadastrar_usuario(request):
     else:
         form_usuario = NewUsuarioForm()
         return render(request, 'projects/cadastro_usuario.html', {'form': form_usuario, 'sucess': True})
+    
+@login_required(login_url='/index')
+def redefinir_senha(request):
+    form = RedefinirSenhaForm(instance=request.user)
 
+    if request.method == 'POST':
+        novasenha = request.POST['password']
+        novasenha2 = request.POST['password2']
+        
+        if novasenha != novasenha2:
+            erro = "As senhas não conferem."
+            return render(request, 'projects/redefinir_senha.html', {'form': form, 'erro': erro})
+        else:
+            user = Usuario.objects.filter(email=request.user.email).first()
+            if user:
+                user.set_password(novasenha)
+                message = "Senha alterada com sucesso!"
+                return render(request, 'projects/logoff.html', {'message': message, 'type': "success"})
+
+    return render(request, 'projects/redefinir_senha.html', {'form': form, 'erro': ""})
 
 def recuperar_senha(request):
     sucess = False

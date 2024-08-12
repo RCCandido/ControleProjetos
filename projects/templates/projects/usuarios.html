@@ -54,7 +54,11 @@
 							<tr>
 								<td>{{ user.name }}</td>
 								<td>{{ user.email }}</td>
-								<td>{{ user.bloqueado }}</td>
+								{% if user.bloqueado == "L"%}
+									<td>Sim</td>
+									{% else %}
+									<td>Não</td>
+								{% endif %}
 								<td>{{ user.tipo }}</td>
 								<td>{{ user.perfil }}</td>
 								<td>

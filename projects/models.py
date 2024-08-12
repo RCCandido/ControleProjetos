@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 class Usuario(AbstractUser):
   
@@ -22,6 +23,12 @@ class Usuario(AbstractUser):
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
   perfil = models.CharField(verbose_name="Peril", max_length=3, null=False, blank=False, choices=PERFIS)
   
+  def set_password(self, raw_password):
+    self.password = make_password(raw_password)
+    self.password2 = make_password(raw_password)
+    self.save()
+    return 
+
   class Meta:
     verbose_name_plural = "Usuários"
 
