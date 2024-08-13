@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import Usuario, Empresa, Servicos, Niveis
 from .forms import UsuarioForm, NewUsuarioForm, EmpresaForm, ServicosForm, NivelForm, RedefinirSenhaForm
 from .decorators import nivel_access_required
+from .filters import UsuarioFilter
 
 ## LOGIN ##
 def logar_usuario(request):
@@ -129,6 +130,7 @@ def usuarios(request, opc=False, pk=False):
             usuario.bloqueado = form.cleaned_data['bloqueado']
             usuario.tipo = form.cleaned_data['tipo']
             usuario.perfil = form.cleaned_data['perfil']
+            usuario.usefilter = form.cleaned_data['usefilter']
             
             usuario.save()
 
@@ -136,7 +138,6 @@ def usuarios(request, opc=False, pk=False):
         else:
             erro = form.errors
             return render(request, 'projects/usuarios.html', {'altera': True, 'form': form, 'erro': erro })
-
     else:
         if opc == "editar":
             if pk:
@@ -153,7 +154,13 @@ def usuarios(request, opc=False, pk=False):
 
         else:
             users = Usuario.objects.all()
-            return render(request, 'projects/usuarios.html', {'usuarios': users })
+            filter = UsuarioFilter(request.GET, queryset=users)
+            context = {
+                'usuarios': filter,
+                'filter': filter
+            }
+            return render(request, 'projects/usuarios.html', context)
+
 
 @login_required(login_url='/index')
 @nivel_access_required(view_name="servicos")

@@ -6,6 +6,9 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from .models import Usuario, Empresa, Servicos, Niveis
 
 class NewUsuarioForm(forms.ModelForm):
+  password = forms.CharField(widget=forms.PasswordInput(), required=True, label="Senha")
+  password2 = forms.CharField(widget=forms.PasswordInput(), required=True, label="Repita a Senha")
+
   class Meta:
     model = Usuario
     fields = (
@@ -16,6 +19,8 @@ class NewUsuarioForm(forms.ModelForm):
               'bloqueado',
               'tipo',
               'perfil',
+              'resetpsw',
+              'usefilter',
             )
 
 class RedefinirSenhaForm(forms.ModelForm):
@@ -32,9 +37,11 @@ class RedefinirSenhaForm(forms.ModelForm):
             )
     
 class UsuarioForm(forms.ModelForm):
+  
   email = forms.CharField(disabled=True, required=False)
-  password = forms.CharField(disabled=True, required=False)
-  password2 = forms.CharField(disabled=True, required=False)
+  password = forms.CharField(widget=forms.PasswordInput(), disabled=True, required=False)
+  password2 = forms.CharField(widget=forms.PasswordInput(), disabled=True, required=False)
+
   class Meta:
     model = Usuario
     fields = (
@@ -45,6 +52,7 @@ class UsuarioForm(forms.ModelForm):
               'bloqueado',
               'tipo',
               'perfil',
+              'usefilter',
             )
   
 class NivelForm(forms.ModelForm):

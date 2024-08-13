@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'projects.apps.ProjectsConfig',
     'crispy_forms',
     'crispy_bootstrap4',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -103,6 +104,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'projects.Usuario'
 AUTHENTICATION_BACKENDS = ['projects.backends.EmailBackend']
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

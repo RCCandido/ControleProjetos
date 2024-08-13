@@ -14,15 +14,20 @@ class Usuario(AbstractUser):
     ("N5", "Nivel 5"),
     )
 
-  user_id = models.AutoField(primary_key=True)
+
+  username = None # desabilita o uso do username
+  USERNAME_FIELD = 'user_id'
+
+  user_id = models.IntegerField(primary_key=True)
   name = models.CharField(verbose_name="Nome", max_length=200, null=False, blank=False)
-  email = models.CharField(verbose_name="Email", unique=True, max_length=200)
+  email = models.EmailField('E-mail', unique=True)
   password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
   password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
   bloqueado = models.CharField(verbose_name="Status", max_length=1, null=False, blank=False, choices=STATUS)
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
   perfil = models.CharField(verbose_name="Peril", max_length=3, null=False, blank=False, choices=PERFIS)
-  resetpsw = models.BooleanField(default=True)
+  resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
+  usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
 
   def set_password(self, raw_password):
     self.password = make_password(raw_password)
