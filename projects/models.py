@@ -22,10 +22,12 @@ class Usuario(AbstractUser):
   bloqueado = models.CharField(verbose_name="Status", max_length=1, null=False, blank=False, choices=STATUS)
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
   perfil = models.CharField(verbose_name="Peril", max_length=3, null=False, blank=False, choices=PERFIS)
-  
+  resetpsw = models.BooleanField(default=True)
+
   def set_password(self, raw_password):
     self.password = make_password(raw_password)
     self.password2 = make_password(raw_password)
+    self.resetpsw = False
     self.save()
     return 
  

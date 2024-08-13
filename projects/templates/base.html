@@ -43,7 +43,7 @@
           </a>
           <ul class="nav nav-pills flex-column mt-4">
           
-          {% if nivel == "1" %}
+          {% if user.perfil == "N1" %}
           
             <li class="nav-item py-2 py-sm-0 mask">
               <a href="{% url 'home' %}" class="nav-link text-white ">
@@ -87,18 +87,24 @@
         <div class="dropdown open p-3 ">
           <button class="btn border-none dropdown-toggle text-white type=" id="triggerId" data-bs-toggle="dropdown"
             aria-expanded="false">
-            <i class="fa fa-user fs-4 d-none d-lg-inline"></i>
-            <span class="ms-2">{% block nomeusuario %} {{ user.name }} {% endblock %}</span>
+            <i class="fa fa-user fs-5 d-none d-lg-inline"></i>
+            <span class="ms-2 fs-6">{% block nomeusuario %} {{ user.name }} {% endblock %}</span>
           </button>
           <div class="dropdown-menu" aria-labelledby="triggerId">
-            <a class="dropdown-item" href="{% url 'redefinir_senha' %}">Alterar Senha</a>
-            <a class="dropdown-item" href="{% url 'deslogar_usuario' %}">Sair</a>
+            <a class="dropdown-item fs-6" href="{% url 'redefinir_senha' %}">Alterar Senha</a>
+            <a class="dropdown-item fs-6" href="{% url 'deslogar_usuario' %}">Sair</a>
           </div>
         </div>
       </div>
-
+      
       <div class="container w-75 p-4 ">
-        {% block content%} {% endblock content %}
+        <h4>{% block title %} {% endblock title %}</h4>
+        <hr>
+        <div class="row">
+          <div class="col-md-12">
+            {% block content %} {% endblock content %}
+          </div>
+        </div>
       </div>
 
     </div>

@@ -1,28 +1,21 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page_title %} Usuários {% endblock page_title %}
-
+{% block title %} Redefinir Senha {% endblock title %}
 {% block content %}
-<h1>Redefinir Senha</h1>
-<hr>
+	<form method="POST" >{% csrf_token %}
+		
+		{{ form|crispy }}
+		
+		{% if erro %}
+			<div class="form-group">
+				<p class="text-danger">{{ erro }}</p>
+			</div>
+		{% endif %}
 
-	<div class="row">
-		<div class="col-xs-4 mb-2 mt-2 p-2">
-			<form method="POST" >{% csrf_token %}
-				
-				{{ form|crispy }}
-				
-				{% if erro %}
-					<div class="form-group">
-						<p class="text-danger">{{ erro }}</p>
-					</div>
-				{% endif %}
-
-				<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-				<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a>
-				
-			</form>
-		</div>
-	</div>
+		<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
+		<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a>
+		
+	</form>
 
 {% endblock content %}

@@ -1,13 +1,10 @@
 {% extends "base.html" %}
 {% block page_title %}Home{% endblock page_title %}
+{% block title %} Bem Vindo! {% endblock title %}
 {% block content %}
-<h1>Bem Vindo!</h1>
-<hr>
-<div class="content">
 
 	<span class="">Usuário Logado: {{ user }}</span><br>
 	<span class="">Usuários Cadastrados: {{ qtdUsuarios }}</span><br>
 	<span class="">Serviços Cadastrados: {{ qtdServicos }}</span>
 
-</div>
 {% endblock content %}

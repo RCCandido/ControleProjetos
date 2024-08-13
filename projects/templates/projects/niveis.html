@@ -1,73 +1,62 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page_title %}Niveis{% endblock page_title %}
+{% block title %} Niveis de Acesso {% endblock title %}
 {% block content %}
 
-<h1>Niveis de Acesso</h1>
-<hr>
-<div class="content">
-	<div class="container-fluid">
+	{% if altera %}
+
 		<div class="row">
-			<div class="col-md-12">
-
-				{% if altera %}
-
-					<div class="row">
-						<div class="col-xs-4 mb-2 mt-2 p-2">
-							<form method="POST">{% csrf_token %}
-								
-								{{ form|crispy }}
-								
-								<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-								<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
-								
-							</form>
-						</div>
-					</div>
+			<div class="col-xs-4 mb-2 mt-2 p-2">
+				<form method="POST">{% csrf_token %}
 					
-				{% elif inclui %}
+					{{ form|crispy }}
 					
-					<form method="POST" id="{{ nivel.helper.nivel_id }}">{% csrf_token %}
-						{{ form|crispy }}
-
-						<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-						<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
+					<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
+					<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
 					
-					</form>
-
-				{% else %}
-
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Código</th>
-								<th>Descrição</th>
-								<th>Rotina</th>
-								<th>Bloqueado</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for nivel in niveis %}
-							<tr>
-								<td>{{ nivel.nivel_id }}</td>
-								<td>{{ nivel.descricao }}</td>
-								<td>{{ nivel.rotina }}</td>
-								<td>{{ nivel.bloqueado }}</td>
-								<td>
-									<a href="{% url "niveis" pk=nivel.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
-								</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-					
-					<a href="{% url "niveis" pk='incluir' %}" class="btn btn-primary mt-4">Cadastrar Nivel</a>
-				{% endif %}
-
+				</form>
 			</div>
 		</div>
-	</div>
-</div>
+		
+	{% elif inclui %}
+		
+		<form method="POST" id="{{ nivel.helper.nivel_id }}">{% csrf_token %}
+			{{ form|crispy }}
 
+			<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
+			<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
+		
+		</form>
+
+	{% else %}
+
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Código</th>
+					<th>Descrição</th>
+					<th>Rotina</th>
+					<th>Bloqueado</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for nivel in niveis %}
+				<tr>
+					<td>{{ nivel.nivel_id }}</td>
+					<td>{{ nivel.descricao }}</td>
+					<td>{{ nivel.rotina }}</td>
+					<td>{{ nivel.bloqueado }}</td>
+					<td>
+						<a href="{% url "niveis" pk=nivel.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+		<a href="{% url "niveis" pk='incluir' %}" class="btn btn-primary mt-4">Cadastrar Nivel</a>
+	{% endif %}
+			
 {% endblock content %}

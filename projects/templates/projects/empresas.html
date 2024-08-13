@@ -1,41 +1,29 @@
 {% extends "base.html" %}
-
-{% block page_title %}
-Empresas
-{% endblock page_title %}
-
+{% block page_title %}Empresas{% endblock page_title %}
+{% block title %} Empresas {% endblock title %}
 {% block content %}
-<h1>Empresas</h1>
-<hr>
-<div class="content">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-12">
-				<table class="table table-hover">
-					<thead>
-						<tr>
-							<th>Codigo</th>
-							<th>Nome</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for e in empresa %}
-						<tr>
-							<td>{{ e.codigo }}</td>
-							<td>{{ e.nome }}</td>
-							<td>
-                <a href="{% url "empresas" pk=e.codigo %}" class="btn btn-sm btn-secondary">Editar</a>
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
 
-<a href="{% url 'cadastrar_empresa' %}" class="btn btn-primary mt-4">Cadastrar Empresa</a>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>Codigo</th>
+				<th>Nome</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for e in empresa %}
+			<tr>
+				<td>{{ e.codigo }}</td>
+				<td>{{ e.nome }}</td>
+				<td>
+					<a href="{% url "empresas" pk=e.codigo %}" class="btn btn-sm btn-secondary">Editar</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{% url 'cadastrar_empresa' %}" class="btn btn-primary mt-4">Cadastrar Empresa</a>
 
 {% endblock content %}

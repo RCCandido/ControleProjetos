@@ -1,14 +1,11 @@
 {% extends "base_sem_nav.html" %}
 {% load crispy_forms_tags %}
-
 {% block page_title %}Recuperação de Senha{% endblock page_title %}
-
 {% block content %}
 <h1>Recuperação de Senha</h1>
 <hr class="col-md-8">
 <div class="content">
-	<form method="POST" class="row g-3">
-		{% csrf_token %}
+	<form method="POST" class="row g-3">{% csrf_token %}
 		
 		<div class="row">
 			<div class="col-xs-4 mb-2 mt-2 p-2">
@@ -35,8 +32,7 @@
 								<input type="submit" value="Enviar" class="btn btn-primary mt-4" >
 								<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a></p>
 						</div>
-				</form>
-				
+					</form>
 				{% endif %}
 
 			</div>
