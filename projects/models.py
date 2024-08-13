@@ -28,10 +28,14 @@ class Usuario(AbstractUser):
     self.password2 = make_password(raw_password)
     self.save()
     return 
-
+ 
   class Meta:
     verbose_name_plural = "Usuários"
+    ordering = ('name',)
 
+  def __str__(self):
+    return self.name
+  
 class Niveis(models.Model):
   SN = (
     ('S', 'Sim'),

@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password, check_password
 
 from .models import Usuario, Empresa, Servicos, Niveis
 from .forms import UsuarioForm, NewUsuarioForm, EmpresaForm, ServicosForm, NivelForm, RedefinirSenhaForm
+from .decorators import nivel_access_required
 
 def logar_usuario(request):
     if request.method == "POST":
@@ -34,6 +35,7 @@ def logar_usuario(request):
 
 
 @login_required(login_url='/index')
+@nivel_access_required(view_name="usuarios")
 def cadastrar_usuario(request):
 
     if request.method == "POST":
@@ -130,6 +132,7 @@ def home(request):
   return render(request, "projects/home.html", { 'user': request.user, 'qtdUsuarios': 10, 'qtdServicos': 1 })
 
 @login_required(login_url='/index')
+@nivel_access_required(view_name="niveis")
 def niveis(request, pk=False):
     if request.method == "POST":
         nivel_form = NivelForm(request.POST)
@@ -148,7 +151,6 @@ def niveis(request, pk=False):
         else:
             niveis = Niveis.objects.all()
             return render(request, 'projects/niveis.html', {'niveis': niveis })
-
 
 @login_required(login_url='/index')
 def deslogar_usuario(request):
@@ -178,8 +180,11 @@ def cadastrar_empresa(request):
         form_empresa = EmpresaForm()
         return render(request, 'projects/cadastro_empresa.html', {'form': form_empresa})
 
+
 @login_required(login_url='/index')
+@nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
+
     if request.method == "POST":
         form = UsuarioForm(request.POST)
         if form.is_valid():
@@ -216,12 +221,16 @@ def usuarios(request, opc=False, pk=False):
             users = Usuario.objects.all()
             return render(request, 'projects/usuarios.html', {'usuarios': users })
 
+
+
 @login_required(login_url='/index')
+@nivel_access_required(view_name="servicos")
 def servicos(request):
     servicos = Servicos.objects.all()
     return render(request, 'projects/servicos.html', {'servicos': servicos })
 
 @login_required(login_url='/index')
+@nivel_access_required(view_name="servicos")
 def cadastrar_servico(request):
     if request.method == "POST":
         form_servico = ServicosForm(request.POST)

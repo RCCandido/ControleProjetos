@@ -54,13 +54,9 @@
 							<tr>
 								<td>{{ user.name }}</td>
 								<td>{{ user.email }}</td>
-								{% if user.bloqueado == "L"%}
-									<td>Sim</td>
-									{% else %}
-									<td>Não</td>
-								{% endif %}
-								<td>{{ user.tipo }}</td>
-								<td>{{ user.perfil }}</td>
+								<td>{{ user.get_bloqueado_display }}</td>
+								<td>{{ user.get_tipo_display }}</td>
+								<td>{{ user.get_perfil_display }}</td>
 								<td>
 									<a href="{% url "usuarios" opc='editar' pk=user.email %}" class="btn btn-sm btn-secondary">Editar</a>
 									<a href="{% url "usuarios" opc='delete' pk=user.email %}" class="btn btn-sm btn-danger">Excluir</a>
