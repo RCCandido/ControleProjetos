@@ -19,7 +19,9 @@ def logar_usuario(request):
         password = request.POST["password"]
         usuario = authenticate(request, username=email, password=password)
         if usuario is not None:
-            if usuario.bloqueado == "B":
+
+            # se usuaro nao esta ativo
+            if not usuario.status:
                 error = "Usuário Bloqueado."
                 form_login = AuthenticationForm()
                 return render(request, 'projects/index.html', {"error": error, "form_login": form_login})
