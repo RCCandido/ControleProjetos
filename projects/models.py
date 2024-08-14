@@ -4,7 +4,6 @@ from django.contrib.auth.hashers import make_password, check_password
 
 class Usuario(AbstractUser):
   
-  STATUS = (('B', "Bloqueado"), ("L", "Liberado"))
   TIPO = (('1', "Colaborador"), ("2", "Cliente"))
   PERFIS = (
     ('N1', "Nivel 1"), 
@@ -23,7 +22,7 @@ class Usuario(AbstractUser):
   email = models.EmailField('E-mail', unique=True)
   password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
   password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
-  bloqueado = models.CharField(verbose_name="Status", max_length=1, null=False, blank=False, choices=STATUS)
+  status = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
   perfil = models.CharField(verbose_name="Peril", max_length=3, null=False, blank=False, choices=PERFIS)
   resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")

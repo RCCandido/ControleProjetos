@@ -35,16 +35,16 @@
 	{% else %}
 		
 		{% if user.usefilter %}	
-			<div class="filtro col mb-4 fs-6">
+			<div class="filtro col mb-4 fs-6 mx-5">
 				<form method="GET">
 					<label>Nome: </label>
 					{{ filter.form.name }}
 					
 					<label>Email: </label>
 					{{ filter.form.email }}
-
-					<input type="submit" value="Filtrar" />
-					<input type="button" value="Limpar" />
+					
+					<input class="filter_buttons" type="submit" value="Filtrar" />
+					<input class="filter_buttons" type="button" value="Limpar" onclick="limparCampos()" />
 				</form>
 			</div>
 		{% endif %}
@@ -80,5 +80,12 @@
 		</table>
 		<a href="{% url 'cadastrar_usuario' %}" class="btn btn-primary mt-4">Cadastrar Usuário</a>
 	{% endif %}
+
+<script>
+	function limparCampos(){
+		document.getElementById('id_name').value='';
+		document.getElementById('id_email').value='';
+	}
+</script>
 
 {% endblock content %}
