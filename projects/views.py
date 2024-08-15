@@ -22,7 +22,6 @@ from .filters import UsuarioFilter
 
 ## LOGIN ##
 def logar_usuario(request):
-    return redirect("home")
     if request.method == "POST":
         email = request.POST["email"]
         password = request.POST["password"]
@@ -66,8 +65,54 @@ def recuperar_senha(request):
     invalidEmail = False
     if request.method == "POST":
 
+        first_login = request.POST["first_login"]
         destinatario = request.POST["email"]
-        if destinatario:
+        if destinatario and first_login:
+
+            user = Usuario.objects.filter(email=destinatario).first()
+            if not user:
+
+                initial_pass = "123456"
+
+                name = "novousuario"
+                email = destinatario
+                password = make_password(initial_pass)
+                password2 = make_password(initial_pass)
+                active = True
+                tipo = "1"
+                perfil = "N1"
+
+                user = Usuario(
+                    name=name,
+                    email=email,
+                    password=password,
+                    password2=password2,
+                    active=active,
+                    tipo=tipo,
+                    perfil=perfil,
+                )
+                user.save()
+
+                mensagem = "Criado primeiro acesso:\n"
+                mensagem += "Usuario: " + email + "\n"
+                mensagem += "Senha: " + initial_pass
+
+                send_mail(
+                    "Primeiro Acesso",
+                    mensagem,
+                    "rodrigo.candido@alphaerp.com.br",
+                    [destinatario],
+                    fail_silently=False,
+                )
+                sucess = False
+                invalidEmail = True
+                return render(
+                    request,
+                    "projects/recuperar_senha.html",
+                    {"sucess": sucess, "invalidEmail": invalidEmail},
+                )
+
+        elif destinatario:
 
             # verifica se o destinatario tem o email cadastrado
             user = Usuario.objects.filter(email=destinatario).first()
@@ -160,7 +205,7 @@ def redefinir_senha(request):
 
 
 ## MENUS ##
-# @login_required(login_url="/index")
+@login_required(login_url="/index")
 def home(request):
     usuarios = Usuario.objects.all().count()
     servicos = Servicos.objects.all().count()
@@ -170,8 +215,8 @@ def home(request):
     return render(request, "projects/home.html", context)
 
 
-# @login_required(login_url="/index")
-# @nivel_access_required(view_name="usuarios")
+@login_required(login_url="/index")
+@nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
 
     if request.method == "POST":
@@ -266,8 +311,8 @@ def niveis(request, pk=False):
 
 
 ## CADASTROS ##
-# @login_required(login_url="/index")
-# @nivel_access_required(view_name="usuarios")
+@login_required(login_url="/index")
+@nivel_access_required(view_name="usuarios")
 def cadastrar_usuario(request):
     message = ""
     if request.method == "POST":

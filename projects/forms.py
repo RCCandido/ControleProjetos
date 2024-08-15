@@ -27,7 +27,7 @@ class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(disabled=True, required=False)
   password = forms.CharField(widget=forms.PasswordInput(), required=True, label="Nova Senha", help_text="Digite a nova senha.")
   password2 = forms.CharField(widget=forms.PasswordInput(), required=True, label="Confirmação da Nova Senha", help_text="Repita a senha.")
-
+  
   class Meta:
     model = Usuario
     fields = (
