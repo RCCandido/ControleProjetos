@@ -309,6 +309,13 @@ def niveis(request, pk=False):
             niveis = Niveis.objects.all()
             return render(request, "projects/niveis.html", {"niveis": niveis})
 
+@login_required(login_url="/index")
+def clientes(request):
+    return render(request, "projects/em_construcao.html")
+
+@login_required(login_url="/index")
+def relatorios(request):
+    return render(request, "projects/em_construcao.html")
 
 ## CADASTROS ##
 @login_required(login_url="/index")
