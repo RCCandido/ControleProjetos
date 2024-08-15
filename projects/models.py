@@ -22,7 +22,7 @@ class Usuario(AbstractUser):
   email = models.EmailField('E-mail', unique=True)
   password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
   password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
-  status = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
+  active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
   perfil = models.CharField(verbose_name="Peril", max_length=3, null=False, blank=False, choices=PERFIS)
   resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
@@ -57,7 +57,7 @@ class Niveis(models.Model):
   exclusao = models.CharField(verbose_name="Excluir", max_length=1, null=False, blank=False, choices=SN)
   logs = models.CharField(verbose_name="Logs", max_length=1, null=False, blank=False, choices=SN)
   filtro = models.CharField(verbose_name="Filtro", max_length=1, null=False, blank=False, choices=SN)
-  bloqueado = models.CharField(verbose_name="Status", max_length=1, null=False, blank=False, choices=STATUS)
+  active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
 
 
 class Empresa(models.Model):

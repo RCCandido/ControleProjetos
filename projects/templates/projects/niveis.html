@@ -10,7 +10,20 @@
 			<div class="col-xs-4 mb-2 mt-2 p-2">
 				<form method="POST">{% csrf_token %}
 					
-					{{ form|crispy }}
+					{{ form.descricao|as_crispy_field }}
+					{{ form.rotina|as_crispy_field }}
+					{{ form.inclusao|as_crispy_field }}
+					{{ form.edicao|as_crispy_field }}
+					{{ form.exclusao|as_crispy_field }}
+					{{ form.logs|as_crispy_field }}
+					{{ form.filtro|as_crispy_field }}
+					{{ form.active|as_crispy_field }}
+					
+					{% if erro %}
+						<div class="form-group">
+							<p class="text danger">{{ erro }}</p>
+						</div>
+					{% endif %}
 					
 					<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
 					<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
@@ -37,7 +50,7 @@
 					<th>Código</th>
 					<th>Descrição</th>
 					<th>Rotina</th>
-					<th>Bloqueado</th>
+					<th>Ativo</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -47,7 +60,7 @@
 					<td>{{ nivel.nivel_id }}</td>
 					<td>{{ nivel.descricao }}</td>
 					<td>{{ nivel.rotina }}</td>
-					<td>{{ nivel.bloqueado }}</td>
+					<td>{{ nivel.active }}</td>
 					<td>
 						<a href="{% url "niveis" pk=nivel.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
 					</td>

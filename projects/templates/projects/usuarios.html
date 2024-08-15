@@ -14,7 +14,7 @@
 					
 					{{ form.name|as_crispy_field }}
 					{{ form.email|as_crispy_field }}
-					{{ form.bloqueado|as_crispy_field }}
+					{{ form.active|as_crispy_field }}
 					{{ form.tipo|as_crispy_field }}
 					{{ form.perfil|as_crispy_field }}
 					{{ form.usefilter|as_crispy_field }}
@@ -66,7 +66,7 @@
 				<tr>
 					<td>{{ user.name }}</td>
 					<td>{{ user.email }}</td>
-					<td>{{ user.status }}</td>
+					<td>{{ user.active }}</td>
 					<td>{{ user.get_tipo_display }}</td>
 					<td>{{ user.get_perfil_display }}</td>
 					<td>

@@ -6,11 +6,10 @@ from django.http import HttpResponse
  
  
 def servicos_test_function(user):
-    if not user.bloqueado and user.perfil == "N1":
+    if user.active and user.perfil == "N1":
         return True
     return False
- 
- 
+  
 def usuarios_test_function(user):
     if user.perfil == "N1":
         return True
