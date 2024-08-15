@@ -22,6 +22,7 @@ from .filters import UsuarioFilter
 
 ## LOGIN ##
 def logar_usuario(request):
+    return redirect("home")
     if request.method == "POST":
         email = request.POST["email"]
         password = request.POST["password"]
@@ -159,7 +160,7 @@ def redefinir_senha(request):
 
 
 ## MENUS ##
-#@login_required(login_url="/index")
+# @login_required(login_url="/index")
 def home(request):
     usuarios = Usuario.objects.all().count()
     servicos = Servicos.objects.all().count()
@@ -169,8 +170,8 @@ def home(request):
     return render(request, "projects/home.html", context)
 
 
-#@login_required(login_url="/index")
-#@nivel_access_required(view_name="usuarios")
+# @login_required(login_url="/index")
+# @nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
 
     if request.method == "POST":
@@ -265,8 +266,8 @@ def niveis(request, pk=False):
 
 
 ## CADASTROS ##
-#@login_required(login_url="/index")
-#@nivel_access_required(view_name="usuarios")
+# @login_required(login_url="/index")
+# @nivel_access_required(view_name="usuarios")
 def cadastrar_usuario(request):
     message = ""
     if request.method == "POST":
