@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
+from django.http import JsonResponse
 
 from .models import Usuario, Empresa, Servicos, Niveis
 from .forms import (
@@ -399,6 +400,13 @@ def cadastrar_empresa(request):
     else:
         form_empresa = EmpresaForm()
         return render(request, "projects/cadastro_empresa.html", {"form": form_empresa})
+
+
+############ DASHBOARD ############
+def retorna_total_usuarios(request):
+    # total = Usuario.objects.all().aggregate(Sum('total'))['total__sum']
+    total = Usuario.objects.all().count()
+    return JsonResponse({'total_usuarios': total})
 
 
 ############ functions ############

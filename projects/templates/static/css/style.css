@@ -1,0 +1,60 @@
+body2 {
+  background-color: #0d0e11;
+  color: #fff;
+}
+
+html,
+body {
+  height: 100%;
+  background: #21273d;
+  color: #fff;
+}
+
+.nav-pills li a:hover {
+  background-color: blue;
+}
+
+.nomeusuario {
+  color: lightblue;
+}
+
+#sidebar-collapse,
+.row,
+.container-fluid {
+  height: 100%;
+}
+
+.filtro {
+  border-radius: 5px;
+  background-color: lightgray;
+  padding: 10px;
+  align-items: center;
+}
+
+.filter_buttons {
+  border-radius: 2px;
+}
+
+.filtro input {
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.informacoes_basicas {
+  height: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #181c24;
+  height: 100px;
+  margin-right: auto;
+  border: 1px solid transparent;
+  border-image: linear-gradient(to right top, #bd31c4, #8e3bb0, #643b97, #413579, #282c59);
+  border-image-slice: 1;
+  margin-left: 1%;
+}
+
+.icone {
+  color: #c040b9;
+  width: 40px;
+}

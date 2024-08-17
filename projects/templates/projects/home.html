@@ -1,10 +1,101 @@
 {% extends "base.html" %}
-{% block page_title %}Home{% endblock page_title %}
-{% block title %} Bem Vindo! {% endblock title %}
+{% load static %}
+
+{% block head %}
+{% endblock head %}
+
+{% block page_title %} Home {% endblock page_title %}
+{% block title %} Dashboard {% endblock title %}
 {% block content %}
 
+
+<div class="container">
 	<span class="">Usuário Logado: {{ user }}</span><br>
 	<span class="">Usuários Cadastrados: {{ qtdUsuarios }}</span><br>
 	<span class="">Serviços Cadastrados: {{ qtdServicos }}</span>
+	
+	<br>
+	<br>
+
+	<div class="row">
+		<div class="col-md informacoes_basicas">
+			<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-people-fill"
+				viewBox="0 0 16 16">
+				<path
+					d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+			</svg>
+			<span id="total_usuarios" class="p-2"></span><span>Usuários</span>
+		</div>
+
+		<div class="col-md informacoes_basicas">
+			<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-file-earmark-check"
+				viewBox="0 0 16 16">
+				<path
+					d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z" />
+				<path
+					d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+			</svg>
+			<span id="faturamento_total">R$ 10</span>
+		</div>
+
+		<div class="col-md informacoes_basicas">
+			<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-file-earmark-check"
+				viewBox="0 0 16 16">
+				<path
+					d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z" />
+				<path
+					d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+			</svg>
+			<span id="faturamento_total">R$ 10</span>
+		</div>
+	</div>
+
+	<div class="row">
+
+		<div class="col-md">
+			<br>
+			<h1>Projetos</h1>
+			<canvas id="projetos_total_chart" width="50" height="25"></canvas>
+		</div>
+
+		<div class="col-md">
+			<br>
+			<h1>Despesas</h1>
+			<canvas id="faturamento_total" width="250" height="200"></canvas>
+		</div>
+
+	</div>
+	
+	<div class="row">
+
+		<div class="col-md">
+			<br>
+			<h1>Faturamento</h1>
+			<canvas id="faturamento_total" width="250" height="200"></canvas>
+		</div>
+
+		<div class="col-md">
+			<br>
+			<h1>Grafico2</h1>
+			<canvas id="faturamento_total" width="250" height="200"></canvas>
+		</div>
+
+	</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
+
+<script>
+
+	window.onload = function(event){
+
+		renderiza_total_usuarios('{% url "retorna_total_usuarios" %}');
+		renderiza_total_usuarios_chart();
+
+	}
+
+</script>
 
 {% endblock content %}

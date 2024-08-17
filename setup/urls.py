@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from projects.views import *
 
@@ -22,5 +24,10 @@ urlpatterns = [
     path("niveis/<pk>", niveis, name="niveis"),
     path("clientes", clientes, name="clientes"),
     path("relatorios", relatorios, name="relatorios"),
+    path(
+        "retorna_total_usuarios", retorna_total_usuarios, name="retorna_total_usuarios"
+    ),
     path("home", home, name="home"),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
