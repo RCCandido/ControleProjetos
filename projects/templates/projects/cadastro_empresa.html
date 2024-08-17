@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page_title %}Empresas{% endblock page_title %}
-
+{% block title %} Cadastro de Empresas {% endblock title %}
 {% block content %}
-<h1>Cadastro de Empresas</h1>
-	<hr class="col-md-8">
 	<div class="content">
 		<form method="POST" class="row g-3" >
 			{% csrf_token %}

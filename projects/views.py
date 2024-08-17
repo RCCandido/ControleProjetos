@@ -219,7 +219,6 @@ def home(request):
 @login_required(login_url="/index")
 @nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
-
     if request.method == "POST":
         form = UsuarioForm(request.POST)
         if form.is_valid():

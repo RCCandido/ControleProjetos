@@ -2,21 +2,22 @@
 {% load crispy_forms_tags %}
 
 {% block page_title %}Cadastro de Usuários{% endblock page_title %}
+{% block title %} Cadastro de Usuários {% endblock title %}
 {% block content %}
-  <h1>Cadastro de Usuários</h1>
+  <div class="content">
+    <form method="post">{% csrf_token %}
+      
+      {{ form|crispy }}
 
-  <form method="post">{% csrf_token %}
+      <div class="form-group">
+        <input type="submit" value="Cadastrar" class="btn btn-primary mt-4" >
+        <a href="{% url 'usuarios' %}" class="btn btn-danger mt-4">Cancelar</a></p>
+      </div>
     
-    {{ form|crispy }}
+      {% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
 
-    <div class="form-group">
-      <input type="submit" value="Cadastrar" class="btn btn-primary mt-4" >
-      <a href="{% url 'usuarios' %}" class="btn btn-danger mt-4">Cancelar</a></p>
-    </div>
-  
-    {% if message %}
-      <span class="text-{{ type }}">{{ message }}</span >
-    {% endif %}
-
-  </form>
+    </form>
+  </div>
 {% endblock content %} 
