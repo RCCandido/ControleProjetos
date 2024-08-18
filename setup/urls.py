@@ -21,7 +21,8 @@ urlpatterns = [
     path("recuperar_senha", recuperar_senha, name="recuperar_senha"),
     path("redefinir_senha", redefinir_senha, name="redefinir_senha"),
     path("niveis", niveis, name="niveis"),
-    path("niveis/<pk>", niveis, name="niveis"),
+    path("niveis/<opc>", niveis, name="niveis"),
+    path("niveis/<opc>/<pk>", niveis, name="niveis"),
     path("clientes", clientes, name="clientes"),
     path("relatorios", relatorios, name="relatorios"),
     path(

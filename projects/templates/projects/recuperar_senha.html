@@ -11,7 +11,9 @@
 			<div class="col-xs-4 mb-2 mt-2 p-2">
 
 				{% if sucess %}
-					<p>E-mail de recuperação enviado com Sucesso!</p>
+					<div class="text-sucess">
+						{{ message }} 
+					</div>
 				
 					<a href="{% url 'home' %}" class="btn btn-danger mt-2">Voltar</a>
 				{% else %}
@@ -20,13 +22,13 @@
 							<div class="form-group">
 								<label for="email">Email</label>
 								<input type="email" class="form-control mb-2" name="email" placeholder="email@email.com.br">
-								<input class="mt-2" type="checkbox" name="first_login" />
-    						<label class="text" for="first">Primeiro Acesso</label>
+								<!--<input class="mt-2" type="checkbox" name="first_login" />
+    						<label class="text" for="first">Primeiro Acesso</label> -->
 							</div>
 		
-							{% if invalidEmail  %}
+							{% if not sucess  %}
 								<div class="text-danger">
-									E-mail inválido, não consta na base de dados.
+									{{ message }} 
 								</div>
 							{% endif %}
 							

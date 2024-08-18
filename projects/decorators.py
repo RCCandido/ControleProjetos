@@ -10,12 +10,13 @@ def servicos_test_function(user):
     return False
 
 def usuarios_test_function(user):
-    if user.perfil == "N1":
+    return True
+    if user.perfil == "":
         return True
     return False
 
-
 def niveis_test_function(user):
+    return True
     if user.perfil == "N1":
         return True
     return False

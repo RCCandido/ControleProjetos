@@ -6,27 +6,29 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from .models import Usuario, Empresa, Servicos, Niveis
 
 class NewUsuarioForm(forms.ModelForm):
-  password = forms.CharField(widget=forms.PasswordInput(), required=True, label="Senha")
-  password2 = forms.CharField(widget=forms.PasswordInput(), required=True, label="Repita a Senha")
+    password = forms.CharField(widget=forms.PasswordInput(), required=True, label="Senha")
+    password2 = forms.CharField(widget=forms.PasswordInput(), required=True, label="Repita a Senha")
 
-  class Meta:
-    model = Usuario
-    fields = (
-              'name',
-              'email',
-              'password',
-              'password2',
-              'active',
-              'tipo',
-              'perfil',
-              'resetpsw',
-              'usefilter',
-            )
+    class Meta:
+        model = Usuario
+        fields = (
+            "firstname",
+            "name",
+            "email",
+            "password",
+            "password2",
+            "active",
+            "tipo",
+            "perfil",
+            "resetpsw",
+            "usefilter",
+        )
+
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(disabled=True, required=False)
-  password = forms.CharField(widget=forms.PasswordInput(), required=True, label="Nova Senha", help_text="Digite a nova senha.")
-  password2 = forms.CharField(widget=forms.PasswordInput(), required=True, label="Confirmação da Nova Senha", help_text="Repita a senha.")
+  password = forms.CharField(widget=forms.PasswordInput(), required=True, label="Nova Senha")
+  password2 = forms.CharField(widget=forms.PasswordInput(), required=True, label="Confirmação da Nova Senha")
   
   class Meta:
     model = Usuario
@@ -35,26 +37,32 @@ class RedefinirSenhaForm(forms.ModelForm):
               'password',
               'password2',
             )
-    
-class UsuarioForm(forms.ModelForm):
-  
-  email = forms.CharField(disabled=True, required=False)
-  password = forms.CharField(widget=forms.PasswordInput(), disabled=True, required=False)
-  password2 = forms.CharField(widget=forms.PasswordInput(), disabled=True, required=False)
 
-  class Meta:
-    model = Usuario
-    fields = (
-              'name',
-              'email',
-              'password',
-              'password2',
-              'active',
-              'tipo',
-              'perfil',
-              'usefilter',
-            )
-  
+class UsuarioForm(forms.ModelForm):
+
+    email = forms.CharField(disabled=True, required=False)
+    password = forms.CharField(
+        widget=forms.PasswordInput(), disabled=True, required=False
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(), disabled=True, required=False
+    )
+
+    class Meta:
+        model = Usuario
+        fields = (
+            "firstname",
+            "name",
+            "email",
+            "password",
+            "password2",
+            "active",
+            "tipo",
+            "perfil",
+            "usefilter",
+        )
+
+
 class NivelForm(forms.ModelForm):
   class Meta:
     model = Niveis

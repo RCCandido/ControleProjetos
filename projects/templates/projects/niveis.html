@@ -26,7 +26,7 @@
 					{% endif %}
 					
 					<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-					<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
+					<a href="{% url 'niveis' %}" class="btn btn-danger mt-4 mx-2">Cancelar</a>
 					
 				</form>
 			</div>
@@ -38,8 +38,7 @@
 			{{ form|crispy }}
 
 			<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-			<a href="{% url 'niveis' %}" class="btn btn-danger mt-4">Cancelar</a>
-		
+			<a href="{% url 'niveis' %}" class="btn btn-danger mt-4 mx-2">Cancelar</a>
 		</form>
 
 	{% else %}
@@ -59,17 +58,18 @@
 				<tr>
 					<td>{{ nivel.nivel_id }}</td>
 					<td>{{ nivel.descricao }}</td>
-					<td>{{ nivel.rotina }}</td>
+					<td>{{ nivel.get_rotina_display }}</td>
 					<td>{{ nivel.active }}</td>
 					<td>
-						<a href="{% url "niveis" pk=nivel.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
+						<a href="{% url "niveis" opc='edit' pk=nivel.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
+						<a href="{% url "niveis" opc='delete' pk=nivel.nivel_id	 %}" class="btn btn-sm btn-danger">Excluir</a>
 					</td>
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 		
-		<a href="{% url "niveis" pk='incluir' %}" class="btn btn-primary mt-4">Cadastrar Nivel</a>
+		<a href="{% url "niveis" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Nivel</a>
 	{% endif %}
 			
 {% endblock content %}

@@ -68,7 +68,7 @@
           <button class="btn border-none dropdown-toggle text-white type=" id="triggerId" data-bs-toggle="dropdown"
             aria-expanded="false">
             <i class="fa fa-user fs-5 d-none d-lg-inline"></i>
-            <span class="ms-2 fs-6">{% block nomeusuario %} {{ user.name }} {% endblock %}</span>
+            <span class="ms-2 fs-6">{% block nomeusuario %} {{ user.firstname }} {% endblock %}</span>
           </button>
           <div class="dropdown-menu" aria-labelledby="triggerId">
             <a class="dropdown-item fs-6" href="{% url 'redefinir_senha' %}">Alterar Senha</a>

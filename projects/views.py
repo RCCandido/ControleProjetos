@@ -63,58 +63,13 @@ def logar_usuario(request):
 
 def recuperar_senha(request):
     sucess = False
-    invalidEmail = False
+    message = ""
     if request.method == "POST":
 
-        first_login = request.POST["first_login"]
         destinatario = request.POST["email"]
-        if destinatario and first_login:
-
-            user = Usuario.objects.filter(email=destinatario).first()
-            if not user:
-
-                initial_pass = "123456"
-
-                name = "novousuario"
-                email = destinatario
-                password = make_password(initial_pass)
-                password2 = make_password(initial_pass)
-                active = True
-                tipo = "1"
-                perfil = "N1"
-
-                user = Usuario(
-                    name=name,
-                    email=email,
-                    password=password,
-                    password2=password2,
-                    active=active,
-                    tipo=tipo,
-                    perfil=perfil,
-                )
-                user.save()
-
-                mensagem = "Criado primeiro acesso:\n"
-                mensagem += "Usuario: " + email + "\n"
-                mensagem += "Senha: " + initial_pass
-
-                send_mail(
-                    "Primeiro Acesso",
-                    mensagem,
-                    "rodrigo.candido@alphaerp.com.br",
-                    [destinatario],
-                    fail_silently=False,
-                )
-                sucess = False
-                invalidEmail = True
-                return render(
-                    request,
-                    "projects/recuperar_senha.html",
-                    {"sucess": sucess, "invalidEmail": invalidEmail},
-                )
-
-        elif destinatario:
-
+        
+        if destinatario:
+            
             # verifica se o destinatario tem o email cadastrado
             user = Usuario.objects.filter(email=destinatario).first()
             if user:
@@ -140,35 +95,72 @@ def recuperar_senha(request):
                     fail_silently=False,
                 )
                 sucess = True
-                invalidEmail = False
+                message = "E-mail de recuperação enviado com Sucesso!"
                 return render(
                     request,
                     "projects/recuperar_senha.html",
-                    {"sucess": sucess, "invalidEmail": invalidEmail},
+                    {"sucess": sucess, "message": message},
                 )
             else:
-                sucess = False
-                invalidEmail = True
-                return render(
-                    request,
-                    "projects/recuperar_senha.html",
-                    {"sucess": sucess, "invalidEmail": invalidEmail},
+                initial_pass = "123456"
+
+                name = "novousuario"
+                email = destinatario
+                password = make_password(initial_pass)
+                password2 = make_password(initial_pass)
+                active = True
+                tipo = "1"
+
+                user = Usuario(
+                    name=name,
+                    email=email,
+                    password=password,
+                    password2=password2,
+                    active=active,
+                    tipo=tipo,
                 )
+                user.save()
+
+                mensagem = "Criado primeiro acesso:\n"
+                mensagem += "Usuario: " + email + "\n"
+                mensagem += "Senha: " + initial_pass
+
+                send_mail(
+                    "Primeiro Acesso",
+                    mensagem,
+                    "rodrigo.candido@alphaerp.com.br",
+                    [destinatario],
+                    fail_silently=False,
+                )
+                sucess = True
+                message = "Email enviado com o primeiro acesso."
+                context = {"sucess": sucess, "message": message}
+                return render(request,"projects/recuperar_senha.html",
+                    context,
+                )
+            
+                #sucess = False
+                #message = "E-mail inválido, não consta na base de dados."
+                #return render(
+                #    request,
+                #    "projects/recuperar_senha.html",
+                #    {"sucess": sucess, "message": message},
+                #)
 
         else:
             sucess = False
-            invalidEmail = True
+            message = "E-mail inválido, não consta na base de dados."
             return render(
                 request,
                 "projects/recuperar_senha.html",
-                {"sucess": sucess, "invalidEmail": invalidEmail},
+                {"sucess": False, "message": message},
             )
 
     else:
         return render(
             request,
             "projects/recuperar_senha.html",
-            {"sucess": sucess, "invalidEmail": invalidEmail},
+            {"sucess": False, "message": ""},
         )
 
 
@@ -225,6 +217,7 @@ def usuarios(request, opc=False, pk=False):
 
             usuario = Usuario.objects.filter(email=pk).first()
 
+            usuario.firstname = form.cleaned_data["firstname"]
             usuario.name = form.cleaned_data["name"]
             usuario.active = form.cleaned_data["active"]
             usuario.tipo = form.cleaned_data["tipo"]
@@ -242,24 +235,29 @@ def usuarios(request, opc=False, pk=False):
                 {"altera": True, "form": form, "erro": erro},
             )
     else:
-        if opc == "editar":
+        if opc == "edit":
             if pk:
                 usuario = Usuario.objects.filter(email=pk).first()
                 form = UsuarioForm(instance=usuario)
-                return render(
-                    request, "projects/usuarios.html", {"altera": True, "form": form}
-                )
+                context = {"altera": True, "form": form}
+                return render(request, "projects/usuarios.html", context)
 
         elif opc == "delete":
             if pk:
                 usuario = Usuario.objects.filter(email=pk).first()
                 usuario.delete()
+
                 users = Usuario.objects.all()
-                return render(request, "projects/usuarios.html", {"usuarios": users})
+                filter = UsuarioFilter(request.GET, queryset=users)
+
+                context = {"usuarios": filter, "filter": filter}
+                return render(request, "projects/usuarios.html", context)
 
         else:
             users = Usuario.objects.all()
+
             filter = UsuarioFilter(request.GET, queryset=users)
+
             context = {"usuarios": filter, "filter": filter}
             return render(request, "projects/usuarios.html", context)
 
@@ -284,27 +282,75 @@ def empresas(request, pk=False):
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="niveis")
-def niveis(request, pk=False):
+def niveis(request, pk=False, opc=False):
     if request.method == "POST":
         nivel_form = NivelForm(request.POST)
         if nivel_form.is_valid():
-            nivel_form.save()
-            return redirect("niveis")
-    else:
-        if pk:
-            if pk == "incluir":
-                nivel_form = NivelForm()
-                return render(
-                    request,
-                    "projects/niveis.html",
-                    {"inclui": True, "form": nivel_form},
+
+            descricao = nivel_form.cleaned_data["descricao"]
+            rotina = nivel_form.cleaned_data["rotina"]
+            inclusao = nivel_form.cleaned_data["inclusao"]
+            edicao = nivel_form.cleaned_data["edicao"]
+            exclusao = nivel_form.cleaned_data["exclusao"]
+            logs = nivel_form.cleaned_data["logs"]
+            filtro = nivel_form.cleaned_data["filtro"]
+            active = nivel_form.cleaned_data["active"]
+
+            if opc == "insert":
+
+                nivel = Niveis(
+                    descricao=descricao,
+                    rotina=rotina,
+                    inclusao=inclusao,
+                    edicao=edicao,
+                    exclusao=exclusao,
+                    logs=logs,
+                    filtro=filtro,
+                    active=active
                 )
 
-            elif isInt(pk):
+                nivel.save()
+
+                return redirect("niveis")
+
+            elif opc == "edit":
+
+                nivel = Niveis.objects.filter(nivel_id=pk).first()
+
+                nivel.descricao = descricao
+                nivel.rotina    = rotina   
+                nivel.inclusao  = inclusao 
+                nivel.edicao    = edicao   
+                nivel.exclusao  = exclusao 
+                nivel.logs      = logs     
+                nivel.filtro    = filtro   
+                nivel.active    = active   
+                
+                nivel.save()
+
+                return redirect("niveis")
+    else:
+
+        if opc == "insert":
+            nivel_form = NivelForm()
+            context = {"inclui": True, "form": nivel_form}
+            return render(request, "projects/niveis.html", context)
+
+        elif opc == "edit":
+            if pk:
                 nivel = Niveis.objects.filter(nivel_id=pk).first()
                 form = NivelForm(instance=nivel)
                 context = {"altera": True, "form": form}
                 return render(request, "projects/niveis.html", context)
+
+        elif opc == "delete":
+            if pk:
+                nivel = Niveis.objects.filter(nivel_id=pk).first()
+                nivel.delete()
+                niveis = Niveis.objects.all()
+                context = {"niveis": niveis}
+                return render(request, "projects/niveis.html", context)
+
         else:
             niveis = Niveis.objects.all()
             return render(request, "projects/niveis.html", {"niveis": niveis})
