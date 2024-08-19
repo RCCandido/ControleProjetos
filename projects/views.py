@@ -325,7 +325,7 @@ def niveis(request, pk=False, opc=False):
                 nivel.logs      = logs     
                 nivel.filtro    = filtro   
                 nivel.active    = active   
-                
+
                 nivel.save()
 
                 return redirect("niveis")
@@ -357,11 +357,30 @@ def niveis(request, pk=False, opc=False):
 
 @login_required(login_url="/index")
 def clientes(request):
-    return render(request, "projects/em_construcao.html")
+    context = {
+        "type": "primary",
+        "title": "Clientes",
+        "message": "Página em construção.",
+    }
+    return render(request, "projects/em_construcao.html", context)
 
 @login_required(login_url="/index")
 def relatorios(request):
-    return render(request, "projects/em_construcao.html")
+    context = {
+        "type": "primary",
+        "title": "Relatórios",
+        "message": "Página em construção.",
+    }
+    return render(request, "projects/em_construcao.html", context)
+
+@login_required(login_url="/index")
+def projetos(request):
+    context = {
+        "type": "primary",
+        "title": "Projetos",
+        "message": "Página em construção.",
+    }
+    return render(request, "projects/em_construcao.html", context)
 
 ## CADASTROS ##
 @login_required(login_url="/index")

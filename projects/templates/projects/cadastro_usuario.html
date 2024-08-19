@@ -8,7 +8,7 @@
     <form method="post">{% csrf_token %}
       
       {{ form|crispy }}
-
+      
       <div class="form-group">
         <input type="submit" value="Cadastrar" class="btn btn-primary mt-4" >
         <a href="{% url 'usuarios' %}" class="btn btn-danger mt-4">Cancelar</a></p>

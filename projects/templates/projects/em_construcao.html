@@ -1,9 +1,20 @@
 {% extends "base.html" %}
-{% block page_title %}Not Implemented{% endblock page_title %}
-
+{% block page_title %}Em desenvolvimento{% endblock page_title %}
+{% block title %} {{ title }} {% endblock title %}
 {% block content %}
-<h1>Página em Construção</h1>
-		
-	<a href="{% url 'home' %}" class="btn btn-primary mt-2">Voltar</a>
+
+	<div class="row">
+		<div class="col-xs-4 mb-2 mt-2 p-2">
+				
+			{% if message %}
+				<div class="form-group">
+					<p class="text-{{ type }}">{{ message }}</p>
+				</div>
+			{% endif %}
+
+			<a href="{% url 'home' %}" class="btn btn-primary mt-4">Voltar</a>
+				
+		</div>
+	</div>
 
 {% endblock content %}

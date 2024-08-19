@@ -1,10 +1,11 @@
 from functools import wraps
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
 
 def servicos_test_function(user):
+    return True
     if user.active and user.perfil == "N1":
         return True
     return False
@@ -22,6 +23,7 @@ def niveis_test_function(user):
     return False
 
 def empresas_test_function(user):
+    return True
     if user.perfil == "N1":
         return True
     return False
@@ -38,10 +40,13 @@ def nivel_access_required(view_name):
                         return redirect("redefinir_senha")
 
                     if not servicos_test_function(request.user):
-                        return HttpResponse(
-                            "Você não tem permissão \
-                              de acesso à esta pagina!"
-                        )
+                        context = {
+                            "type": "danger",
+                            "title": "Serviços",
+                            "message": "Você não tem permissão de acesso à esta página.",
+                        }
+                        return render(request, "projects/notpermited.html", context)
+
                     return view(request, *args, **kwargs)
 
                 return _wrapped_view
@@ -56,8 +61,13 @@ def nivel_access_required(view_name):
                         return redirect("redefinir_senha")
 
                     if not usuarios_test_function(request.user):
-                        return HttpResponse("Você não tem permissão \
-                              de acesso à esta pagina!")
+                        context = {
+                            "type": "danger",
+                            "title": "Usuários",
+                            "message": "Você não tem permissão de acesso à esta página.",
+                        }
+                        return render(request, "projects/notpermited.html", context)
+
                     return view(request, *args, **kwargs)
                 return _wrapped_view
             return decorator
@@ -70,8 +80,13 @@ def nivel_access_required(view_name):
                         return redirect("redefinir_senha")
 
                     if not niveis_test_function(request.user):
-                        return HttpResponse("Você não tem permissão \
-                              de acesso à esta pagina!")
+                        context = {
+                            "type": "danger",
+                            "title": "Níveis",
+                            "message": "Você não tem permissão de acesso à esta página.",
+                        }
+                        return render(request, "projects/notpermited.html", context)
+
                     return view(request, *args, **kwargs)
                 return _wrapped_view
             return decorator
@@ -82,10 +97,15 @@ def nivel_access_required(view_name):
                 def _wrapped_view(request, *args, **kwargs):
                     if request.user.resetpsw:
                         return redirect("redefinir_senha")
-                    
+
                     if not empresas_test_function(request.user):
-                        return HttpResponse("Você não tem permissão \
-                              de acesso à esta pagina!")
+                        context = {
+                            "type": "danger",
+                            "title": "Empresas",
+                            "message": "Você não tem permissão de acesso à esta página.",
+                        }
+                        return render(request, "projects/notpermited.html", context)
+                    
                     return view(request, *args, **kwargs)
                 return _wrapped_view
             return decorator

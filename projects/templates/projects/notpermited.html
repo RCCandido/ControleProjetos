@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
-{% block page_title %} Redefinir {% endblock page_title %}
-
+{% block page_title %} Permissão {% endblock page_title %}
+{% block title %} {{ title }} {% endblock title %}
 {% block content %}
+
 	<div class="row">
 		<div class="col-xs-4 mb-2 mt-2 p-2">
 				
@@ -12,7 +12,7 @@
 				</div>
 			{% endif %}
 
-			<a href="{% url 'home' %}" class="btn btn-primary mt-4">Login</a>
+			<a href="{% url 'home' %}" class="btn btn-primary mt-4">Voltar</a>
 				
 		</div>
 	</div>

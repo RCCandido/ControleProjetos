@@ -48,6 +48,12 @@ class UsuarioForm(forms.ModelForm):
         widget=forms.PasswordInput(), disabled=True, required=False
     )
 
+    perfil = forms.ModelChoiceField(
+        queryset=Niveis.objects.all().order_by("descricao"),
+        widget=forms.Select,
+        required=True
+    )
+
     class Meta:
         model = Usuario
         fields = (
@@ -61,6 +67,10 @@ class UsuarioForm(forms.ModelForm):
             "perfil",
             "usefilter",
         )
+  
+    def __init__(self, *args, **kwargs):
+      super(Niveis, self).__init__(*args, **kwargs)
+      self.fields['descricao'].queryset = Niveis.objects.all()
 
 
 class NivelForm(forms.ModelForm):

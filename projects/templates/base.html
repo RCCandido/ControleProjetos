@@ -21,60 +21,72 @@
           <a href="{% url 'home' %}" class="d-flex text-decoration-none mt-1 align-items-center text-white">
             <span class="fs-4 d-none d-sm-inline text-primary">Alpha Projetos</span>
           </a>
-          <ul class="nav nav-pills flex-column mt-4">
-          
-          {% if user.perfil == "N1" %}
-          
-            <li class="nav-item py-2 py-sm-0 mask">
-              <a href="{% url 'home' %}" class="nav-link text-white ">
-                <i class="fs-6 fa fa-house"></i><span class="fs-8 ms-3 d-none d-sm-inline">Home</span>
-              </a>
-            </li>
 
+          {% if user.is_active %}
+
+            <ul class="nav nav-pills flex-column mt-4">
+            
+            {% if user.perfil == "N1" %}
+            
+              <li class="nav-item py-2 py-sm-0 mask">
+                <a href="{% url 'home' %}" class="nav-link text-white ">
+                  <i class="fs-6 fa fa-house"></i><span class="fs-8 ms-3 d-none d-sm-inline">Home</span>
+                </a>
+              </li>
+
+            {% endif %}
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'empresas' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-bookmark"></i><span class="fs-8 ms-3 d-none d-sm-inline">Empresas</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'servicos' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-list"></i><span class="fs-8 ms-3 d-none d-sm-inline">Serviços</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'usuarios' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-users"></i><span class="fs-8 ms-3 d-none d-sm-inline">Usuários</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'niveis' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-table"></i><span class="fs-8 ms-3 d-none d-sm-inline">Níveis</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'relatorios' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-magnifying-glass-chart"></i><span class="fs-8 ms-3 d-none d-sm-inline">Relatórios</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'clientes' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-person-rays"></i><span class="fs-8 ms-3 d-none d-sm-inline">Clientes</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'projetos' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-person-rays"></i><span class="fs-8 ms-3 d-none d-sm-inline">Projetos</span>
+                </a>
+              </li>
+            </ul>
           {% endif %}
-            <li class="nav-item py-2 py-sm-0">
-              <a href="{% url 'empresas' %}" class="nav-link text-white">
-                <i class="fs-6 fa fa-bookmark"></i><span class="fs-8 ms-3 d-none d-sm-inline">Empresas</span>
-              </a>
-            </li>
-            <li class="nav-item py-2 py-sm-0">
-              <a href="{% url 'servicos' %}" class="nav-link text-white">
-                <i class="fs-6 fa fa-list"></i><span class="fs-8 ms-3 d-none d-sm-inline">Serviços</span>
-              </a>
-            </li>
-            <li class="nav-item py-2 py-sm-0">
-              <a href="{% url 'usuarios' %}" class="nav-link text-white">
-                <i class="fs-6 fa fa-users"></i><span class="fs-8 ms-3 d-none d-sm-inline">Usuários</span>
-              </a>
-            </li>
-            <li class="nav-item py-2 py-sm-0">
-              <a href="{% url 'niveis' %}" class="nav-link text-white">
-                <i class="fs-6 fa fa-table"></i><span class="fs-8 ms-3 d-none d-sm-inline">Níveis</span>
-              </a>
-            </li>
-            <li class="nav-item py-2 py-sm-0">
-              <a href="{% url 'relatorios' %}" class="nav-link text-white">
-                <i class="fs-6 fa fa-magnifying-glass-chart"></i><span class="fs-8 ms-3 d-none d-sm-inline">Relatórios</span>
-              </a>
-            </li>
-            <li class="nav-item py-2 py-sm-0">
-              <a href="{% url 'clientes' %}" class="nav-link text-white">
-                <i class="fs-6 fa fa-person-rays"></i><span class="fs-8 ms-3 d-none d-sm-inline">Clientes</span>
-              </a>
-            </li>
-          </ul>
         </div>
-        <div class="dropdown open p-3 ">
-          <button class="btn border-none dropdown-toggle text-white type=" id="triggerId" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <i class="fa fa-user fs-5 d-none d-lg-inline"></i>
-            <span class="ms-2 fs-6">{% block nomeusuario %} {{ user.firstname }} {% endblock %}</span>
-          </button>
-          <div class="dropdown-menu" aria-labelledby="triggerId">
-            <a class="dropdown-item fs-6" href="{% url 'redefinir_senha' %}">Alterar Senha</a>
-            <a class="dropdown-item fs-6" href="{% url 'deslogar_usuario' %}">Sair</a>
+
+        {% if user.is_active %}
+          <div class="dropdown open p-3 ">
+            <button class="btn border-none dropdown-toggle text-white type=" id="triggerId" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="fa fa-user fs-5 d-none d-lg-inline"></i>
+              <span class="ms-2 fs-6">{% block nomeusuario %} {{ user.firstname }} {% endblock %}</span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="triggerId">
+              <a class="dropdown-item fs-6" href="{% url 'redefinir_senha' %}">Alterar Senha</a>
+              <a class="dropdown-item fs-6" href="{% url 'deslogar_usuario' %}">Sair</a>
+            </div>
           </div>
-        </div>
+        {% endif %}
       </div>
       
       <div class="container w-75 p-4 ">

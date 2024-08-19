@@ -44,40 +44,51 @@ class Niveis(models.Model):
 
     def get_niveis():
         return Niveis.objects.all()['descricao']
-    
+
+    def __str__(self):
+        return self.descricao
+
+    def __unicode__(self):
+        return self.descricao
+
 class Usuario(AbstractUser):
-  
-  TIPO = (('1', "Colaborador"), ("2", "Cliente"))
-  
-  username = None # desabilita o uso do username
-  USERNAME_FIELD = 'user_id'
 
-  user_id = models.IntegerField(primary_key=True)
-  firstname = models.CharField(verbose_name="Primeiro Nome", max_length=20, null=False, blank=False)
-  name = models.CharField(verbose_name="Nome Completo", max_length=200, null=False, blank=False)
-  email = models.EmailField('E-mail', unique=True)
-  password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
-  password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
-  active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
-  tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
-  perfil = models.ForeignKey(Niveis, on_delete=models.SET_NULL, null=True, blank=True)
-  resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
-  usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
-  created_at = models.DateTimeField(auto_now=True)
+    TIPO = (("1", "Colaborador"), ("2", "Cliente"))
 
-  def set_password(self, raw_password):
-    self.password = make_password(raw_password)
-    self.password2 = make_password(raw_password)
-    self.resetpsw = False
-    self.save()
-    return 
- 
-  class Meta:
-    verbose_name_plural = "Usuários"
-    ordering = ('name',)
+    username = None # desabilita o uso do username
+    USERNAME_FIELD = 'user_id'
 
-  def __str__(self):
-    return self.name
+    user_id = models.IntegerField(primary_key=True)
+    firstname = models.CharField(verbose_name="Primeiro Nome", max_length=20, null=False, blank=False)
+    name = models.CharField(verbose_name="Nome Completo", max_length=200, null=False, blank=False)
+    email = models.EmailField('E-mail', unique=True)
+    password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
+    password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
+    active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
+    tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
+    perfil = models.ForeignKey(
+        Niveis,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
+    usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
+    created_at = models.DateTimeField(auto_now=True)
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        self.password2 = make_password(raw_password)
+        self.resetpsw = False
+        self.save()
+        return 
+
+    class Meta:
+        verbose_name_plural = "Usuários"
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
 
 class Empresa(models.Model):
     codigo = models.CharField(

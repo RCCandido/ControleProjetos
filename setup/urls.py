@@ -25,6 +25,7 @@ urlpatterns = [
     path("niveis/<opc>/<pk>", niveis, name="niveis"),
     path("clientes", clientes, name="clientes"),
     path("relatorios", relatorios, name="relatorios"),
+    path("projetos", projetos, name="projetos"),
     path(
         "retorna_total_usuarios", retorna_total_usuarios, name="retorna_total_usuarios"
     ),
