@@ -25,16 +25,12 @@
           {% if user.is_active %}
 
             <ul class="nav nav-pills flex-column mt-4">
-            
-            {% if user.perfil == "N1" %}
-            
               <li class="nav-item py-2 py-sm-0 mask">
                 <a href="{% url 'home' %}" class="nav-link text-white ">
                   <i class="fs-6 fa fa-house"></i><span class="fs-8 ms-3 d-none d-sm-inline">Home</span>
                 </a>
               </li>
 
-            {% endif %}
               <li class="nav-item py-2 py-sm-0">
                 <a href="{% url 'empresas' %}" class="nav-link text-white">
                   <i class="fs-6 fa fa-bookmark"></i><span class="fs-8 ms-3 d-none d-sm-inline">Empresas</span>
@@ -67,7 +63,12 @@
               </li>
               <li class="nav-item py-2 py-sm-0">
                 <a href="{% url 'projetos' %}" class="nav-link text-white">
-                  <i class="fs-6 fa fa-person-rays"></i><span class="fs-8 ms-3 d-none d-sm-inline">Projetos</span>
+                  <i class="fs-6 fa fa-rocket"></i><span class="fs-8 ms-3 d-none d-sm-inline">Projetos</span>
+                </a>
+              </li>
+              <li class="nav-item py-2 py-sm-0">
+                <a href="{% url 'logs' %}" class="nav-link text-white">
+                  <i class="fs-6 fa fa-file-text"></i><span class="fs-8 ms-3 d-none d-sm-inline">Logs</span>
                 </a>
               </li>
             </ul>

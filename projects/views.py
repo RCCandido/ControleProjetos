@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 
-from .models import Usuario, Empresa, Servicos, Niveis
+from .models import Usuario, Empresa, Servicos, Niveis, Projetos
 from .forms import (
     UsuarioForm,
     NewUsuarioForm,
@@ -16,13 +16,19 @@ from .forms import (
     ServicosForm,
     NivelForm,
     RedefinirSenhaForm,
+    ProjetoForm,
+    NewProjetoForm,
 )
 from .decorators import nivel_access_required
-from .filters import UsuarioFilter
+from .filters import UsuarioFilter, ProjetoFilter
 
 
 ## LOGIN ##
 def logar_usuario(request):
+
+    set_first(tipo="nivel")
+    set_first(tipo="usuario")
+
     if request.method == "POST":
         email = request.POST["email"]
         password = request.POST["password"]
@@ -102,50 +108,13 @@ def recuperar_senha(request):
                     {"sucess": sucess, "message": message},
                 )
             else:
-                initial_pass = "123456"
-
-                name = "novousuario"
-                email = destinatario
-                password = make_password(initial_pass)
-                password2 = make_password(initial_pass)
-                active = True
-                tipo = "1"
-
-                user = Usuario(
-                    name=name,
-                    email=email,
-                    password=password,
-                    password2=password2,
-                    active=active,
-                    tipo=tipo,
+                sucess = False
+                message = "E-mail inválido, não consta na base de dados."
+                return render(
+                    request,
+                    "projects/recuperar_senha.html",
+                    {"sucess": sucess, "message": message},
                 )
-                user.save()
-
-                mensagem = "Criado primeiro acesso:\n"
-                mensagem += "Usuario: " + email + "\n"
-                mensagem += "Senha: " + initial_pass
-
-                send_mail(
-                    "Primeiro Acesso",
-                    mensagem,
-                    "rodrigo.candido@alphaerp.com.br",
-                    [destinatario],
-                    fail_silently=False,
-                )
-                sucess = True
-                message = "Email enviado com o primeiro acesso."
-                context = {"sucess": sucess, "message": message}
-                return render(request,"projects/recuperar_senha.html",
-                    context,
-                )
-            
-                #sucess = False
-                #message = "E-mail inválido, não consta na base de dados."
-                #return render(
-                #    request,
-                #    "projects/recuperar_senha.html",
-                #    {"sucess": sucess, "message": message},
-                #)
 
         else:
             sucess = False
@@ -283,6 +252,7 @@ def empresas(request, pk=False):
 @login_required(login_url="/index")
 @nivel_access_required(view_name="niveis")
 def niveis(request, pk=False, opc=False):
+
     if request.method == "POST":
         nivel_form = NivelForm(request.POST)
         if nivel_form.is_valid():
@@ -373,11 +343,109 @@ def relatorios(request):
     }
     return render(request, "projects/em_construcao.html", context)
 
+
 @login_required(login_url="/index")
-def projetos(request):
+def projetos(request, opc=False, pk=False):
+    if request.method == "POST":
+        if opc == "insert":
+
+            form = NewProjetoForm(request.POST)
+            if form.is_valid():
+
+                codigo = form.cleaned_data["codigo"]
+                name = form.cleaned_data["name"]
+                cliente = form.cleaned_data["cliente"]
+                responsavel = form.cleaned_data["responsavel"]
+                arquiteto = form.cleaned_data["arquiteto"]
+                data_inicio = form.cleaned_data["data_inicio"]
+                data_entrega = form.cleaned_data["data_entrega"]
+                desenvolvedor = form.cleaned_data["desenvolvedor"]
+                status = form.cleaned_data["status"]
+
+                projeto = Projetos(
+                    codigo=codigo,
+                    name=name,
+                    cliente=cliente,
+                    responsavel=responsavel,
+                    arquiteto=arquiteto,
+                    data_inicio=data_inicio,
+                    data_entrega=data_entrega,
+                    desenvolvedor=desenvolvedor,
+                    status=status,
+                )
+                projeto.save()
+
+                return redirect("projetos")
+            else:
+                erro = form.errors
+                return render(
+                    request,
+                    "projects/projetos.html",
+                    {"altera": True, "form": form, "erro": erro},
+                )
+        else:
+            form = ProjetoForm(request.POST)
+            if form.is_valid():
+
+                projeto = Projetos.objects.filter(codigo=pk).first()
+
+                projeto.name = form.cleaned_data["name"]
+                projeto.cliente = form.cleaned_data["cliente"]
+                projeto.responsavel = form.cleaned_data["responsavel"]
+                projeto.arquiteto = form.cleaned_data["arquiteto"]
+                projeto.data_inicio = form.cleaned_data["data_inicio"]
+                projeto.data_entrega = form.cleaned_data["data_entrega"]
+                projeto.desenvolvedor = form.cleaned_data["desenvolvedor"]
+                projeto.status = form.cleaned_data["status"]
+
+                projeto.save()
+
+                return redirect("projetos")
+            else:
+                erro = form.errors
+                return render(
+                    request,
+                    "projects/projetos.html",
+                    {"altera": True, "form": form, "erro": erro},
+                )
+    else:
+        if opc == "insert":
+            form = ProjetoForm()
+            context = {"inclui": True, "form": form}
+            return render(request, "projects/projetos.html", context)
+
+        elif opc == "edit":
+            if pk:
+                projeto = Projetos.objects.filter(codigo=pk).first()
+                form = ProjetoForm(instance=projeto)
+                context = {"altera": True, "form": form}
+                return render(request, "projects/projetos.html", context)
+
+        elif opc == "delete":
+            if pk:
+                projeto = Projetos.objects.filter(codigo=pk).first()
+                projeto.delete()
+
+                projetos = Projetos.objects.all()
+                filter = ProjetoFilter(request.GET, queryset=projetos)
+
+                context = {"projetos": filter, "filter": filter}
+                return render(request, "projects/projetos.html", context)
+
+        else:
+            projetos = Projetos.objects.all()
+
+            filter = ProjetoFilter(request.GET, queryset=projetos)
+
+            context = {"projetos": filter, "filter": filter}
+            return render(request, "projects/projetos.html", context)
+
+
+@login_required(login_url="/index")
+def logs(request):
     context = {
         "type": "primary",
-        "title": "Projetos",
+        "title": "Logs",
         "message": "Página em construção.",
     }
     return render(request, "projects/em_construcao.html", context)
@@ -410,7 +478,6 @@ def cadastrar_usuario(request):
             )
             user.save()
 
-            message = "Usuário criado com Sucesso!"
             return redirect("usuarios")
         else:
             message = "As senhas não conferem."
@@ -485,3 +552,42 @@ def isInt(value):
 def SenhaAleatoria():
     numero = random.randrange(100000, 999999)
     return str(numero)
+
+def set_first(tipo=False):
+
+    if tipo == "usuario":
+        
+        usuarios = Usuario.objects.all().count()
+        
+        if not usuarios:
+            user = Usuario(
+                firstname="admin",
+                name="Administrador",
+                email="rodrigo.cesar91@yahoo.com.br",
+                password=make_password("123"),
+                password2=make_password("123"),
+                active=True,
+                tipo="1",
+                resetpsw=0,
+            )
+            user.save()
+
+    elif tipo == "nivel":
+        
+        niveis = Niveis.objects.all().count()
+
+        if not niveis:
+            nivel = Niveis(
+                    descricao="Full Access",
+                    rotina="0",
+                    inclusao="S",
+                    edicao="S",
+                    exclusao="S",
+                    logs="S",
+                    filtro="S",
+                    active=True
+                )
+
+            nivel.save()
+    else:
+        return

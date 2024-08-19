@@ -26,6 +26,9 @@ urlpatterns = [
     path("clientes", clientes, name="clientes"),
     path("relatorios", relatorios, name="relatorios"),
     path("projetos", projetos, name="projetos"),
+    path("projetos/<opc>", projetos, name="projetos"),
+    path("projetos/<opc>/<pk>", projetos, name="projetos"),
+    path("logs", logs, name="logs"),
     path(
         "retorna_total_usuarios", retorna_total_usuarios, name="retorna_total_usuarios"
     ),

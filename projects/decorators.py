@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
-
 def servicos_test_function(user):
     return True
     if user.active and user.perfil == "N1":

@@ -52,6 +52,7 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
+					<th>ID</th>
 					<th>Name</th>
 					<th>E-mail</th>
 					<th>Ativo</th>
@@ -64,6 +65,7 @@
 				
 				{% for user in filter.qs %}
 				<tr>
+					<td>{{ user.user_id }}</td>
 					<td>{{ user.name }}</td>
 					<td>{{ user.email }}</td>
 					<td>{{ user.active }}</td>

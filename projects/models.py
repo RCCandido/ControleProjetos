@@ -91,20 +91,20 @@ class Usuario(AbstractUser):
         return self.name
 
 class Empresa(models.Model):
-    codigo = models.CharField(
-        verbose_name="Código", unique=True, max_length=6, null=False, blank=False
-    )
-    nome = models.CharField(
-        verbose_name="Empresa", max_length=200, null=False, blank=False
-    )
-    created_at = models.DateTimeField(auto_now=True)
+  codigo = models.CharField(
+      verbose_name="Código", unique=True, max_length=6, null=False, blank=False
+  )
+  nome = models.CharField(
+      verbose_name="Empresa", max_length=200, null=False, blank=False
+  )
+  created_at = models.DateTimeField(auto_now=True)
 
 
-    def __str__(self):
-        return self.nome
+  def __str__(self):
+      return self.nome
 
-    class Meta:
-        verbose_name_plural = "Empresas"
+  class Meta:
+      verbose_name_plural = "Empresas"
 
 
 class Servicos(models.Model):
@@ -129,13 +129,42 @@ class Servicos(models.Model):
     verbose_name_plural = "Serviços"
 
 class Log(models.Model):
-    log_id = models.AutoField(primary_key=True)
-    processo = models.CharField(verbose_name="Rotina", max_length=80)
-    usuario = models.CharField(
-        verbose_name="Nome", max_length=200, null=False, blank=False
-    )
-    email = models.EmailField("E-mail", unique=True)
-    log_at = models.DateTimeField(auto_now=True)
+  log_id = models.AutoField(primary_key=True)
+  processo = models.CharField(verbose_name="Rotina", max_length=80)
+  usuario = models.CharField(
+      verbose_name="Nome", max_length=200, null=False, blank=False
+  )
+  email = models.EmailField("E-mail", unique=True)
+  log_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        verbose_name_plural = "Logs"
+  class Meta:
+      verbose_name_plural = "Logs"
+
+class Projetos(models.Model):
+
+  STATUS = (
+    ('0', 'Orçamento'),
+    ('1', 'Aprovado'),
+    ('2', 'Iniciado'),
+    ('3', 'Em Desenvolvimento'),
+    ('4', 'Em Teste'),
+    ('5', 'Em Homologação'),
+    ('6', 'Homologado'),
+    ('7', 'Em Produção'),
+    ('8', 'Finalizado'),
+  )
+
+  codigo = models.CharField(primary_key=True, verbose_name="Código", max_length=8, blank=False, unique=True)
+  name = models.CharField(verbose_name="Descrição", null=False, blank=False, max_length=200)
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  cliente = models.CharField(verbose_name="Cliente", max_length=50)
+  responsavel = models.CharField(verbose_name="Responsável", max_length=50)
+  arquiteto = models.CharField(verbose_name="Arquiteto", max_length=50)
+  data_inicio = models.DateField(verbose_name="Inicio", auto_now=False, auto_now_add=False)
+  data_entrega = models.DateField(verbose_name="Entrega", auto_now=False, auto_now_add=False)
+  desenvolvedor = models.CharField(verbose_name="Desenvolvedor", max_length=50)
+  status = models.CharField(verbose_name="Status", max_length=1, choices=STATUS)
+
+  class Meta:
+    verbose_name_plural = "Projetos"
