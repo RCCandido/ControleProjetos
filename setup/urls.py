@@ -32,6 +32,9 @@ urlpatterns = [
     path(
         "retorna_total_usuarios", retorna_total_usuarios, name="retorna_total_usuarios"
     ),
+    path(
+        "retorna_total_projetos", retorna_total_projetos, name="retorna_total_projetos"
+    ),
     path("home", home, name="home"),
 ]
 

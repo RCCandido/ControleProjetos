@@ -154,17 +154,40 @@ class Projetos(models.Model):
     ('8', 'Finalizado'),
   )
 
-  codigo = models.CharField(primary_key=True, verbose_name="Código", max_length=8, blank=False, unique=True)
-  name = models.CharField(verbose_name="Descrição", null=False, blank=False, max_length=200)
+  codigo = models.CharField(
+      primary_key=True, verbose_name="Código", max_length=8, blank=False, unique=True
+  )
+  name = models.CharField(
+      verbose_name="Descrição", null=False, blank=False, max_length=200
+  )
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   cliente = models.CharField(verbose_name="Cliente", max_length=50)
   responsavel = models.CharField(verbose_name="Responsável", max_length=50)
   arquiteto = models.CharField(verbose_name="Arquiteto", max_length=50)
-  data_inicio = models.DateField(verbose_name="Inicio", auto_now=False, auto_now_add=False)
-  data_entrega = models.DateField(verbose_name="Entrega", auto_now=False, auto_now_add=False)
+  data_inicio = models.DateField(
+      verbose_name="Inicio", 
+      auto_now=False,
+      auto_now_add=False,
+      null=True, 
+      blank=True,
+  )
+  data_entrega = models.DateField(
+      verbose_name="Entrega", 
+      auto_now=False, 
+      auto_now_add=False,
+      null=True, 
+      blank=True,
+  )
   desenvolvedor = models.CharField(verbose_name="Desenvolvedor", max_length=50)
   status = models.CharField(verbose_name="Status", max_length=1, choices=STATUS)
+  qtd_horas_apontadas = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+  qtd_horas_projeto = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+  valor_total = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
   class Meta:
-    verbose_name_plural = "Projetos"
+      verbose_name_plural = "Projetos"
+
+  def __str__(self):
+      return self.name

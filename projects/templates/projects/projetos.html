@@ -4,18 +4,13 @@
 {% block page_title %} Projetos {% endblock page_title %}
 {% block title %} Projetos {% endblock title %}
 {% block content %}
-		
+
 	{% if inclui %}
 
 		<form method="post">{% csrf_token %}
+			
+			{% crispy form %}
       
-      {{ form|crispy }}
-      
-      <div class="form-group">
-        <input type="submit" value="Cadastrar" class="btn btn-primary mt-4" >
-        <a href="{% url 'projetos' %}" class="btn btn-danger mt-4">Cancelar</a></p>
-      </div>
-    
       {% if message %}
         <span class="text-{{ type }}">{{ message }}</span >
       {% endif %}
@@ -28,14 +23,7 @@
 			<div class="col-xs-4 mb-2 mt-2 p-2">
 				<form method="POST" >{% csrf_token %}
 					
-					{{ form.name|as_crispy_field }}
-					{{ form.cliente|as_crispy_field }}
-					{{ form.responsavel|as_crispy_field }}
-					{{ form.arquiteto|as_crispy_field }}
-					{{ form.data_inicio|as_crispy_field }}
-					{{ form.data_entrega|as_crispy_field }}
-					{{ form.desenvolvedor|as_crispy_field }}
-					{{ form.status|as_crispy_field }}
+					{% crispy form %}
 					
 					{% if erro %}
 						<div class="form-group">
@@ -43,9 +31,6 @@
 						</div>
 					{% endif %}
 
-					<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-					<a href="{% url 'projetos' %}" class="btn btn-danger mt-4">Cancelar</a>
-					
 				</form>
 			</div>
 		</div>

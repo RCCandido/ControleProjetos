@@ -141,3 +141,7 @@ EMAIL_HOST_PASSWORD = 'afit cbmk zbpf hjyh'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'rodrigoicmbn@gmail.com'
+
+DECIMAL_SEPARATOR = ","
+USE_THOUSAND_SEPARATOR = True
+DATE_INPUT_FORMATS = ['%d-%m-%Y']

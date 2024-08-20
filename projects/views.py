@@ -6,7 +6,8 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
-from django.http import JsonResponse
+from django.http import JsonResponse 
+from datetime import datetime
 
 from .models import Usuario, Empresa, Servicos, Niveis, Projetos
 from .forms import (
@@ -352,26 +353,20 @@ def projetos(request, opc=False, pk=False):
             form = NewProjetoForm(request.POST)
             if form.is_valid():
 
-                codigo = form.cleaned_data["codigo"]
-                name = form.cleaned_data["name"]
-                cliente = form.cleaned_data["cliente"]
-                responsavel = form.cleaned_data["responsavel"]
-                arquiteto = form.cleaned_data["arquiteto"]
-                data_inicio = form.cleaned_data["data_inicio"]
-                data_entrega = form.cleaned_data["data_entrega"]
-                desenvolvedor = form.cleaned_data["desenvolvedor"]
-                status = form.cleaned_data["status"]
-
                 projeto = Projetos(
-                    codigo=codigo,
-                    name=name,
-                    cliente=cliente,
-                    responsavel=responsavel,
-                    arquiteto=arquiteto,
-                    data_inicio=data_inicio,
-                    data_entrega=data_entrega,
-                    desenvolvedor=desenvolvedor,
-                    status=status,
+                    codigo = form.cleaned_data["codigo"],
+                    name = form.cleaned_data["name"],
+                    cliente = form.cleaned_data["cliente"],
+                    responsavel = form.cleaned_data["responsavel"],
+                    arquiteto = form.cleaned_data["arquiteto"],
+                    data_inicio = form.cleaned_data["data_inicio"],
+                    data_entrega = form.cleaned_data["data_entrega"],
+                    desenvolvedor = form.cleaned_data["desenvolvedor"],
+                    status = form.cleaned_data["status"],
+                    qtd_horas_apontadas = form.cleaned_data["qtd_horas_apontadas"],
+                    qtd_horas_projeto = form.cleaned_data["qtd_horas_projeto"],
+                    valor_hora = form.cleaned_data["valor_hora"],
+                    valor_total = form.cleaned_data["valor_total"],
                 )
                 projeto.save()
 
@@ -381,7 +376,7 @@ def projetos(request, opc=False, pk=False):
                 return render(
                     request,
                     "projects/projetos.html",
-                    {"altera": True, "form": form, "erro": erro},
+                    {"inclui": True, "form": form, "message": "erro", "type": "danger"},
                 )
         else:
             form = ProjetoForm(request.POST)
@@ -403,6 +398,7 @@ def projetos(request, opc=False, pk=False):
                 return redirect("projetos")
             else:
                 erro = form.errors
+                print(erro)
                 return render(
                     request,
                     "projects/projetos.html",
@@ -410,7 +406,7 @@ def projetos(request, opc=False, pk=False):
                 )
     else:
         if opc == "insert":
-            form = ProjetoForm()
+            form = NewProjetoForm()
             context = {"inclui": True, "form": form}
             return render(request, "projects/projetos.html", context)
 
@@ -539,6 +535,43 @@ def retorna_total_usuarios(request):
     total = Usuario.objects.all().count()
     return JsonResponse({'total_usuarios': total})
 
+def retorna_total_projetos(request):
+    x = Projetos.objects.all()
+
+    data = []
+    labels = []
+    mes = datetime.now().month + 1
+    ano = datetime.now().year
+    meses = (
+        [
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez",
+        ],
+    )
+
+    for i in range(12):
+        mes -= 1
+        if mes == 0:
+            mes = 12
+            ano -= 1
+
+        y = sum([i.valor_total for i in x if i.data_inicio.month == mes and i.data_inicio.year == ano])
+        labels.append(meses[mes-1])
+        data.append(y)
+
+    data_json = {'data': data[::-1], 'labels': labels[::-1]}
+
+    return JsonResponse(data_json)
 
 ############ functions ############
 def isInt(value):

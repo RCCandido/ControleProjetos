@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page_title %}Recuperação de Senha{% endblock page_title %}
+{% block title %} Recuperação de Senha {% endblock title %}
 {% block content %}
-<h1>Recuperação de Senha</h1>
-<hr class="col-md-8">
-<div class="content">
+
+<div class="container">
 	<form method="POST" class="row g-3">{% csrf_token %}
 		
 		<div class="row">
@@ -19,22 +19,22 @@
 				{% else %}
 			
 					<form method="post">{% csrf_token %}
-							<div class="form-group">
-								<label for="email">Email</label>
-								<input type="email" class="form-control mb-2" name="email" placeholder="email@email.com.br">
-								<!--<input class="mt-2" type="checkbox" name="first_login" />
-    						<label class="text" for="first">Primeiro Acesso</label> -->
+						<div class="form-group">
+							<label for="email">Email</label>
+							<input type="email" class="form-control mb-2" name="email" placeholder="email@email.com.br" required >
+							<!--<input class="mt-2" type="checkbox" name="first_login" />
+							<label class="text" for="first">Primeiro Acesso</label> -->
+						</div>
+	
+						{% if not sucess  %}
+							<div class="text-danger">
+								{{ message }} 
 							</div>
-		
-							{% if not sucess  %}
-								<div class="text-danger">
-									{{ message }} 
-								</div>
-							{% endif %}
+						{% endif %}
 							
 						<div class="form-group">
-								<input type="submit" value="Enviar" class="btn btn-primary mt-4" >
-								<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a></p>
+							<input type="submit" value="Enviar" class="btn btn-primary mt-4">
+							<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a></p>
 						</div>
 					</form>
 				{% endif %}

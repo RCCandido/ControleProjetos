@@ -39,3 +39,31 @@ function renderiza_total_usuarios_chart() {
     }
   })
 }
+
+function renderiza_total_projetos_chart(url) {
+
+  fetch(url, {
+    method: 'get',
+  }).then(function (result) {
+    return result.json()
+  }).then(function (data) {
+    
+    const ctx = document.getElementById('projetos_total_chart').getContext('2d');
+    var cores = gera_cor(qtd=12)
+    const myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: 'Projetos',
+        datasets: [{
+          label: data.labels,
+          data: data.data,
+          backgroundColor: cores[0],
+          borderColor: cores[1],
+          borderWidth: 1
+        }]
+      }
+    })
+
+  })
+
+}
