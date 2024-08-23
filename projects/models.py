@@ -23,9 +23,6 @@ class Niveis(models.Model):
     )
     return ROTINAS
   
-  def get_niveis():
-      return Niveis.objects.all()['descricao']
-
   def __str__(self):
       return self.descricao
 
@@ -59,22 +56,25 @@ class Niveis(models.Model):
 class Usuario(AbstractUser):
 
   def getTipos():
-    TIPOS = (("1", "Colaborador"), ("2", "Cliente"),)
+    TIPOS = (
+      ("1", "Administrador"), 
+      ("2", "Colaborador"),
+    )
     return TIPOS
 
   def set_password(self, raw_password):
-      self.password = make_password(raw_password)
-      self.password2 = make_password(raw_password)
-      self.resetpsw = False
-      self.save()
-      return 
+    self.password = make_password(raw_password)
+    self.password2 = make_password(raw_password)
+    self.resetpsw = False
+    self.save()
+    return 
 
   class Meta:
-      verbose_name_plural = "Usuários"
-      ordering = ('name',)
+    verbose_name_plural = "Usuários"
+    ordering = ('name',)
 
   def __str__(self):
-      return self.name
+    return self.name
 
   username = None # desabilita o uso do username
   USERNAME_FIELD = 'user_id'
@@ -88,10 +88,10 @@ class Usuario(AbstractUser):
   active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=getTipos())
   perfil = models.ForeignKey(
-      Niveis,
-      on_delete=models.SET_NULL,
-      null=True,
-      blank=True,
+    Niveis,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
   )
   resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
   usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
@@ -115,6 +115,7 @@ class Empresa(models.Model):
 
 
 class Servicos(models.Model):
+  
   TIPOS = (
     ('pontual', 'Pontual'),
     ('sustentacao', 'Sustentação'),
@@ -197,6 +198,32 @@ class Projetos(models.Model):
 
   class Meta:
       verbose_name_plural = "Projetos"
+
+  def __str__(self):
+      return self.name
+
+class Cliente(models.Model):
+
+  def getTipo():
+    TIPO = (
+      ('F', 'Pessoa Fisica'),
+      ('J', 'Pessoa Juridica'),
+    )
+    return TIPO
+  
+  cliente_id = models.AutoField(primary_key=True)
+  codigo = models.CharField(verbose_name="Código", max_length=6, blank=False, unique=True)
+  name = models.CharField(verbose_name="Descrição", null=False, blank=False, max_length=200)
+  cnpj = models.CharField(verbose_name="CNPJ", max_length=14, choices=getTipo())
+
+  valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+  perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  class Meta:
+    verbose_name_plural = "Clientes"
 
   def __str__(self):
       return self.name

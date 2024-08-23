@@ -6,7 +6,7 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 
-from .models import Usuario, Empresa, Servicos, Niveis, Projetos
+from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente
 
 class NewUsuarioForm(forms.ModelForm):
   
@@ -111,15 +111,15 @@ class UsuarioForm(forms.ModelForm):
     widget=forms.PasswordInput(), disabled=False, required=False
   )
 
-  perfil = forms.ModelChoiceField(
-    queryset=Niveis.objects.all().order_by("descricao"),
-    to_field_name='descricao',
+  tipo = forms.ChoiceField(
+    choices=Usuario.getTipos(),
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
-
-  tipo = forms.ChoiceField(
-    choices=Usuario.getTipos(),
+  
+  perfil = forms.ModelChoiceField(
+    queryset=Niveis.objects.all().order_by("descricao"),
+    to_field_name='descricao',
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
@@ -245,6 +245,12 @@ class ProjetoForm(forms.ModelForm):
     widget=forms.TextInput(attrs={"class": "form-control", "type": "date"})
   )
 
+  status = forms.ChoiceField(
+    choices=Projetos.getStatus(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
   desenvolvedor = forms.CharField(required=False)
   arquiteto = forms.CharField(required=False)
 
@@ -260,7 +266,7 @@ class ProjetoForm(forms.ModelForm):
       Row(
           Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
           Column('name', css_class='form-control-sm col-md-6 mb-2 p-2'),
-          Column('status', css_class='form-control-sm col-lg-2 mb-2 p-2'),
+          Column('status', css_class='form-control-sm col-lg-3 mb-2 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
@@ -363,33 +369,31 @@ class NewProjetoForm(forms.ModelForm):
   )
   
   arquiteto = forms.ModelChoiceField(
-    queryset=Usuario.objects.all(),
+    queryset=Usuario.objects.all().filter(tipo="1"),
     to_field_name='name',
-    required=True,
+    required=False,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
   
   responsavel = forms.ModelChoiceField(
     queryset=Usuario.objects.all(),
     to_field_name='name',
-    required=True,
+    required=False,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
   
   cliente = forms.ModelChoiceField(
-    queryset=Usuario.objects.all(),
+    queryset=Cliente.objects.all(),
     to_field_name='name',
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
   
-  status = forms.ModelChoiceField(
-    queryset=Projetos.objects.all(),
-    to_field_name='status',
+  status = forms.ChoiceField(
+    choices=Projetos.getStatus(),
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
-
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -399,7 +403,7 @@ class NewProjetoForm(forms.ModelForm):
       Row(
           Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
           Column('name', css_class='form-control-sm col-md-6 mb-2 p-2'),
-          Column('status', css_class='form-control-sm col-md-2 mb-2 p-2'),
+          Column('status', css_class='form-control-sm col-md-3 mb-2 p-2'),
           css_class='form-row d-flex',
       ),
       Row(

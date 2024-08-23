@@ -170,13 +170,7 @@ def redefinir_senha(request):
 ## MENUS ##
 @login_required(login_url="/index")
 def home(request):
-    usuarios = Usuario.objects.all().count()
-    servicos = Servicos.objects.all().count()
-    niveis = Niveis.objects.all().count()
-
-    context = {"qtdUsuarios": usuarios, "qtdServicos": servicos, "qtdNiveis": niveis}
-    return render(request, "projects/home.html", context)
-
+  return render(request, "projects/home.html")
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="usuarios")
@@ -184,7 +178,7 @@ def usuarios(request, opc=False, pk=False):
   if request.method == "POST":
     form = UsuarioForm(request.POST)
     if form.is_valid():
-
+      
       usuario = Usuario.objects.filter(email=pk).first()
 
       usuario.firstname = form.cleaned_data["firstname"]
@@ -193,7 +187,6 @@ def usuarios(request, opc=False, pk=False):
       usuario.tipo = form.cleaned_data["tipo"]
       usuario.perfil = form.cleaned_data["perfil"]
       usuario.usefilter = form.cleaned_data["usefilter"]
-
       usuario.save()
 
       return redirect("usuarios")
@@ -224,7 +217,7 @@ def usuarios(request, opc=False, pk=False):
         return render(request, "projects/usuarios.html", context)
 
     else:
-      users = Usuario.objects.all()
+      users = Usuario.objects.all().order_by("user_id")
 
       filter = UsuarioFilter(request.GET, queryset=users)
 
@@ -353,24 +346,24 @@ def projetos(request, opc=False, pk=False):
       form = NewProjetoForm(request.POST)
       if form.is_valid():
 
-          projeto = Projetos(
-              codigo = form.cleaned_data["codigo"],
-              name = form.cleaned_data["name"],
-              cliente = form.cleaned_data["cliente"],
-              responsavel = form.cleaned_data["responsavel"],
-              arquiteto = form.cleaned_data["arquiteto"],
-              data_inicio = form.cleaned_data["data_inicio"],
-              data_entrega = form.cleaned_data["data_entrega"],
-              desenvolvedor = form.cleaned_data["desenvolvedor"],
-              status = form.cleaned_data["status"],
-              qtd_horas_apontadas = form.cleaned_data["qtd_horas_apontadas"],
-              qtd_horas_projeto = form.cleaned_data["qtd_horas_projeto"],
-              valor_hora = form.cleaned_data["valor_hora"],
-              valor_total = form.cleaned_data["valor_total"],
-          )
-          projeto.save()
+        projeto = Projetos(
+          codigo = form.cleaned_data["codigo"],
+          name = form.cleaned_data["name"],
+          cliente = form.cleaned_data["cliente"],
+          responsavel = form.cleaned_data["responsavel"],
+          arquiteto = form.cleaned_data["arquiteto"],
+          data_inicio = form.cleaned_data["data_inicio"],
+          data_entrega = form.cleaned_data["data_entrega"],
+          desenvolvedor = form.cleaned_data["desenvolvedor"],
+          status = form.cleaned_data["status"],
+          qtd_horas_apontadas = form.cleaned_data["qtd_horas_apontadas"],
+          qtd_horas_projeto = form.cleaned_data["qtd_horas_projeto"],
+          valor_hora = form.cleaned_data["valor_hora"],
+          valor_total = form.cleaned_data["valor_total"],
+        )
+        projeto.save()
 
-          return redirect("projetos")
+        return redirect("projetos")
       else:
           erro = form.errors
           return render(
@@ -384,14 +377,14 @@ def projetos(request, opc=False, pk=False):
 
           projeto = Projetos.objects.filter(codigo=pk).first()
 
-          projeto.name = form.cleaned_data["name"]
-          projeto.cliente = form.cleaned_data["cliente"]
-          projeto.responsavel = form.cleaned_data["responsavel"]
-          projeto.arquiteto = form.cleaned_data["arquiteto"]
-          projeto.data_inicio = form.cleaned_data["data_inicio"]
-          projeto.data_entrega = form.cleaned_data["data_entrega"]
+          projeto.name          = form.cleaned_data["name"]
+          projeto.cliente       = form.cleaned_data["cliente"]
+          projeto.responsavel   = form.cleaned_data["responsavel"]
+          projeto.arquiteto     = form.cleaned_data["arquiteto"]
+          projeto.data_inicio   = form.cleaned_data["data_inicio"]
+          projeto.data_entrega  = form.cleaned_data["data_entrega"]
           projeto.desenvolvedor = form.cleaned_data["desenvolvedor"]
-          projeto.status = form.cleaned_data["status"]
+          projeto.status        = form.cleaned_data["status"]
 
           projeto.save()
 
@@ -452,38 +445,38 @@ def logs(request):
 def cadastrar_usuario(request):
 
   if request.method == "POST":
-      form = NewUsuarioForm(request.POST)
-      if form.is_valid():
+    form = NewUsuarioForm(request.POST)
+    if form.is_valid():
 
-        firstname = form.cleaned_data["firstname"]
-        name      = form.cleaned_data["name"]
-        email     = form.cleaned_data["email"]
-        password  = make_password(form.cleaned_data["password"])
-        password2 = make_password(form.cleaned_data["password2"])
-        active    = form.cleaned_data["active"]
-        tipo      = form.cleaned_data["tipo"]
-        perfil    = form.cleaned_data["perfil"]
+      firstname = form.cleaned_data["firstname"]
+      name      = form.cleaned_data["name"]
+      email     = form.cleaned_data["email"]
+      password  = make_password(form.cleaned_data["password"])
+      password2 = make_password(form.cleaned_data["password2"])
+      active    = form.cleaned_data["active"]
+      tipo      = form.cleaned_data["tipo"]
+      perfil    = form.cleaned_data["perfil"]
 
-        user = Usuario(
-            firstname=firstname,
-            name=name,
-            email=email,
-            password=password,
-            password2=password2,
-            active=active,
-            tipo=tipo,
-            perfil=perfil,
-        )
-        user.save()
+      user = Usuario(
+          firstname=firstname,
+          name=name,
+          email=email,
+          password=password,
+          password2=password2,
+          active=active,
+          tipo=tipo,
+          perfil=perfil,
+      )
+      user.save()
 
-        return redirect("usuarios")
+      return redirect("usuarios")
 
-      else:
-        return render(
-            request,
-            "projects/cadastro_usuario.html",
-            {"form": form, "message": form.errors, "type": "danger"},
-        )
+    else:
+      return render(
+          request,
+          "projects/cadastro_usuario.html",
+          {"form": form, "message": form.errors, "type": "danger"},
+      )
   else:
     form_usuario = NewUsuarioForm()
     return render(

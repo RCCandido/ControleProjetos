@@ -6,9 +6,9 @@ from django.conf.urls.static import static
 from projects.views import *
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("", logar_usuario, name="logar_usuario"),
     path("index", logar_usuario, name="logar_usuario"),
+    path("admin/", admin.site.urls),
     path("deslogar_usuario", deslogar_usuario, name="deslogar_usuario"),
     path("cadastrar_usuario", cadastrar_usuario, name="cadastrar_usuario"),
     path("empresas", empresas, name="empresas"),
