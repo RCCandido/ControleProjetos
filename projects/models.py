@@ -3,12 +3,15 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 
 class Niveis(models.Model):
+  
+  def getSimNao():
     SN = (
         ('S', 'Sim'),
         ('N', 'Não'),
     )
-    STATUS = (("B", "Bloqueado"), ("L", "Liberado"))
+    return SN
 
+  def getRotinas():
     ROTINAS = (
         ("0", "Todas"),
         ("1", "Empresas"),
@@ -18,78 +21,82 @@ class Niveis(models.Model):
         ("5", "Serviços"),
         ("6", "Relatórios"),
     )
-    nivel_id = models.AutoField(primary_key=True)
-    descricao = models.CharField(
-      verbose_name="Descrição", max_length=200, null=False, blank=False
-    )
-    rotina = models.CharField(verbose_name="Rotina", max_length=80, choices=ROTINAS)
+    return ROTINAS
+  
+  def get_niveis():
+      return Niveis.objects.all()['descricao']
 
-    inclusao = models.CharField(
-      verbose_name="Incluir", max_length=1, null=False, blank=False, choices=SN
-    )
-    edicao = models.CharField(
-      verbose_name="Editar", max_length=1, null=False, blank=False, choices=SN
-    )
-    exclusao = models.CharField(
-      verbose_name="Excluir", max_length=1, null=False, blank=False, choices=SN
-    )
-    logs = models.CharField(
-      verbose_name="Logs", max_length=1, null=False, blank=False, choices=SN
-    )
-    filtro = models.CharField(
-      verbose_name="Filtro", max_length=1, null=False, blank=False, choices=SN
-    )
-    active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
-    created_at = models.DateTimeField(auto_now=True)
+  def __str__(self):
+      return self.descricao
 
-    def get_niveis():
-        return Niveis.objects.all()['descricao']
+  def __unicode__(self):
+      return self.descricao
 
-    def __str__(self):
-        return self.descricao
+  nivel_id = models.AutoField(primary_key=True)
+  descricao = models.CharField(
+    verbose_name="Descrição", max_length=200, null=False, blank=False
+  )
+  rotina = models.CharField(verbose_name="Rotina", max_length=80, choices=getRotinas())
 
-    def __unicode__(self):
-        return self.descricao
+  inclusao = models.CharField(
+    verbose_name="Incluir", max_length=1, null=False, blank=False, choices=getSimNao()
+  )
+  edicao = models.CharField(
+    verbose_name="Editar", max_length=1, null=False, blank=False, choices=getSimNao()
+  )
+  exclusao = models.CharField(
+    verbose_name="Excluir", max_length=1, null=False, blank=False, choices=getSimNao()
+  )
+  logs = models.CharField(
+    verbose_name="Logs", max_length=1, null=False, blank=False, choices=getSimNao()
+  )
+  filtro = models.CharField(
+    verbose_name="Filtro", max_length=1, null=False, blank=False, choices=getSimNao()
+  )
+  active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
+  created_at = models.DateTimeField(auto_now=True)
 
 class Usuario(AbstractUser):
 
-    TIPO = (("1", "Colaborador"), ("2", "Cliente"))
+  def getTipos():
+    TIPOS = (("1", "Colaborador"), ("2", "Cliente"),)
+    return TIPOS
 
-    username = None # desabilita o uso do username
-    USERNAME_FIELD = 'user_id'
+  def set_password(self, raw_password):
+      self.password = make_password(raw_password)
+      self.password2 = make_password(raw_password)
+      self.resetpsw = False
+      self.save()
+      return 
 
-    user_id = models.IntegerField(primary_key=True)
-    firstname = models.CharField(verbose_name="Primeiro Nome", max_length=20, null=False, blank=False)
-    name = models.CharField(verbose_name="Nome Completo", max_length=200, null=False, blank=False)
-    email = models.EmailField('E-mail', unique=True)
-    password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
-    password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
-    active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
-    tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=TIPO)
-    perfil = models.ForeignKey(
-        Niveis,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-    resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
-    usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
-    created_at = models.DateTimeField(auto_now=True)
+  class Meta:
+      verbose_name_plural = "Usuários"
+      ordering = ('name',)
 
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-        self.password2 = make_password(raw_password)
-        self.resetpsw = False
-        self.save()
-        return 
+  def __str__(self):
+      return self.name
 
-    class Meta:
-        verbose_name_plural = "Usuários"
-        ordering = ('name',)
+  username = None # desabilita o uso do username
+  USERNAME_FIELD = 'user_id'
 
-    def __str__(self):
-        return self.name
-
+  user_id = models.AutoField(primary_key=True)
+  firstname = models.CharField(verbose_name="Primeiro Nome", max_length=20, null=False, blank=False)
+  name = models.CharField(verbose_name="Nome Completo", max_length=200, null=False, blank=False)
+  email = models.EmailField('E-mail', unique=True)
+  password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
+  password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
+  active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
+  tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=getTipos())
+  perfil = models.ForeignKey(
+      Niveis,
+      on_delete=models.SET_NULL,
+      null=True,
+      blank=True,
+  )
+  resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
+  usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
+  created_at = models.DateTimeField(auto_now=True)
+  
 class Empresa(models.Model):
   codigo = models.CharField(
       verbose_name="Código", unique=True, max_length=6, null=False, blank=False
@@ -142,17 +149,19 @@ class Log(models.Model):
 
 class Projetos(models.Model):
 
-  STATUS = (
-    ('0', 'Orçamento'),
-    ('1', 'Aprovado'),
-    ('2', 'Iniciado'),
-    ('3', 'Em Desenvolvimento'),
-    ('4', 'Em Teste'),
-    ('5', 'Em Homologação'),
-    ('6', 'Homologado'),
-    ('7', 'Em Produção'),
-    ('8', 'Finalizado'),
-  )
+  def getStatus():
+    STATUS = (
+      ('0', 'Orçamento'),
+      ('1', 'Aprovado'),
+      ('2', 'Iniciado'),
+      ('3', 'Em Desenvolvimento'),
+      ('4', 'Em Teste'),
+      ('5', 'Em Homologação'),
+      ('6', 'Homologado'),
+      ('7', 'Em Produção'),
+      ('8', 'Finalizado'),
+    )
+    return STATUS
 
   codigo = models.CharField(
       primary_key=True, verbose_name="Código", max_length=8, blank=False, unique=True
@@ -180,7 +189,7 @@ class Projetos(models.Model):
       blank=True,
   )
   desenvolvedor = models.CharField(verbose_name="Desenvolvedor", max_length=50)
-  status = models.CharField(verbose_name="Status", max_length=1, choices=STATUS)
+  status = models.CharField(verbose_name="Status", max_length=1, choices=getStatus())
   qtd_horas_apontadas = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
   qtd_horas_projeto = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
   valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
@@ -191,3 +200,5 @@ class Projetos(models.Model):
 
   def __str__(self):
       return self.name
+  
+  

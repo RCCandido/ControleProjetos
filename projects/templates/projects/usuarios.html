@@ -11,13 +11,7 @@
 			<div class="col-xs-4 mb-2 mt-2 p-2">
 				<form method="POST" >{% csrf_token %}
 					
-					{{ form.firstname|as_crispy_field }}
-					{{ form.name|as_crispy_field }}
-					{{ form.email|as_crispy_field }}
-					{{ form.active|as_crispy_field }}
-					{{ form.tipo|as_crispy_field }}
-					{{ form.perfil|as_crispy_field }}
-					{{ form.usefilter|as_crispy_field }}
+					{% crispy form %}
 					
 					{% if erro %}
 						<div class="form-group">
@@ -25,9 +19,6 @@
 						</div>
 					{% endif %}
 
-					<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-					<a href="{% url 'usuarios' %}" class="btn btn-danger mt-4">Cancelar</a>
-					
 				</form>
 			</div>
 		</div>

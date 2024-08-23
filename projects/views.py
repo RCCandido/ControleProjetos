@@ -181,55 +181,55 @@ def home(request):
 @login_required(login_url="/index")
 @nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
-    if request.method == "POST":
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
+  if request.method == "POST":
+    form = UsuarioForm(request.POST)
+    if form.is_valid():
 
-            usuario = Usuario.objects.filter(email=pk).first()
+      usuario = Usuario.objects.filter(email=pk).first()
 
-            usuario.firstname = form.cleaned_data["firstname"]
-            usuario.name = form.cleaned_data["name"]
-            usuario.active = form.cleaned_data["active"]
-            usuario.tipo = form.cleaned_data["tipo"]
-            usuario.perfil = form.cleaned_data["perfil"]
-            usuario.usefilter = form.cleaned_data["usefilter"]
+      usuario.firstname = form.cleaned_data["firstname"]
+      usuario.name = form.cleaned_data["name"]
+      usuario.active = form.cleaned_data["active"]
+      usuario.tipo = form.cleaned_data["tipo"]
+      usuario.perfil = form.cleaned_data["perfil"]
+      usuario.usefilter = form.cleaned_data["usefilter"]
 
-            usuario.save()
+      usuario.save()
 
-            return redirect("usuarios")
-        else:
-            erro = form.errors
-            return render(
-                request,
-                "projects/usuarios.html",
-                {"altera": True, "form": form, "erro": erro},
-            )
+      return redirect("usuarios")
     else:
-        if opc == "edit":
-            if pk:
-                usuario = Usuario.objects.filter(email=pk).first()
-                form = UsuarioForm(instance=usuario)
-                context = {"altera": True, "form": form}
-                return render(request, "projects/usuarios.html", context)
+      erro = form.errors
+      return render(
+          request,
+          "projects/usuarios.html",
+          {"altera": True, "form": form, "erro": erro},
+      )
+  else:
+    if opc == "edit":
+      if pk:
+        usuario = Usuario.objects.filter(email=pk).first()
+        form = UsuarioForm(instance=usuario)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/usuarios.html", context)
 
-        elif opc == "delete":
-            if pk:
-                usuario = Usuario.objects.filter(email=pk).first()
-                usuario.delete()
+    elif opc == "delete":
+      if pk:
+        usuario = Usuario.objects.filter(email=pk).first()
+        usuario.delete()
 
-                users = Usuario.objects.all()
-                filter = UsuarioFilter(request.GET, queryset=users)
+        users = Usuario.objects.all()
+        filter = UsuarioFilter(request.GET, queryset=users)
 
-                context = {"usuarios": filter, "filter": filter}
-                return render(request, "projects/usuarios.html", context)
+        context = {"usuarios": filter, "filter": filter}
+        return render(request, "projects/usuarios.html", context)
 
-        else:
-            users = Usuario.objects.all()
+    else:
+      users = Usuario.objects.all()
 
-            filter = UsuarioFilter(request.GET, queryset=users)
+      filter = UsuarioFilter(request.GET, queryset=users)
 
-            context = {"usuarios": filter, "filter": filter}
-            return render(request, "projects/usuarios.html", context)
+      context = {"usuarios": filter, "filter": filter}
+      return render(request, "projects/usuarios.html", context)
 
 
 @login_required(login_url="/index")
@@ -254,77 +254,77 @@ def empresas(request, pk=False):
 @nivel_access_required(view_name="niveis")
 def niveis(request, pk=False, opc=False):
 
-    if request.method == "POST":
-        nivel_form = NivelForm(request.POST)
-        if nivel_form.is_valid():
+  if request.method == "POST":
+    nivel_form = NivelForm(request.POST)
+    if nivel_form.is_valid():
 
-            descricao = nivel_form.cleaned_data["descricao"]
-            rotina = nivel_form.cleaned_data["rotina"]
-            inclusao = nivel_form.cleaned_data["inclusao"]
-            edicao = nivel_form.cleaned_data["edicao"]
-            exclusao = nivel_form.cleaned_data["exclusao"]
-            logs = nivel_form.cleaned_data["logs"]
-            filtro = nivel_form.cleaned_data["filtro"]
-            active = nivel_form.cleaned_data["active"]
+      descricao = nivel_form.cleaned_data["descricao"]
+      rotina    = nivel_form.cleaned_data["rotina"]
+      inclusao  = nivel_form.cleaned_data["inclusao"]
+      edicao    = nivel_form.cleaned_data["edicao"]
+      exclusao  = nivel_form.cleaned_data["exclusao"]
+      logs      = nivel_form.cleaned_data["logs"]
+      filtro    = nivel_form.cleaned_data["filtro"]
+      active    = nivel_form.cleaned_data["active"]
 
-            if opc == "insert":
+      if opc == "insert":
 
-                nivel = Niveis(
-                    descricao=descricao,
-                    rotina=rotina,
-                    inclusao=inclusao,
-                    edicao=edicao,
-                    exclusao=exclusao,
-                    logs=logs,
-                    filtro=filtro,
-                    active=active
-                )
+        nivel = Niveis(
+            descricao=descricao,
+            rotina=rotina,
+            inclusao=inclusao,
+            edicao=edicao,
+            exclusao=exclusao,
+            logs=logs,
+            filtro=filtro,
+            active=active
+        )
 
-                nivel.save()
+        nivel.save()
 
-                return redirect("niveis")
+        return redirect("niveis")
 
-            elif opc == "edit":
+      elif opc == "edit":
 
-                nivel = Niveis.objects.filter(nivel_id=pk).first()
+        nivel = Niveis.objects.filter(nivel_id=pk).first()
 
-                nivel.descricao = descricao
-                nivel.rotina    = rotina   
-                nivel.inclusao  = inclusao 
-                nivel.edicao    = edicao   
-                nivel.exclusao  = exclusao 
-                nivel.logs      = logs     
-                nivel.filtro    = filtro   
-                nivel.active    = active   
+        nivel.descricao = descricao
+        nivel.rotina    = rotina   
+        nivel.inclusao  = inclusao 
+        nivel.edicao    = edicao   
+        nivel.exclusao  = exclusao 
+        nivel.logs      = logs     
+        nivel.filtro    = filtro   
+        nivel.active    = active   
 
-                nivel.save()
+        nivel.save()
 
-                return redirect("niveis")
-    else:
+        return redirect("niveis")
+  else:
 
-        if opc == "insert":
-            nivel_form = NivelForm()
-            context = {"inclui": True, "form": nivel_form}
+    if opc == "insert":
+        nivel_form = NivelForm()
+        context = {"inclui": True, "form": nivel_form}
+        return render(request, "projects/niveis.html", context)
+
+    elif opc == "edit":
+        if pk:
+            nivel = Niveis.objects.filter(nivel_id=pk).first()
+            form = NivelForm(instance=nivel)
+            context = {"altera": True, "form": form}
             return render(request, "projects/niveis.html", context)
 
-        elif opc == "edit":
-            if pk:
-                nivel = Niveis.objects.filter(nivel_id=pk).first()
-                form = NivelForm(instance=nivel)
-                context = {"altera": True, "form": form}
-                return render(request, "projects/niveis.html", context)
-
-        elif opc == "delete":
-            if pk:
-                nivel = Niveis.objects.filter(nivel_id=pk).first()
-                nivel.delete()
-                niveis = Niveis.objects.all()
-                context = {"niveis": niveis}
-                return render(request, "projects/niveis.html", context)
-
-        else:
+    elif opc == "delete":
+        if pk:
+            nivel = Niveis.objects.filter(nivel_id=pk).first()
+            nivel.delete()
             niveis = Niveis.objects.all()
-            return render(request, "projects/niveis.html", {"niveis": niveis})
+            context = {"niveis": niveis}
+            return render(request, "projects/niveis.html", context)
+
+    else:
+        niveis = Niveis.objects.all()
+        return render(request, "projects/niveis.html", {"niveis": niveis})
 
 @login_required(login_url="/index")
 def clientes(request):
@@ -347,94 +347,94 @@ def relatorios(request):
 
 @login_required(login_url="/index")
 def projetos(request, opc=False, pk=False):
-    if request.method == "POST":
-        if opc == "insert":
+  if request.method == "POST":
+    if opc == "insert":
 
-            form = NewProjetoForm(request.POST)
-            if form.is_valid():
+      form = NewProjetoForm(request.POST)
+      if form.is_valid():
 
-                projeto = Projetos(
-                    codigo = form.cleaned_data["codigo"],
-                    name = form.cleaned_data["name"],
-                    cliente = form.cleaned_data["cliente"],
-                    responsavel = form.cleaned_data["responsavel"],
-                    arquiteto = form.cleaned_data["arquiteto"],
-                    data_inicio = form.cleaned_data["data_inicio"],
-                    data_entrega = form.cleaned_data["data_entrega"],
-                    desenvolvedor = form.cleaned_data["desenvolvedor"],
-                    status = form.cleaned_data["status"],
-                    qtd_horas_apontadas = form.cleaned_data["qtd_horas_apontadas"],
-                    qtd_horas_projeto = form.cleaned_data["qtd_horas_projeto"],
-                    valor_hora = form.cleaned_data["valor_hora"],
-                    valor_total = form.cleaned_data["valor_total"],
-                )
-                projeto.save()
+          projeto = Projetos(
+              codigo = form.cleaned_data["codigo"],
+              name = form.cleaned_data["name"],
+              cliente = form.cleaned_data["cliente"],
+              responsavel = form.cleaned_data["responsavel"],
+              arquiteto = form.cleaned_data["arquiteto"],
+              data_inicio = form.cleaned_data["data_inicio"],
+              data_entrega = form.cleaned_data["data_entrega"],
+              desenvolvedor = form.cleaned_data["desenvolvedor"],
+              status = form.cleaned_data["status"],
+              qtd_horas_apontadas = form.cleaned_data["qtd_horas_apontadas"],
+              qtd_horas_projeto = form.cleaned_data["qtd_horas_projeto"],
+              valor_hora = form.cleaned_data["valor_hora"],
+              valor_total = form.cleaned_data["valor_total"],
+          )
+          projeto.save()
 
-                return redirect("projetos")
-            else:
-                erro = form.errors
-                return render(
-                    request,
-                    "projects/projetos.html",
-                    {"inclui": True, "form": form, "message": "erro", "type": "danger"},
-                )
-        else:
-            form = ProjetoForm(request.POST)
-            if form.is_valid():
-
-                projeto = Projetos.objects.filter(codigo=pk).first()
-
-                projeto.name = form.cleaned_data["name"]
-                projeto.cliente = form.cleaned_data["cliente"]
-                projeto.responsavel = form.cleaned_data["responsavel"]
-                projeto.arquiteto = form.cleaned_data["arquiteto"]
-                projeto.data_inicio = form.cleaned_data["data_inicio"]
-                projeto.data_entrega = form.cleaned_data["data_entrega"]
-                projeto.desenvolvedor = form.cleaned_data["desenvolvedor"]
-                projeto.status = form.cleaned_data["status"]
-
-                projeto.save()
-
-                return redirect("projetos")
-            else:
-                erro = form.errors
-                print(erro)
-                return render(
-                    request,
-                    "projects/projetos.html",
-                    {"altera": True, "form": form, "erro": erro},
-                )
+          return redirect("projetos")
+      else:
+          erro = form.errors
+          return render(
+              request,
+              "projects/projetos.html",
+              {"inclui": True, "form": form, "message": "erro", "type": "danger"},
+          )
     else:
-        if opc == "insert":
-            form = NewProjetoForm()
-            context = {"inclui": True, "form": form}
-            return render(request, "projects/projetos.html", context)
+        form = ProjetoForm(request.POST)
+        if form.is_valid():
 
-        elif opc == "edit":
-            if pk:
-                projeto = Projetos.objects.filter(codigo=pk).first()
-                form = ProjetoForm(instance=projeto)
-                context = {"altera": True, "form": form}
-                return render(request, "projects/projetos.html", context)
+          projeto = Projetos.objects.filter(codigo=pk).first()
 
-        elif opc == "delete":
-            if pk:
-                projeto = Projetos.objects.filter(codigo=pk).first()
-                projeto.delete()
+          projeto.name = form.cleaned_data["name"]
+          projeto.cliente = form.cleaned_data["cliente"]
+          projeto.responsavel = form.cleaned_data["responsavel"]
+          projeto.arquiteto = form.cleaned_data["arquiteto"]
+          projeto.data_inicio = form.cleaned_data["data_inicio"]
+          projeto.data_entrega = form.cleaned_data["data_entrega"]
+          projeto.desenvolvedor = form.cleaned_data["desenvolvedor"]
+          projeto.status = form.cleaned_data["status"]
 
-                projetos = Projetos.objects.all()
-                filter = ProjetoFilter(request.GET, queryset=projetos)
+          projeto.save()
 
-                context = {"projetos": filter, "filter": filter}
-                return render(request, "projects/projetos.html", context)
-
+          return redirect("projetos")
         else:
-            projetos = Projetos.objects.all()
+          erro = form.errors
+          print(erro)
+          return render(
+              request,
+              "projects/projetos.html",
+              {"altera": True, "form": form, "erro": erro},
+          )
+  else:
+    if opc == "insert":
+      form = NewProjetoForm()
+      context = {"inclui": True, "form": form}
+      return render(request, "projects/projetos.html", context)
 
-            filter = ProjetoFilter(request.GET, queryset=projetos)
+    elif opc == "edit":
+      if pk:
+          projeto = Projetos.objects.filter(codigo=pk).first()
+          form = ProjetoForm(instance=projeto)
+          context = {"altera": True, "form": form}
+          return render(request, "projects/projetos.html", context)
 
-            context = {"projetos": filter, "filter": filter}
-            return render(request, "projects/projetos.html", context)
+    elif opc == "delete":
+      if pk:
+          projeto = Projetos.objects.filter(codigo=pk).first()
+          projeto.delete()
+
+          projetos = Projetos.objects.all()
+          filter = ProjetoFilter(request.GET, queryset=projetos)
+
+          context = {"projetos": filter, "filter": filter}
+          return render(request, "projects/projetos.html", context)
+
+    else:
+      projetos = Projetos.objects.all()
+
+      filter = ProjetoFilter(request.GET, queryset=projetos)
+
+      context = {"projetos": filter, "filter": filter}
+      return render(request, "projects/projetos.html", context)
 
 
 @login_required(login_url="/index")
@@ -450,46 +450,47 @@ def logs(request):
 @login_required(login_url="/index")
 @nivel_access_required(view_name="usuarios")
 def cadastrar_usuario(request):
-    message = ""
-    if request.method == "POST":
-        form = NewUsuarioForm(request.POST)
-        if form.is_valid():
 
-            name = form.cleaned_data["name"]
-            email = form.cleaned_data["email"]
-            password = make_password(form.cleaned_data["password"])
-            password2 = make_password(form.cleaned_data["password2"])
-            active = form.cleaned_data["active"]
-            tipo = form.cleaned_data["tipo"]
-            perfil = form.cleaned_data["perfil"]
+  if request.method == "POST":
+      form = NewUsuarioForm(request.POST)
+      if form.is_valid():
 
-            user = Usuario(
-                name=name,
-                email=email,
-                password=password,
-                password2=password2,
-                active=active,
-                tipo=tipo,
-                perfil=perfil,
-            )
-            user.save()
+        firstname = form.cleaned_data["firstname"]
+        name      = form.cleaned_data["name"]
+        email     = form.cleaned_data["email"]
+        password  = make_password(form.cleaned_data["password"])
+        password2 = make_password(form.cleaned_data["password2"])
+        active    = form.cleaned_data["active"]
+        tipo      = form.cleaned_data["tipo"]
+        perfil    = form.cleaned_data["perfil"]
 
-            return redirect("usuarios")
-        else:
-            message = "As senhas não conferem."
-            return render(
-                request,
-                "projects/cadastro_usuario.html",
-                {"form": form_usuario, "message": message, "type": "danger"},
-            )
-    else:
-        form_usuario = NewUsuarioForm()
+        user = Usuario(
+            firstname=firstname,
+            name=name,
+            email=email,
+            password=password,
+            password2=password2,
+            active=active,
+            tipo=tipo,
+            perfil=perfil,
+        )
+        user.save()
+
+        return redirect("usuarios")
+
+      else:
         return render(
             request,
             "projects/cadastro_usuario.html",
-            {"form": form_usuario, "message": message, "type": "success"},
+            {"form": form, "message": form.errors, "type": "danger"},
         )
-
+  else:
+    form_usuario = NewUsuarioForm()
+    return render(
+        request,
+        "projects/cadastro_usuario.html",
+        {"form": form_usuario, "message": "", "type": "success"},
+    )
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
@@ -575,52 +576,52 @@ def retorna_total_projetos(request):
 
 ############ functions ############
 def isInt(value):
-    try:
-        int(value)
-        return True
-    except:
-        return False
+  try:
+      int(value)
+      return True
+  except:
+      return False
 
 
 def SenhaAleatoria():
-    numero = random.randrange(100000, 999999)
-    return str(numero)
+  numero = random.randrange(100000, 999999)
+  return str(numero)
 
 def set_first(tipo=False):
 
-    if tipo == "usuario":
-        
-        usuarios = Usuario.objects.all().count()
-        
-        if not usuarios:
-            user = Usuario(
-                firstname="admin",
-                name="Administrador",
-                email="rodrigo.cesar91@yahoo.com.br",
-                password=make_password("123"),
-                password2=make_password("123"),
-                active=True,
-                tipo="1",
-                resetpsw=0,
-            )
-            user.save()
+  if tipo == "usuario":
+      
+      usuarios = Usuario.objects.all().count()
+      
+      if not usuarios:
+          user = Usuario(
+              firstname="admin",
+              name="Administrador",
+              email="rodrigo.cesar91@yahoo.com.br",
+              password=make_password("123"),
+              password2=make_password("123"),
+              active=True,
+              tipo="1",
+              resetpsw=0,
+          )
+          user.save()
 
-    elif tipo == "nivel":
-        
-        niveis = Niveis.objects.all().count()
+  elif tipo == "nivel":
+      
+      niveis = Niveis.objects.all().count()
 
-        if not niveis:
-            nivel = Niveis(
-                    descricao="Full Access",
-                    rotina="0",
-                    inclusao="S",
-                    edicao="S",
-                    exclusao="S",
-                    logs="S",
-                    filtro="S",
-                    active=True
-                )
+      if not niveis:
+          nivel = Niveis(
+                  descricao="Full Access",
+                  rotina="0",
+                  inclusao="S",
+                  edicao="S",
+                  exclusao="S",
+                  logs="S",
+                  filtro="S",
+                  active=True
+              )
 
-            nivel.save()
-    else:
-        return
+          nivel.save()
+  else:
+      return

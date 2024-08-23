@@ -8,83 +8,172 @@ from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 
 from .models import Usuario, Empresa, Servicos, Niveis, Projetos
 
-
 class NewUsuarioForm(forms.ModelForm):
-    password = forms.CharField(
-        widget=forms.PasswordInput(), required=True, label="Senha"
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput(), required=True, label="Repita a Senha"
-    )
-
-    class Meta:
-        model = Usuario
-        fields = (
-            "firstname",
-            "name",
-            "email",
-            "password",
-            "password2",
-            "active",
-            "tipo",
-            "perfil",
-            "resetpsw",
-            "usefilter",
-        )
-
-
-class RedefinirSenhaForm(forms.ModelForm):
-    email = forms.CharField(disabled=True, required=False)
-    password = forms.CharField(
-        widget=forms.PasswordInput(), required=True, label="Nova Senha"
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput(), required=True, label="Confirmação da Nova Senha"
-    )
-
-    class Meta:
-        model = Usuario
-        fields = (
-            "email",
-            "password",
-            "password2",
-        )
-
-
-class UsuarioForm(forms.ModelForm):
-
-  email = forms.CharField(disabled=True, required=False)
-  password = forms.CharField(
-      widget=forms.PasswordInput(), disabled=True, required=False
-  )
-  password2 = forms.CharField(
-      widget=forms.PasswordInput(), disabled=True, required=False
+  
+  tipo = forms.ChoiceField(
+    choices=Usuario.getTipos(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
   )
 
   perfil = forms.ModelChoiceField(
-      queryset=Niveis.objects.all().order_by("descricao"),
-      widget=forms.Select,
-      required=True,
+    queryset=Niveis.objects.all(),
+    to_field_name='descricao',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  password = forms.CharField(
+      widget=forms.PasswordInput(), required=True, label="Senha"
+  )
+  password2 = forms.CharField(
+      widget=forms.PasswordInput(), required=True, label="Repita a Senha"
+  )
+
+  class Meta:
+    model = Usuario
+    fields = (
+      'firstname',
+      'name',
+      'email',
+      'tipo',
+      'perfil',
+      'password',
+      'password2',
+      'resetpsw',
+      'active',
+      'usefilter',
+    )
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = 'border p-12'
+    self.helper.layout = Layout(
+      Row(
+          Column('firstname', css_class='form-control-sm col-sm-4 mb-2 p-2'),
+          Column('name', css_class='form-control-sm col-md-8 mb-2 p-2'),
+          css_class='form-row d-flex',
+      ),
+      Row(
+        Column('email', css_class='form-control-sm col-md-6 mb-2 p-2'),
+        Column('tipo', css_class='form-control-sm col-md-2 mb-0 p-2'),
+        Column('perfil', css_class='form-control-sm col-md-4 mb-0 p-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('password',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        Column('password2',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('resetpsw', css_class='form-control-sm p-2'),
+        Column('active', css_class='form-control-sm p-2'),
+        Column('usefilter', css_class='form-control-sm p-2'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mt-3 mx-2'),
+          HTML('<a class="btn btn-danger mt-3" href="{% url "usuarios" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+          )
+      )
+    )
+
+class RedefinirSenhaForm(forms.ModelForm):
+  email = forms.CharField(disabled=True, required=False)
+  password = forms.CharField(
+      widget=forms.PasswordInput(), required=True, label="Nova Senha"
+  )
+  password2 = forms.CharField(
+      widget=forms.PasswordInput(), required=True, label="Confirmação da Nova Senha"
   )
 
   class Meta:
       model = Usuario
       fields = (
-          "firstname",
-          "name",
           "email",
           "password",
           "password2",
-          "active",
-          "tipo",
-          "perfil",
-          "usefilter",
       )
 
-  # def __init__(self, *args, **kwargs):
-  #  super(Niveis, self).__init__(*args, **kwargs)
-  #  self.fields['descricao'].queryset = Niveis.objects.all()
 
+class UsuarioForm(forms.ModelForm):
+
+  email = forms.CharField(disabled=True, required=False)
+
+  password = forms.CharField(
+    widget=forms.PasswordInput(), disabled=False, required=False
+  )
+
+  password2 = forms.CharField(
+    widget=forms.PasswordInput(), disabled=False, required=False
+  )
+
+  perfil = forms.ModelChoiceField(
+    queryset=Niveis.objects.all().order_by("descricao"),
+    to_field_name='descricao',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  tipo = forms.ChoiceField(
+    choices=Usuario.getTipos(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  class Meta:
+    model = Usuario
+    fields = (
+        "firstname",
+        "name",
+        "email",
+        "password",
+        "password2",
+        "active",
+        "tipo",
+        "perfil",
+        "usefilter",
+        "resetpsw",
+    )
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = 'border p-12'
+    self.helper.layout = Layout(
+      Row(
+        Column('firstname', css_class='form-control-sm col-sm-4 mb-2 p-2'),
+        Column('name', css_class='form-control-sm col-md-8 mb-2 p-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('email', css_class='form-control-sm col-md-6 mb-2 p-2'),
+        Column('tipo', css_class='form-control-sm col-md-2 mb-0 p-2'),
+        Column('perfil', css_class='form-control-sm col-md-4 mb-0 p-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('password',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        Column('password2',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('resetpsw', css_class='form-control-sm p-2'),
+        Column('active', css_class='form-control-sm p-2'),
+        Column('usefilter', css_class='form-control-sm p-2'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mt-3 mx-2'),
+          HTML('<a class="btn btn-danger mt-3" href="{% url "usuarios" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+        )
+      )
+    )
 
 class NivelForm(forms.ModelForm):
   class Meta:
@@ -204,6 +293,9 @@ class ProjetoForm(forms.ModelForm):
 
 
 class NewProjetoForm(forms.ModelForm):
+  class Meta:
+    model = Projetos
+    fields = '__all__'
 
   codigo = forms.CharField(
     label='Codigo do Projeto',
@@ -262,10 +354,42 @@ class NewProjetoForm(forms.ModelForm):
     required=False,
     label="Valor Total"
   )
+  
+  desenvolvedor = forms.ModelChoiceField(
+    queryset=Usuario.objects.all(),
+    to_field_name='name',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  arquiteto = forms.ModelChoiceField(
+    queryset=Usuario.objects.all(),
+    to_field_name='name',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  responsavel = forms.ModelChoiceField(
+    queryset=Usuario.objects.all(),
+    to_field_name='name',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  cliente = forms.ModelChoiceField(
+    queryset=Usuario.objects.all(),
+    to_field_name='name',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  status = forms.ModelChoiceField(
+    queryset=Projetos.objects.all(),
+    to_field_name='status',
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
 
-  class Meta:
-    model = Projetos
-    fields = '__all__'
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -275,7 +399,7 @@ class NewProjetoForm(forms.ModelForm):
       Row(
           Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
           Column('name', css_class='form-control-sm col-md-6 mb-2 p-2'),
-          Column('status', css_class='form-control-sm col-lg-2 mb-2 p-2'),
+          Column('status', css_class='form-control-sm col-md-2 mb-2 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
