@@ -44,7 +44,6 @@
 					<th>E-mail</th>
 					<th>Ativo</th>
 					<th>Tipo</th>
-					<th>Perfil</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -57,7 +56,6 @@
 					<td>{{ user.email }}</td>
 					<td>{{ user.active }}</td>
 					<td>{{ user.get_tipo_display }}</td>
-					<td>{{ user.get_perfil_display }}</td>
 					<td>
 						<a href="{% url "usuarios" opc='edit' pk=user.email %}" class="btn btn-sm btn-secondary">Editar</a>
 						<a href="{% url "usuarios" opc='delete' pk=user.email %}" class="btn btn-sm btn-danger">Excluir</a>

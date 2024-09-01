@@ -53,11 +53,18 @@ class Niveis(models.Model):
   active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
   created_at = models.DateTimeField(auto_now=True)
 
+  class Meta:
+    verbose_name_plural = "Niveis"
+    ordering = ('descricao',)
+
+  def __str__(self):
+    return self.descricao
+
 class Usuario(AbstractUser):
 
   def getTipos():
     TIPOS = (
-      ("1", "Administrador"), 
+      ("1", "Cliente"), 
       ("2", "Colaborador"),
     )
     return TIPOS
@@ -98,38 +105,49 @@ class Usuario(AbstractUser):
   created_at = models.DateTimeField(auto_now=True)
   
 class Empresa(models.Model):
+
+  created_at = models.DateTimeField(auto_now=True)
   codigo = models.CharField(
+      primary_key=True,
       verbose_name="Código", unique=True, max_length=6, null=False, blank=False
   )
   nome = models.CharField(
       verbose_name="Empresa", max_length=200, null=False, blank=False
   )
-  created_at = models.DateTimeField(auto_now=True)
 
+  cnpj = models.CharField(verbose_name="CNPJ", max_length=14, default="")
+  endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
+  cidade = models.CharField(verbose_name="Cidade", max_length=80, default="")
+  estado = models.CharField(verbose_name="Estado", max_length=2, default="")
+  telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
+  dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
+  imposto = models.IntegerField(verbose_name="% Imposto", default=0)
 
   def __str__(self):
-      return self.nome
+    return self.nome
 
   class Meta:
-      verbose_name_plural = "Empresas"
-
+    verbose_name_plural = "Empresas"
+    ordering = ('codigo',)
 
 class Servicos(models.Model):
   
-  TIPOS = (
-    ('pontual', 'Pontual'),
-    ('sustentacao', 'Sustentação'),
-    ('sd', 'Service Desk'),
-    ('projeto', 'Projeto'),
-    ('hradicional', 'Hora Adicional'),
-  )
-
+  def getTipos():
+    TIPOS = (
+      ('pontual', 'Pontual'),
+      ('sustentacao', 'Sustentação'),
+      ('sd', 'Service Desk'),
+      ('projeto', 'Projeto'),
+      ('hradicional', 'Hora Adicional'),
+    )
+    return TIPOS
+    
   codigo = models.CharField(verbose_name="Código", max_length=6, null=False, blank=False)
   descricao = models.CharField(verbose_name="Descrição", max_length=80, null=False, blank=False)
   versao = models.CharField(verbose_name="Versão", max_length=3, null=False, blank=False)
   cliente = models.CharField(verbose_name="Cliente", max_length=6, null=False, blank=False)
   nomeCliente = models.CharField(verbose_name="Nome", max_length=80, null=False, blank=False)
-  tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=TIPOS)
+  tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=getTipos())
   observacao = models.TextField(verbose_name="Observações")
   created_at = models.DateTimeField(auto_now=True)
 

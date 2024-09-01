@@ -1,85 +1,12 @@
 from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Field
+from crispy_forms.helper import FormHelper 
+from crispy_forms.layout import Layout, Submit, Row, Field 
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 
 from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente
-
-class NewUsuarioForm(forms.ModelForm):
-  
-  tipo = forms.ChoiceField(
-    choices=Usuario.getTipos(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-
-  perfil = forms.ModelChoiceField(
-    queryset=Niveis.objects.all(),
-    to_field_name='descricao',
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-
-  password = forms.CharField(
-      widget=forms.PasswordInput(), required=True, label="Senha"
-  )
-  password2 = forms.CharField(
-      widget=forms.PasswordInput(), required=True, label="Repita a Senha"
-  )
-
-  class Meta:
-    model = Usuario
-    fields = (
-      'firstname',
-      'name',
-      'email',
-      'tipo',
-      'perfil',
-      'password',
-      'password2',
-      'resetpsw',
-      'active',
-      'usefilter',
-    )
-
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self.helper = FormHelper()
-    self.helper.form_class = 'border p-12'
-    self.helper.layout = Layout(
-      Row(
-          Column('firstname', css_class='form-control-sm col-sm-4 mb-2 p-2'),
-          Column('name', css_class='form-control-sm col-md-8 mb-2 p-2'),
-          css_class='form-row d-flex',
-      ),
-      Row(
-        Column('email', css_class='form-control-sm col-md-6 mb-2 p-2'),
-        Column('tipo', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('perfil', css_class='form-control-sm col-md-4 mb-0 p-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('password',css_class='form-control-sm col-md-4 mb-2 p-2'),
-        Column('password2',css_class='form-control-sm col-md-4 mb-2 p-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('resetpsw', css_class='form-control-sm p-2'),
-        Column('active', css_class='form-control-sm p-2'),
-        Column('usefilter', css_class='form-control-sm p-2'),
-        css_class='form-row d-flex',
-      ),
-      Div(
-        Row(
-          Submit('submit', 'Confirmar', css_class='mt-3 mx-2'),
-          HTML('<a class="btn btn-danger mt-3" href="{% url "usuarios" %}">Cancelar</a>'),
-          css_class='form-row d-flex',
-          )
-      )
-    )
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(disabled=True, required=False)
@@ -98,10 +25,9 @@ class RedefinirSenhaForm(forms.ModelForm):
           "password2",
       )
 
-
 class UsuarioForm(forms.ModelForm):
 
-  email = forms.CharField(disabled=True, required=False)
+  email = forms.EmailField(disabled=True, required=False,)
 
   password = forms.CharField(
     widget=forms.PasswordInput(), disabled=False, required=False
@@ -119,7 +45,7 @@ class UsuarioForm(forms.ModelForm):
   
   perfil = forms.ModelChoiceField(
     queryset=Niveis.objects.all().order_by("descricao"),
-    to_field_name='descricao',
+    to_field_name='nivel_id',
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
@@ -142,95 +68,216 @@ class UsuarioForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = 'border p-12'
+    self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-        Column('firstname', css_class='form-control-sm col-sm-4 mb-2 p-2'),
-        Column('name', css_class='form-control-sm col-md-8 mb-2 p-2'),
+        Column('firstname', css_class='form-control-sm col-sm-4'),
+        Column('name', css_class='form-control-sm col-sm-8'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('email', css_class='form-control-sm col-md-6 mb-2 p-2'),
-        Column('tipo', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('perfil', css_class='form-control-sm col-md-4 mb-0 p-2'),
+        Column('email', css_class='form-control-sm col-sm-6'),
+        Column('tipo', css_class='form-control-sm col-sm-2'),
+        Column('perfil', css_class='form-control-sm col-sm-4'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('password',css_class='form-control-sm col-md-4 mb-2 p-2'),
-        Column('password2',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        Column('password',css_class='form-control-sm col-sm-4'),
+        Column('password2',css_class='form-control-sm col-sm-4'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('resetpsw', css_class='form-control-sm p-2'),
-        Column('active', css_class='form-control-sm p-2'),
-        Column('usefilter', css_class='form-control-sm p-2'),
+        Column('resetpsw', css_class='form-control-sm'),
+        Column('active', css_class='form-control-sm'),
+        Column('usefilter', css_class='form-control-sm'),
         css_class='form-row d-flex',
       ),
       Div(
         Row(
-          Submit('submit', 'Confirmar', css_class='mt-3 mx-2'),
-          HTML('<a class="btn btn-danger mt-3" href="{% url "usuarios" %}">Cancelar</a>'),
+          Submit('submit', 'Confirmar', css_class='mx-2'),
+          HTML('<a class="btn btn-danger" href="{% url "usuarios" %}">Cancelar</a>'),
           css_class='form-row d-flex',
         )
       )
     )
 
+class NewUsuarioForm(UsuarioForm):
+  
+  email = forms.EmailField(disabled=False, required=True,)
+
+  password = forms.CharField(
+      widget=forms.PasswordInput(), required=True, label="Senha"
+  )
+  
+  password2 = forms.CharField(
+      widget=forms.PasswordInput(), required=True, label="Repita a Senha"
+  )
+ 
 class NivelForm(forms.ModelForm):
+
+  rotina = forms.ChoiceField(
+    choices=Niveis.getRotinas(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  inclusao = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  edicao = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  exclusao = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  logs = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  filtro = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
   class Meta:
       model = Niveis
-      fields = (
-          "descricao",
-          "rotina",
-          "inclusao",
-          "edicao",
-          "exclusao",
-          "logs",
-          "filtro",
-          "active",
-      )
+      fields = "__all__"
 
-      # Uni-form
-      helper = FormHelper()
-      helper.form_class = "form-horizontal"
-      helper.layout = Layout(
-          Field("text_input", css_class="input-xlarge"),
-          Field("textarea", rows="3", css_class="input-xlarge"),
-          "radio_buttons",
-          Field("checkboxes", style="background: #FAFAFA; padding: 10px;"),
-          AppendedText("appended_text", ".00"),
-          PrependedText(
-              "prepended_text",
-              '<input type="checkbox" checked="checked" value="" id="" name="">',
-              active=True,
-          ),
-          PrependedText("prepended_text_two", "@"),
-          "multicolon_select",
-          FormActions(
-              Submit("save_changes", "Save changes", css_class="btn-primary"),
-              Submit("cancel", "Cancel"),
-          ),
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = ''
+    self.helper.layout = Layout(
+      Row(
+        Column('descricao', css_class='form-control-sm col-sm-4'),
+        Column('rotina', css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('inclusao', css_class='form-control-sm col-sm-2'),
+        Column('edicao', css_class='form-control-sm col-sm-2'),
+        Column('exclusao', css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('logs',css_class='form-control-sm col-sm-4'),
+        Column('filtro',css_class='form-control-sm col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('active', css_class='form-control-sm'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2'),
+          HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+        )
       )
-
+    )
 
 class EmpresaForm(forms.ModelForm):
-  class Meta:
-      model = Empresa
-      fields = ("codigo", "nome")
 
+  codigo = forms.CharField(disabled=True, required=False)
+  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
+  endereco = forms.CharField(required=False)
+  class Meta:
+    model = Empresa
+    fields = "__all__"
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = ''
+    self.helper.layout = Layout(
+      Row(
+          Column('codigo', css_class='form-control-sm col-sm-2'),
+          Column('nome', css_class='form-control-sm col-sm-8'),
+          css_class='form-row d-flex',
+      ),
+      Row(
+        Column('cnpj', css_class='form-control-sm col-lg-6'),
+        Column('cidade',css_class='form-control-sm col-sm-4'),
+        Column('estado',css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+          Column('telefone', css_class='form-control-sm col-sm-4'),
+          Column('endereco', css_class='form-control-sm col-sm-6'),
+          Column('imposto', css_class='form-control-sm col-sm-2'),
+          css_class='form-row d-flex',
+      ),
+      Row(
+          Column('dados_bancarios', css_class='form-control-sm col-sm-8'),
+          css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2'),
+          HTML('<a class="btn btn-danger" href="{% url "empresas" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+          )
+      )
+    )
+
+class NewEmpresaForm(EmpresaForm):
+
+  codigo = forms.CharField(disabled=False, required=True)
 
 class ServicosForm(forms.ModelForm):
+
+  tipo = forms.ChoiceField(
+    choices=Servicos.getTipos(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
   class Meta:
       model = Servicos
-      fields = (
-          "codigo",
-          "descricao",
-          "versao",
-          "cliente",
-          "nomeCliente",
-          "tipo",
-          "observacao",
+      fields = "__all__"
+  
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = ''
+    self.helper.layout = Layout(
+      Row(
+        Column('codigo', css_class='form-control-sm col-sm-2'),
+        Column('descricao', css_class='form-control-sm col-sm-6'),
+        Column('versao', css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('cliente', css_class='form-control-sm col-sm-2'),
+        Column('nomeCliente', css_class='form-control-sm col-sm-6'),
+        Column('tipo',css_class='form-control-sm col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('observacao',css_class='form-control-sm col-sm-6'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2'),
+          HTML('<a class="btn btn-danger" href="{% url "servicos" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+        )
       )
-
+    )
 
 class ProjetoForm(forms.ModelForm):
 
@@ -265,27 +312,27 @@ class ProjetoForm(forms.ModelForm):
     self.helper.layout = Layout(
       Row(
           Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
-          Column('name', css_class='form-control-sm col-md-6 mb-2 p-2'),
+          Column('name', css_class='form-control-sm col-sm-6 mb-2 p-2'),
           Column('status', css_class='form-control-sm col-lg-3 mb-2 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('cliente',css_class='form-control-sm col-md-6 mb-2 p-2'),
-        Column('responsavel',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        Column('cliente',css_class='form-control-sm col-sm-6 mb-2 p-2'),
+        Column('responsavel',css_class='form-control-sm col-sm-4 mb-2 p-2'),
         css_class='form-row d-flex',
       ),
       Row(
-          Column('data_inicio', css_class='form-control-sm col-md-2 mb-0 p-2'),
-          Column('data_entrega', css_class='form-control-sm col-md-2 mb-0 p-2'),
-          Column('desenvolvedor', css_class='form-control-sm col-md-4 mb-0 p-2'),
-          Column('arquiteto', css_class='form-control-sm col-md-4 mb-0 p-2'),
+          Column('data_inicio', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+          Column('data_entrega', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+          Column('desenvolvedor', css_class='form-control-sm col-sm-4 mb-0 p-2'),
+          Column('arquiteto', css_class='form-control-sm col-sm-4 mb-0 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('qtd_horas_projeto', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('qtd_horas_apontadas', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('valor_hora', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('valor_total', css_class='form-control-sm col-md-2 mb-0 p-2'),
+        Column('qtd_horas_projeto', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('qtd_horas_apontadas', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('valor_hora', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('valor_total', css_class='form-control-sm col-sm-2 mb-0 p-2'),
         css_class='form-row d-flex',
       ),
       Div(
@@ -296,7 +343,6 @@ class ProjetoForm(forms.ModelForm):
           )
       )
     )
-
 
 class NewProjetoForm(forms.ModelForm):
   class Meta:
@@ -402,27 +448,27 @@ class NewProjetoForm(forms.ModelForm):
     self.helper.layout = Layout(
       Row(
           Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
-          Column('name', css_class='form-control-sm col-md-6 mb-2 p-2'),
-          Column('status', css_class='form-control-sm col-md-3 mb-2 p-2'),
+          Column('name', css_class='form-control-sm col-sm-6 mb-2 p-2'),
+          Column('status', css_class='form-control-sm col-sm-3 mb-2 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('cliente',css_class='form-control-sm col-md-6 mb-2 p-2'),
-        Column('responsavel',css_class='form-control-sm col-md-4 mb-2 p-2'),
+        Column('cliente',css_class='form-control-sm col-sm-6 mb-2 p-2'),
+        Column('responsavel',css_class='form-control-sm col-sm-4 mb-2 p-2'),
         css_class='form-row d-flex',
       ),
       Row(
-          Column('data_inicio', css_class='form-control-sm col-md-2 mb-0 p-2'),
-          Column('data_entrega', css_class='form-control-sm col-md-2 mb-0 p-2'),
-          Column('desenvolvedor', css_class='form-control-sm col-md-4 mb-0 p-2'),
-          Column('arquiteto', css_class='form-control-sm col-md-4 mb-0 p-2'),
+          Column('data_inicio', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+          Column('data_entrega', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+          Column('desenvolvedor', css_class='form-control-sm col-sm-4 mb-0 p-2'),
+          Column('arquiteto', css_class='form-control-sm col-sm-4 mb-0 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('qtd_horas_projeto', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('qtd_horas_apontadas', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('valor_hora', css_class='form-control-sm col-md-2 mb-0 p-2'),
-        Column('valor_total', css_class='form-control-sm col-md-2 mb-0 p-2'),
+        Column('qtd_horas_projeto', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('qtd_horas_apontadas', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('valor_hora', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('valor_total', css_class='form-control-sm col-sm-2 mb-0 p-2'),
         css_class='form-row d-flex',
       ),
       Div(

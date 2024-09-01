@@ -1,31 +1,64 @@
 {% extends "base.html" %}
-{% block page_title %} Serviços {% endblock page_title %}
+{% load crispy_forms_tags %}
+{% block page_title %}Serviços{% endblock page_title %}
 {% block title %} Serviços {% endblock title %}
 {% block content %}
-	<table class="table table-hover">
-		<thead>
-			<tr>
-				<th>Codigo</th>
-				<th>Descrição</th>
-				<th>Versão</th>
-				<th>Cliente</th>
-				<th>Nome</th>
-				<th>Tipo</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for servicos in servicos %}
-			<tr>
-				<td>{{ servicos.codigo }}</td>
-				<td>{{ servicos.descricao }}</td>
-				<td>{{ servicos.versao }}</td>
-				<td>{{ servicos.cliente }}</td>
-				<td>{{ servicos.nomeCliente }}</td>
-				<td>{{ servicos.tipo }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
 
-	<a href="{% url 'cadastrar_servico' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
+	{% if altera %}
+
+		<form method="POST">{% csrf_token %}
+			{% crispy form %}
+			
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+			
+		</form>
+		
+	{% elif inclui %}
+		
+		<form method="POST" id="{{ servicos.helper.codigo }}">{% csrf_token %}
+			{% crispy form %}
+			
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+
+		</form>
+
+	{% else %}
+
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Codigo</th>
+					<th>Descrição</th>
+					<th>Versão</th>
+					<th>Cliente</th>
+					<th>Nome</th>
+					<th>Tipo</th>
+					<th>Ação</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in servicos %}
+				<tr>
+					<td>{{ s.codigo }}</td>
+					<td>{{ s.descricao }}</td>
+					<td>{{ s.versao }}</td>
+					<td>{{ s.cliente }}</td>
+					<td>{{ s.nomeCliente }}</td>
+					<td>{{ s.tipo }}</td>
+					<td>
+						<a href="{% url "servicos" opc='edit' pk=s.codigo %}" class="btn btn-sm btn-secondary">Editar</a>
+						<a href="{% url "servicos" opc='delete' pk=s.codigo	 %}" class="btn btn-sm btn-danger">Excluir</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+		<a href="{% url "servicos" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
+	{% endif %}
+			
 {% endblock content %}

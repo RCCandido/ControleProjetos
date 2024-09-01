@@ -122,25 +122,25 @@
                         <span class="sub-item">Empresas</span>
                       </a>
                     </li>
+                    <li>
+                      <a href="{% url 'servicos' %}">
+                        <span class="sub-item">Serviços</span>
+                      </a>
+                    </li>
                   </ul>
                 </div>
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarLayouts">
                   <i class="fas fa-th-list"></i>
-                  <p>Sidebar Layouts</p>
+                  <p>Projetos</p>
                   <span class="caret"></span>
                 </a>
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="sidebar-style-2.html">
-                        <span class="sub-item">Sidebar Style 2</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="icon-menu.html">
-                        <span class="sub-item">Icon Menu</span>
+                      <a href="{% url 'projetos' %}">
+                        <span class="sub-item">Projetos</span>
                       </a>
                     </li>
                   </ul>
@@ -149,14 +149,14 @@
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#forms">
                   <i class="fas fa-pen-square"></i>
-                  <p>Forms</p>
+                  <p>Relatórios</p>
                   <span class="caret"></span>
                 </a>
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="forms/forms.html">
-                        <span class="sub-item">Basic Form</span>
+                      <a href="{% url 'relatorios' %}">
+                        <span class="sub-item">Relatório 1</span>
                       </a>
                     </li>
                   </ul>
@@ -690,7 +690,7 @@
         </div>
 
         <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
+          <div class="container-fluid d-flex justify-content-between ">
             <nav class="pull-left">
               <ul class="nav">
                 <li class="nav-item">
@@ -701,8 +701,7 @@
               </ul>
             </nav>
             <div class="copyright">
-              2024, feito por Alpha -
-              <a href="https://alphaerp.com.br">Alpha ERP</a>
+              Desenvolvido por <a href="https://alphaerp.com.br">Alpha ERP</a> - 2024
             </div>
             <div>
               Version 1.0
@@ -711,7 +710,7 @@
         </footer>
       </div>
 
-    </div> "{% static 'img/profile.jpg' %}"
+    </div>
     <!--   Core JS Files   -->
     <script src="{% static 'js/core/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'js/core/popper.min.js' %}"></script>

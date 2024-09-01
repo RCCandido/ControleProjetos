@@ -6,31 +6,17 @@
 
 	{% if altera %}
 
-		<div class="row">
-			<div class="col-xs-4 mb-2 mt-2 p-2">
-				<form method="POST">{% csrf_token %}
-					
-					{{ form.descricao|as_crispy_field }}
-					{{ form.rotina|as_crispy_field }}
-					{{ form.inclusao|as_crispy_field }}
-					{{ form.edicao|as_crispy_field }}
-					{{ form.exclusao|as_crispy_field }}
-					{{ form.logs|as_crispy_field }}
-					{{ form.filtro|as_crispy_field }}
-					{{ form.active|as_crispy_field }}
-					
-					{% if erro %}
-						<div class="form-group">
-							<p class="text danger">{{ erro }}</p>
-						</div>
-					{% endif %}
-					
-					<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-					<a href="{% url 'niveis' %}" class="btn btn-danger mt-4 mx-2">Cancelar</a>
-					
-				</form>
-			</div>
-		</div>
+		<form method="POST">{% csrf_token %}
+			
+			{% crispy form %}
+			
+			{% if erro %}
+				<div class="form-group">
+					<p class="text danger">{{ erro }}</p>
+				</div>
+			{% endif %}
+			
+		</form>
 		
 	{% elif inclui %}
 		
@@ -50,19 +36,19 @@
 					<th>Descrição</th>
 					<th>Rotina</th>
 					<th>Ativo</th>
-					<th></th>
+					<th>Ações</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for nivel in niveis %}
+				{% for n in niveis %}
 				<tr>
-					<td>{{ nivel.nivel_id }}</td>
-					<td>{{ nivel.descricao }}</td>
-					<td>{{ nivel.get_rotina_display }}</td>
-					<td>{{ nivel.active }}</td>
+					<td>{{ n.nivel_id }}</td>
+					<td>{{ n.descricao }}</td>
+					<td>{{ n.get_rotina_display }}</td>
+					<td>{{ n.active }}</td>
 					<td>
-						<a href="{% url "niveis" opc='edit' pk=nivel.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
-						<a href="{% url "niveis" opc='delete' pk=nivel.nivel_id	 %}" class="btn btn-sm btn-danger">Excluir</a>
+						<a href="{% url "niveis" opc='edit' pk=n.nivel_id %}" class="btn btn-sm btn-secondary">Editar</a>
+						<a href="{% url "niveis" opc='delete' pk=n.nivel_id	 %}" class="btn btn-sm btn-danger">Excluir</a>
 					</td>
 				</tr>
 				{% endfor %}

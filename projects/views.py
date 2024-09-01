@@ -19,6 +19,7 @@ from .forms import (
     RedefinirSenhaForm,
     ProjetoForm,
     NewProjetoForm,
+    NewEmpresaForm,
 )
 from .decorators import nivel_access_required
 from .filters import UsuarioFilter, ProjetoFilter
@@ -227,22 +228,161 @@ def usuarios(request, opc=False, pk=False):
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
-def servicos(request):
-    servicos = Servicos.objects.all()
-    return render(request, "projects/servicos.html", {"servicos": servicos})
+def servicos(request, opc=False, pk=False):
 
+  if request.method == "POST":
+    form = ServicosForm(request.POST)
+    if form.is_valid():
+
+      codigo      = form.cleaned_data["codigo"]
+      descricao   = form.cleaned_data["descricao"]
+      versao      = form.cleaned_data["versao"]
+      cliente     = form.cleaned_data["cliente"]
+      nomeCliente = form.cleaned_data["nomeCliente"]
+      tipo        = form.cleaned_data["tipo"]
+      observacao  = form.cleaned_data["observacao"]
+
+      if opc == "insert":
+
+        servico = Servicos(
+          codigo      = codigo,
+          descricao   = descricao,
+          versao      = versao,
+          cliente     = cliente,
+          nomeCliente = nomeCliente,
+          tipo        = tipo,
+          observacao  = observacao,
+        )
+
+        servico.save()
+
+        return redirect("servicos")
+
+      elif opc == "edit":
+
+        servico = Servicos.objects.filter(codigo=pk).first()
+
+        servico.descricao   = descricao
+        servico.versao      = versao
+        servico.cliente     = cliente
+        servico.nomeCliente = nomeCliente
+        servico.tipo        = tipo
+        servico.observacao  = observacao
+       
+        servico.save()
+
+        return redirect("servicos")
+  else:
+
+    if opc == "insert":
+      form = ServicosForm()
+      context = {"inclui": True, "form": form}
+      return render(request, "projects/servicos.html", context)
+
+    elif opc == "edit":
+      if pk:
+        servico = Servicos.objects.filter(codigo=pk).first()
+        form = ServicosForm(instance=servico)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/servicos.html", context)
+
+    elif opc == "delete":
+      if pk:
+        servico = Servicos.objects.filter(codigo=pk).first()
+        servico.delete()
+        servicos = Servicos.objects.all()
+        context = {"servicos": servicos}
+        return render(request, "projects/servicos.html", context)
+
+    else:
+      servicos = Servicos.objects.all()
+      context = {"servicos": servicos}
+      return render(request, "projects/servicos.html", context)
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="empresas")
-def empresas(request, pk=False):
-    if pk:
-        empresa = Empresa.objects.filter(codigo=pk)
-        return render(request, "projects/editar_empresa.html", {"empresa": empresa})
+def empresas(request, pk=False, opc=False):
+  
+  if request.method == "POST":
+    form = EmpresaForm(request.POST)
+    if form.is_valid():
+      
+      nome        = form.cleaned_data["nome"]
+      cnpj        = form.cleaned_data["cnpj"]
+      endereco    = form.cleaned_data["endereco"]
+      cidade      = form.cleaned_data["cidade"]
+      estado      = form.cleaned_data["estado"]
+      telefone    = form.cleaned_data["telefone"]
+      dados_bancarios = form.cleaned_data["dados_bancarios"]
+      imposto     = form.cleaned_data["imposto"]
+      
+      if opc == "insert":
+
+        empresa = Empresa(
+          nome            = nome,
+          cnpj            = cnpj,
+          endereco        = endereco,
+          cidade          = cidade,
+          estado          = estado,
+          telefone        = telefone,
+          dados_bancarios = dados_bancarios,
+          imposto         = imposto,
+        )
+
+        empresa.save()
+
+        return redirect("empresas")
+
+      elif opc == "edit":
+        
+        empresa = Empresa.objects.filter(codigo=pk).first()
+
+        empresa.nome            = nome
+        empresa.cnpj            = cnpj
+        empresa.endereco        = endereco
+        empresa.cidade          = cidade
+        empresa.estado          = estado
+        empresa.telefone        = telefone
+        empresa.dados_bancarios = dados_bancarios
+        empresa.imposto         = imposto
+        
+        empresa.save()
+
+        return redirect("empresas")
     else:
+      return render(
+          request,
+          "projects/empresas.html",
+          {"form": form, "message": form.errors, "type": "danger"},
+      )
+
+  else:
+
+    if opc == "insert":
+      form = NewEmpresaForm()
+      context = {"inclui": True, "form": form}
+      return render(request, "projects/empresas.html", context)
+
+    elif opc == "edit":
+      if pk:
+        empresa = Empresa.objects.filter(codigo=pk).first()
+        form = EmpresaForm(instance=empresa)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/empresas.html", context)
+
+    elif opc == "delete":
+      if pk:
+        empresa = Empresa.objects.filter(codigo=pk).first()
+        empresa.delete()
         empresas = Empresa.objects.all()
-        return render(request, "projects/empresas.html", {"empresa": empresas})
+        context = {"empresa": empresas}
+        return render(request, "projects/empresas.html", context)
 
-
+    else:
+      empresas = Empresa.objects.all()
+      context = {"empresa": empresas}
+      return render(request, "projects/empresas.html", context)
+           
 @login_required(login_url="/index")
 @nivel_access_required(view_name="niveis")
 def niveis(request, pk=False, opc=False):
@@ -296,28 +436,29 @@ def niveis(request, pk=False, opc=False):
   else:
 
     if opc == "insert":
-        nivel_form = NivelForm()
-        context = {"inclui": True, "form": nivel_form}
-        return render(request, "projects/niveis.html", context)
+      nivel_form = NivelForm()
+      context = {"inclui": True, "form": nivel_form}
+      return render(request, "projects/niveis.html", context)
 
     elif opc == "edit":
-        if pk:
-            nivel = Niveis.objects.filter(nivel_id=pk).first()
-            form = NivelForm(instance=nivel)
-            context = {"altera": True, "form": form}
-            return render(request, "projects/niveis.html", context)
+      if pk:
+        nivel = Niveis.objects.filter(nivel_id=pk).first()
+        form = NivelForm(instance=nivel)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/niveis.html", context)
 
     elif opc == "delete":
-        if pk:
-            nivel = Niveis.objects.filter(nivel_id=pk).first()
-            nivel.delete()
-            niveis = Niveis.objects.all()
-            context = {"niveis": niveis}
-            return render(request, "projects/niveis.html", context)
+      if pk:
+        nivel = Niveis.objects.filter(nivel_id=pk).first()
+        nivel.delete()
+        niveis = Niveis.objects.all()
+        context = {"niveis": niveis}
+        return render(request, "projects/niveis.html", context)
 
     else:
-        niveis = Niveis.objects.all()
-        return render(request, "projects/niveis.html", {"niveis": niveis})
+      niveis = Niveis.objects.all()
+      context = {"niveis": niveis}
+      return render(request, "projects/niveis.html", context)
 
 @login_required(login_url="/index")
 def clientes(request):
@@ -448,24 +589,15 @@ def cadastrar_usuario(request):
     form = NewUsuarioForm(request.POST)
     if form.is_valid():
 
-      firstname = form.cleaned_data["firstname"]
-      name      = form.cleaned_data["name"]
-      email     = form.cleaned_data["email"]
-      password  = make_password(form.cleaned_data["password"])
-      password2 = make_password(form.cleaned_data["password2"])
-      active    = form.cleaned_data["active"]
-      tipo      = form.cleaned_data["tipo"]
-      perfil    = form.cleaned_data["perfil"]
-
       user = Usuario(
-          firstname=firstname,
-          name=name,
-          email=email,
-          password=password,
-          password2=password2,
-          active=active,
-          tipo=tipo,
-          perfil=perfil,
+          firstname = form.cleaned_data["firstname"],
+          name      = form.cleaned_data["name"],
+          email     = form.cleaned_data["email"],
+          password  = make_password(form.cleaned_data["password"]),
+          password2 = make_password(form.cleaned_data["password2"]),
+          active    = form.cleaned_data["active"],
+          tipo      = form.cleaned_data["tipo"],
+          perfil    = form.cleaned_data["perfil"],
       )
       user.save()
 
@@ -488,92 +620,109 @@ def cadastrar_usuario(request):
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
 def cadastrar_servico(request):
-    if request.method == "POST":
-        form_servico = ServicosForm(request.POST)
-        if form_servico.is_valid():
-            form_servico.save()
-            return redirect("servicos")
-        else:
-            form_servico = ServicosForm()
-            return render(
-                request, "projects/cadastro_servicos.html", {"form": form_servico}
-            )
+  if request.method == "POST":
+    form_servico = ServicosForm(request.POST)
+    if form_servico.is_valid():
+      form_servico.save()
+      return redirect("servicos")
     else:
-        form_servico = ServicosForm()
-        return render(
-            request, "projects/cadastro_servicos.html", {"form": form_servico}
-        )
+      form_servico = ServicosForm()
+      return render(
+        request, "projects/cadastro_servicos.html", {"form": form_servico}
+      )
+  else:
+    form_servico = ServicosForm()
+    return render(
+      request, "projects/cadastro_servicos.html", {"form": form_servico}
+    )
 
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="empresas")
 def cadastrar_empresa(request):
-    if request.method == "POST":
-        form_empresa = EmpresaForm(request.POST)
-        if form_empresa.is_valid():
-            form_empresa.save()
-            return redirect("empresas")
-        else:
-            form_empresa = EmpresaForm()
-            return render(
-                request, "projects/cadastro_empresa.html", {"form": form_empresa}
-            )
+  
+  if request.method == "POST":
+    form = EmpresaForm(request.POST)
+    if form.is_valid():
+
+      empresa = Empresa(
+          codigo=form.cleaned_data["codigo"],
+          nome=form.cleaned_data["nome"],
+          endereco=form.cleaned_data["endereco"],
+          cidade=form.cleaned_data["cidade"],
+          estado=form.cleaned_data["estado"],
+          telefone=form.cleaned_data["telefone"],
+          dados_bancarios=form.cleaned_data["dados_bancarios"],
+          imposto=form.cleaned_data["imposto"],
+      )
+      empresa.save()
+
+      print(empresa)
+      return redirect("empresas")
     else:
-        form_empresa = EmpresaForm()
-        return render(request, "projects/cadastro_empresa.html", {"form": form_empresa})
+      print("erro!!!")
+      print(form.errors)
+      return render(
+          request,
+          "projects/cadastro_empresa.html",
+          {"form": form, "message": form.errors, "type": "danger"},
+      )
+  else:
+    form_empresa = EmpresaForm()
+    return render(request, "projects/cadastro_empresa.html", {"form": form_empresa})
 
 
 ############ DASHBOARD ############
 def retorna_total_usuarios(request):
-    # total = Usuario.objects.all().aggregate(Sum('total'))['total__sum']
-    total = Usuario.objects.all().count()
-    return JsonResponse({'total_usuarios': total})
+  # total = Usuario.objects.all().aggregate(Sum('total'))['total__sum']
+  total = Usuario.objects.all().count()
+  return JsonResponse({'total_usuarios': total})
 
 def retorna_total_projetos(request):
-    x = Projetos.objects.all()
+  x = Projetos.objects.all()
 
-    data = []
-    labels = []
-    mes = datetime.now().month + 1
-    ano = datetime.now().year
-    meses = (
-        [
-            "Jan",
-            "Fev",
-            "Mar",
-            "Abr",
-            "Mai",
-            "Jun",
-            "Jul",
-            "Ago",
-            "Set",
-            "Out",
-            "Nov",
-            "Dez",
-        ],
-    )
+  data = []
+  labels = []
+  mes = datetime.now().month + 1
+  ano = datetime.now().year
+  meses = (
+      [
+        "Jan",
+        "Fev",
+        "Mar",
+        "Abr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Out",
+        "Nov",
+        "Dez",
+      ],
+  )
 
-    for i in range(12):
-        mes -= 1
-        if mes == 0:
-            mes = 12
-            ano -= 1
+  for i in range(12):
+    mes -= 1
+    if mes == 0:
+        mes = 12
+        ano -= 1
 
-        y = sum([i.valor_total for i in x if i.data_inicio.month == mes and i.data_inicio.year == ano])
-        labels.append(meses[mes-1])
-        data.append(y)
+    y = sum([i.valor_total for i in x if i.data_inicio.month == mes and i.data_inicio.year == ano])
+    labels.append(meses[mes-1])
+    data.append(y)
 
-    data_json = {'data': data[::-1], 'labels': labels[::-1]}
+  data_json = {'data': data[::-1], 'labels': labels[::-1]}
 
-    return JsonResponse(data_json)
+  return JsonResponse(data_json)
 
 ############ functions ############
 def isInt(value):
   try:
-      int(value)
-      return True
+    int(value)
+    return True
   except:
-      return False
+    return False
 
 
 def SenhaAleatoria():
