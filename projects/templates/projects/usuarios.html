@@ -5,10 +5,21 @@
 {% block title %} Usuários {% endblock title %}
 {% block content %}
 		
-	{% if altera %}
+	{% if inclui %}
+
+	 	<form method="post">{% csrf_token %}
+      
+      {% crispy form %}
+      
+      {% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+
+    </form>
+
+	{% elif altera %}
 		
 		<form method="POST" >{% csrf_token %}
-			
 			{% crispy form %}
 			
 			{% if erro %}
@@ -65,7 +76,8 @@
 				
 			</tbody>
 		</table>
-		<a href="{% url 'cadastrar_usuario' %}" class="btn btn-primary mt-4">Cadastrar Usuário</a>
+		
+		<a href="{% url "usuarios" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Usuário</a>
 	{% endif %}
 
 <script>

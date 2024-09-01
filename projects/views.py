@@ -176,21 +176,47 @@ def home(request):
 @login_required(login_url="/index")
 @nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
+  
   if request.method == "POST":
+    
     form = UsuarioForm(request.POST)
     if form.is_valid():
       
-      usuario = Usuario.objects.filter(email=pk).first()
+      firstname = form.cleaned_data["firstname"]
+      name      = form.cleaned_data["name"]
+      active    = form.cleaned_data["active"]
+      tipo      = form.cleaned_data["tipo"]
+      perfil    = form.cleaned_data["perfil"]
+      usefilter = form.cleaned_data["usefilter"]
 
-      usuario.firstname = form.cleaned_data["firstname"]
-      usuario.name = form.cleaned_data["name"]
-      usuario.active = form.cleaned_data["active"]
-      usuario.tipo = form.cleaned_data["tipo"]
-      usuario.perfil = form.cleaned_data["perfil"]
-      usuario.usefilter = form.cleaned_data["usefilter"]
-      usuario.save()
+      if opc == "insert":
+        
+        user = Usuario(
+          firstname = firstname,
+          name      = name,
+          email     = form.cleaned_data["email"],
+          password  = make_password(form.cleaned_data["password"]),
+          password2 = make_password(form.cleaned_data["password2"]),
+          active    = active,
+          tipo      = tipo,
+          perfil    = perfil,
+          usefilter = usefilter,
+        )
+        user.save()
 
-      return redirect("usuarios")
+      elif opc == "edit":
+
+        usuario = Usuario.objects.filter(email=pk).first()
+
+        usuario.firstname = firstname
+        usuario.name      = name
+        usuario.active    = active
+        usuario.tipo      = tipo
+        usuario.perfil    = perfil
+        usuario.usefilter = usefilter
+        usuario.save()
+
+        return redirect("usuarios")
     else:
       erro = form.errors
       return render(
@@ -198,8 +224,18 @@ def usuarios(request, opc=False, pk=False):
           "projects/usuarios.html",
           {"altera": True, "form": form, "erro": erro},
       )
+
   else:
-    if opc == "edit":
+    if opc == "insert":
+      form = NewUsuarioForm()
+      context = {"inclui": True, "form": form}
+      return render(
+          request,
+          "projects/usuarios.html",
+          context,
+      )
+
+    elif opc == "edit":
       if pk:
         usuario = Usuario.objects.filter(email=pk).first()
         form = UsuarioForm(instance=usuario)
@@ -219,7 +255,6 @@ def usuarios(request, opc=False, pk=False):
 
     else:
       users = Usuario.objects.all().order_by("user_id")
-
       filter = UsuarioFilter(request.GET, queryset=users)
 
       context = {"usuarios": filter, "filter": filter}
@@ -581,42 +616,6 @@ def logs(request):
     return render(request, "projects/em_construcao.html", context)
 
 ## CADASTROS ##
-@login_required(login_url="/index")
-@nivel_access_required(view_name="usuarios")
-def cadastrar_usuario(request):
-
-  if request.method == "POST":
-    form = NewUsuarioForm(request.POST)
-    if form.is_valid():
-
-      user = Usuario(
-          firstname = form.cleaned_data["firstname"],
-          name      = form.cleaned_data["name"],
-          email     = form.cleaned_data["email"],
-          password  = make_password(form.cleaned_data["password"]),
-          password2 = make_password(form.cleaned_data["password2"]),
-          active    = form.cleaned_data["active"],
-          tipo      = form.cleaned_data["tipo"],
-          perfil    = form.cleaned_data["perfil"],
-      )
-      user.save()
-
-      return redirect("usuarios")
-
-    else:
-      return render(
-          request,
-          "projects/cadastro_usuario.html",
-          {"form": form, "message": form.errors, "type": "danger"},
-      )
-  else:
-    form_usuario = NewUsuarioForm()
-    return render(
-        request,
-        "projects/cadastro_usuario.html",
-        {"form": form_usuario, "message": "", "type": "success"},
-    )
-
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
 def cadastrar_servico(request):
