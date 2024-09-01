@@ -29,8 +29,7 @@ from .filters import UsuarioFilter, ProjetoFilter
 ## LOGIN ##
 def logar_usuario(request):
 
-    set_first(tipo="nivel")
-    set_first(tipo="usuario")
+    cargaInicial()
 
     if request.method == "POST":
         email = request.POST["email"]
@@ -501,12 +500,7 @@ def niveis(request, pk=False, opc=False):
 def clientes(request, opc=False, pk=False):
   
   if request.method == "POST":
-    
-    #if opc == "insert":
-    #  form = NewEmpresaForm(request.POST)
-    #elif opc == "edit":
-    #  form = EmpresaForm(request.POST)
-    
+   
     form = ClienteForm(request.POST)
 
     if form.is_valid():
@@ -805,53 +799,81 @@ def SenhaAleatoria():
   numero = random.randrange(100000, 999999)
   return str(numero)
 
-def set_first(tipo=False):
 
-  if tipo == "usuario":
-      
-      usuarios = Usuario.objects.all().count()
-      
-      if not usuarios:
-          user = Usuario(
-              firstname="admin",
-              name="Administrador",
-              email="rodrigo.cesar91@yahoo.com.br",
-              password=make_password("123"),
-              password2=make_password("123"),
-              active=True,
-              tipo="1",
-              resetpsw=0,
+def cargainicial():
+
+  usuarios = Usuario.objects.all().count()
+
+  if not usuarios:
+
+    users = [
+        {"nome": "rodrigo", "email": "rodrigo.cesar91@yahoo.com.br"},
+        {"nome":"velton", "email": "velton@alphaerp.com.br"},
+      ]
+
+    niveis = [
+        {"descricao": "Nivel 1"},
+        {"descricao": "Nivel 2"},
+      ]
+    
+    clientes = [
+        {"nome": "Cliente Teste 1", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
+        {"nome": "Outro Cliente de Teste", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
+      ]
+
+    servicos = [
+        {"codigo": "SV00001", "descricao": "Serviço de Teste 1", "tipo": "Pontual"},
+        {"codigo": "SV00002", "descricao": "Serviço 002", "tipo": "Sustentação"},
+        {"codigo": "SERV001", "descricao": "Serviço para Testar", "tipo": "Projeto"},
+      ]
+
+    for i in users:
+      user = Usuario(
+          firstname=i.nome,
+          name=i.nome,
+          email=i.email,
+          password=make_password("123"),
+          password2=make_password("123"),
+          active=True,
+          tipo="1",
+          resetpsw=0,
+      )
+      user.save()
+
+    for i in niveis:
+      nivel = Niveis(
+              descricao=i.descricao,
+              rotina="0",
+              inclusao="S",
+              edicao="S",
+              exclusao="S",
+              logs="S",
+              filtro="S",
+              active=True
           )
-          user.save()
-          
-          user = Usuario(
-              firstname="Velton",
-              name="Velton",
-              email="velton@alphaerp.com.br",
-              password=make_password("123"),
-              password2=make_password("123"),
-              active=True,
-              tipo="1",
-              resetpsw=0,
-          )
-          user.save()
+      nivel.save()
+    
+    for i in clientes:
+      cliente = Cliente(
+          nome               = i.nome,
+          cnpj               = i.cnpj,
+          estado             = i.estado,
+          email              = i.email,
+          usa_email_cat      = "S",
+          telefone           = i.telefone,
+          active             = True,
+        )
+      cliente.save()
+    
+    for i in servicos:
+      servico = Servicos(
+        codigo= i.codigo,
+        descricao= i.descricao,
+        versao="001", 
+        cliente="Cliente Teste 1",
+        tipo= i.tipo,
+      )
+      servico.save()
 
-  elif tipo == "nivel":
-      
-      niveis = Niveis.objects.all().count()
-
-      if not niveis:
-          nivel = Niveis(
-                  descricao="Full Access",
-                  rotina="0",
-                  inclusao="S",
-                  edicao="S",
-                  exclusao="S",
-                  logs="S",
-                  filtro="S",
-                  active=True
-              )
-
-          nivel.save()
   else:
-      return
+    return
