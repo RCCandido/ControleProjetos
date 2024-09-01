@@ -488,3 +488,42 @@ class NewProjetoForm(forms.ModelForm):
       )
     )
   
+class ClienteForm(forms.ModelForm):
+
+  class Meta:
+      model = Niveis
+      fields = "__all__"
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = ''
+    self.helper.layout = Layout(
+      Row(
+        Column('codigo', css_class='form-control-sm col-sm-4'),
+        Column('nome', css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('cnpj', css_class='form-control-sm col-sm-2'),
+        Column('edicao', css_class='form-control-sm col-sm-2'),
+        Column('exclusao', css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('logs',css_class='form-control-sm col-sm-4'),
+        Column('filtro',css_class='form-control-sm col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('active', css_class='form-control-sm'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2'),
+          HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+        )
+      )
+    )

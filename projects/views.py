@@ -504,12 +504,12 @@ def niveis(request, pk=False, opc=False):
 
 @login_required(login_url="/index")
 def clientes(request):
-    context = {
-        "type": "primary",
-        "title": "Clientes",
-        "message": "Página em construção.",
-    }
-    return render(request, "projects/em_construcao.html", context)
+  context = {
+      "type": "primary",
+      "title": "Clientes",
+      "message": "Página em construção.",
+  }
+  return render(request, "projects/em_construcao.html", context)
 
 @login_required(login_url="/index")
 def relatorios(request):
