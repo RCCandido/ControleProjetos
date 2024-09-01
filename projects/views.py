@@ -746,6 +746,18 @@ def set_first(tipo=False):
               resetpsw=0,
           )
           user.save()
+          
+          user = Usuario(
+              firstname="Velton",
+              name="Velton",
+              email="velton@alphaerp.com.br",
+              password=make_password("123"),
+              password2=make_password("123"),
+              active=True,
+              tipo="1",
+              resetpsw=0,
+          )
+          user.save()
 
   elif tipo == "nivel":
       
