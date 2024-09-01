@@ -20,10 +20,11 @@ from .forms import (
     ProjetoForm,
     NewProjetoForm,
     NewEmpresaForm,
+    Cliente,
+    ClienteForm,
 )
 from .decorators import nivel_access_required
 from .filters import UsuarioFilter, ProjetoFilter
-
 
 ## LOGIN ##
 def logar_usuario(request):
@@ -67,7 +68,6 @@ def logar_usuario(request):
         return render(
             request, "projects/index.html", {"error": error, "form_login": form_login}
         )
-
 
 def recuperar_senha(request):
     sucess = False
@@ -133,7 +133,6 @@ def recuperar_senha(request):
             "projects/recuperar_senha.html",
             {"sucess": False, "message": ""},
         )
-
 
 @login_required(login_url="/index")
 def deslogar_usuario(request):
@@ -260,7 +259,6 @@ def usuarios(request, opc=False, pk=False):
       context = {"usuarios": filter, "filter": filter}
       return render(request, "projects/usuarios.html", context)
 
-
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
 def servicos(request, opc=False, pk=False):
@@ -273,7 +271,6 @@ def servicos(request, opc=False, pk=False):
       descricao   = form.cleaned_data["descricao"]
       versao      = form.cleaned_data["versao"]
       cliente     = form.cleaned_data["cliente"]
-      nomeCliente = form.cleaned_data["nomeCliente"]
       tipo        = form.cleaned_data["tipo"]
       observacao  = form.cleaned_data["observacao"]
 
@@ -284,7 +281,6 @@ def servicos(request, opc=False, pk=False):
           descricao   = descricao,
           versao      = versao,
           cliente     = cliente,
-          nomeCliente = nomeCliente,
           tipo        = tipo,
           observacao  = observacao,
         )
@@ -300,7 +296,6 @@ def servicos(request, opc=False, pk=False):
         servico.descricao   = descricao
         servico.versao      = versao
         servico.cliente     = cliente
-        servico.nomeCliente = nomeCliente
         servico.tipo        = tipo
         servico.observacao  = observacao
        
@@ -503,13 +498,123 @@ def niveis(request, pk=False, opc=False):
       return render(request, "projects/niveis.html", context)
 
 @login_required(login_url="/index")
-def clientes(request):
-  context = {
-      "type": "primary",
-      "title": "Clientes",
-      "message": "Página em construção.",
-  }
-  return render(request, "projects/em_construcao.html", context)
+def clientes(request, opc=False, pk=False):
+  
+  if request.method == "POST":
+    
+    #if opc == "insert":
+    #  form = NewEmpresaForm(request.POST)
+    #elif opc == "edit":
+    #  form = EmpresaForm(request.POST)
+    
+    form = ClienteForm(request.POST)
+
+    if form.is_valid():
+
+      nome                = form.cleaned_data["nome"]
+      cnpj                = form.cleaned_data["cnpj"]
+      ie                  = form.cleaned_data["ie"]
+      endereco            = form.cleaned_data["endereco"]
+      complemento         = form.cleaned_data["complemento"]
+      bairro              = form.cleaned_data["bairro"]
+      cidade              = form.cleaned_data["cidade"]
+      estado              = form.cleaned_data["estado"]
+      email               = form.cleaned_data["email"]
+      email_cat           = form.cleaned_data["email_cat"]
+      usa_email_cat       = form.cleaned_data["usa_email_cat"]
+      telefone            = form.cleaned_data["telefone"]
+      contatos            = form.cleaned_data["contatos"]
+      dados_bancarios     = form.cleaned_data["dados_bancarios"]
+      observacoes         = form.cleaned_data["observacoes"]
+      valor_hora_atual    = form.cleaned_data["valor_hora_atual"]
+      perc_desconto_atual = form.cleaned_data["perc_desconto_atual"]
+      active              = form.cleaned_data["active"]
+
+      if opc == "insert":
+
+        cliente = Cliente(
+          nome               = nome,
+          cnpj               = cnpj,
+          ie                 = ie,
+          endereco           = endereco,
+          complemento        = complemento,
+          bairro             = bairro,
+          cidade             = cidade,
+          estado             = estado,
+          email              = email,
+          email_cat          = email_cat,
+          usa_email_cat      = usa_email_cat,
+          telefone           = telefone,
+          contatos           = contatos,
+          dados_bancarios    = dados_bancarios,
+          observacoes        = observacoes,
+          valor_hora_atual   = valor_hora_atual,
+          perc_desconto_atual= perc_desconto_atual,
+          active             = active,
+        )
+
+        cliente.save()
+
+        return redirect("clientes")
+
+      elif opc == "edit":
+        
+        cliente = Cliente.objects.filter(codigo=pk).first()
+
+        cliente.nome                = nome               
+        cliente.cnpj                = cnpj               
+        cliente.ie                  = ie                 
+        cliente.endereco            = endereco           
+        cliente.complemento         = complemento        
+        cliente.bairro              = bairro             
+        cliente.cidade              = cidade             
+        cliente.estado              = estado             
+        cliente.email               = email              
+        cliente.email_cat           = email_cat          
+        cliente.usa_email_cat       = usa_email_cat      
+        cliente.telefone            = telefone           
+        cliente.contatos            = contatos           
+        cliente.dados_bancarios     = dados_bancarios    
+        cliente.observacoes         = observacoes        
+        cliente.valor_hora_atual    = valor_hora_atual   
+        cliente.perc_desconto_atual = perc_desconto_atual
+        cliente.active              = active             
+        
+        cliente.save()
+
+        return redirect("clientes")
+    else:
+      return render(
+          request,
+          "projects/clientes.html",
+          {"form": form, "message": form.errors, "type": "danger"},
+      )
+  else:
+
+    if opc == "insert":
+      form = ClienteForm()
+      context = {"inclui": True, "form": form}
+      return render(request, "projects/clientes.html", context)
+
+    elif opc == "edit":
+      if pk:
+        cliente = Cliente.objects.filter(codigo=pk).first()
+        form = ClienteForm(instance=cliente)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/clientes.html", context)
+
+    elif opc == "delete":
+      if pk:
+        cliente = Cliente.objects.filter(codigo=pk).first()
+        cliente.delete()
+        clientes = Cliente.objects.all()
+        context = {"cliente": clientes}
+        return render(request, "projects/clientes.html", context)
+
+    else:
+      clientes = Cliente.objects.all()
+      context = {"clientes": clientes}
+      return render(request, "projects/clientes.html", context)
 
 @login_required(login_url="/index")
 def relatorios(request):

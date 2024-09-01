@@ -162,6 +162,44 @@ class Empresa(models.Model):
     verbose_name_plural = "Empresas"
     ordering = ('codigo',)
 
+class Cliente(models.Model):
+
+  def getTipo():
+    TIPO = (
+      ('F', 'Pessoa Fisica'),
+      ('J', 'Pessoa Juridica'),
+    )
+    return TIPO
+  
+  codigo = models.AutoField(primary_key=True)
+  nome = models.CharField(verbose_name="Nome", null=False, blank=False, max_length=200)
+  cnpj = models.CharField(verbose_name="CNPJ", max_length=14)
+  ie = models.CharField(verbose_name="IE", max_length=14, blank=True)
+  endereco = models.CharField(verbose_name="Endereco", max_length=150, blank=True)
+  complemento = models.CharField(verbose_name="Complemento", max_length=50, blank=True)
+  bairro = models.CharField(verbose_name="Bairro", max_length=50, blank=True)
+  cidade = models.CharField(verbose_name="Cidade", max_length=50, blank=True)
+  estado = models.CharField(verbose_name="Estado", max_length=2, choices=Empresa.getUF(), default="")
+  email = models.CharField(verbose_name="E-mail", max_length=100, blank=False, default="")
+  email_cat = models.CharField(verbose_name="E-mail Cat", max_length=100, default="")
+  usa_email_cat = models.CharField(verbose_name="Recebe E-mail Cat?", max_length=1, choices=Niveis.getSimNao(), default="")
+  telefone = models.CharField(verbose_name="Telefone", max_length=20, blank=False,default="")
+  contatos = models.TextField(verbose_name="Contatos", null=True, blank=True, default="")
+  dados_bancarios = models.TextField(verbose_name="Informações Bancárias", null=True, blank=True, default="")
+  observacoes = models.TextField(verbose_name="Observações", null=True, blank=True, default="")
+  valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default="")
+  perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default="")
+  active = models.BooleanField(default=True, verbose_name="Cliente ativo ?")
+
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  class Meta:
+    verbose_name_plural = "Clientes"
+
+  def __str__(self):
+      return self.nome
+
 class Servicos(models.Model):
   
   def getTipos():
@@ -177,8 +215,14 @@ class Servicos(models.Model):
   codigo = models.CharField(verbose_name="Código", max_length=6, null=False, blank=False)
   descricao = models.CharField(verbose_name="Descrição", max_length=80, null=False, blank=False)
   versao = models.CharField(verbose_name="Versão", max_length=3, null=False, blank=False)
-  cliente = models.CharField(verbose_name="Cliente", max_length=6, null=False, blank=False)
-  nomeCliente = models.CharField(verbose_name="Nome", max_length=80, null=False, blank=False)
+  
+  cliente = models.ForeignKey(
+    Cliente,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+  )
+
   tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=getTipos())
   observacao = models.TextField(verbose_name="Observações")
   created_at = models.DateTimeField(auto_now=True)
@@ -222,7 +266,14 @@ class Projetos(models.Model):
   )
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
-  cliente = models.CharField(verbose_name="Cliente", max_length=50)
+  
+  cliente = models.ForeignKey(
+    Cliente,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+  )
+
   responsavel = models.CharField(verbose_name="Responsável", max_length=50)
   arquiteto = models.CharField(verbose_name="Arquiteto", max_length=50)
   data_inicio = models.DateField(
@@ -252,41 +303,6 @@ class Projetos(models.Model):
   def __str__(self):
       return self.name
 
-class Cliente(models.Model):
 
-  def getTipo():
-    TIPO = (
-      ('F', 'Pessoa Fisica'),
-      ('J', 'Pessoa Juridica'),
-    )
-    return TIPO
-  
-  codigo = models.AutoField(primary_key=True)
-  nome = models.CharField(verbose_name="Descrição", null=False, blank=False, max_length=200)
-  cnpj = models.CharField(verbose_name="CNPJ", max_length=14, choices=getTipo())
-  ie = models.CharField(verbose_name="IE", max_length=14, blank=True)
-  endereco = models.CharField(verbose_name="Endereco", max_length=150, blank=True)
-  complemento = models.CharField(verbose_name="Complemento", max_length=50, blank=True)
-  bairro = models.CharField(verbose_name="Bairro", max_length=50, blank=True)
-  cidade = models.CharField(verbose_name="Cidade", max_length=50, blank=True)
-  estado = models.CharField(verbose_name="Estado", max_length=2, choices=Empresa.getUF(), default="")
-  email = models.CharField(verbose_name="E-mail", max_length=100, blank=False, default="")
-  email_cat = models.CharField(verbose_name="E-mail Cat", max_length=100, blank=False, default="")
-  usa_email_cat = models.CharField(verbose_name="Recebe E-mail Cat?", max_length=1, choices=Niveis.getSimNao(), default="")
-  telefone = models.CharField(verbose_name="Telefone", max_length=20, blank=False,default="")
-  contatos = models.TextField(verbose_name="Contatos", null=True, blank=True, default="")
-  dados_bancarios = models.TextField(verbose_name="Informações Bancárias", null=True, blank=True, default="")
-  observacoes = models.TextField(verbose_name="Observações", null=True, blank=True, default="")
-  valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default="")
-  perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default="")
-
-  created_at = models.DateTimeField(auto_now=True)
-  updated_at = models.DateTimeField(auto_now=True)
-
-  class Meta:
-    verbose_name_plural = "Clientes"
-
-  def __str__(self):
-      return self.name
   
   

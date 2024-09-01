@@ -201,7 +201,6 @@ class EmpresaForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
   
-
   class Meta:
     model = Empresa
     fields = "__all__"
@@ -247,11 +246,20 @@ class NewEmpresaForm(EmpresaForm):
 
 class ServicosForm(forms.ModelForm):
 
+  cliente = forms.ModelChoiceField(
+    queryset=Cliente.objects.all().filter(active="1"),
+    to_field_name='codigo',
+    required=False,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
   tipo = forms.ChoiceField(
     choices=Servicos.getTipos(),
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
+
+  observacao = forms.CharField(required=False, label="Observações", widget=forms.Textarea(attrs={"rows":"5"}))
 
   class Meta:
       model = Servicos
@@ -269,8 +277,7 @@ class ServicosForm(forms.ModelForm):
         css_class='form-row d-flex',
       ),
       Row(
-        Column('cliente', css_class='form-control-sm col-sm-2'),
-        Column('nomeCliente', css_class='form-control-sm col-sm-6'),
+        Column('cliente', css_class='form-control-sm col-sm-6'),
         Column('tipo',css_class='form-control-sm col-sm-4'),
         css_class='form-row d-flex',
       ),
@@ -438,7 +445,7 @@ class NewProjetoForm(forms.ModelForm):
   
   cliente = forms.ModelChoiceField(
     queryset=Cliente.objects.all(),
-    to_field_name='name',
+    to_field_name='nome',
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
@@ -490,9 +497,57 @@ class NewProjetoForm(forms.ModelForm):
   
 class ClienteForm(forms.ModelForm):
 
+  cnpj = forms.CharField(
+    label='CNPJ',
+    required=True,
+    widget = forms.TextInput(
+      attrs={
+        "placeholder": "999999999999",
+      })
+  )
+
+  estado = forms.ChoiceField(
+    choices=Empresa.getUF(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+ 
+  
+  usa_email_cat = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  email_cat = forms.CharField(label='E-mail CAT', required=False)
+  usa_email_cat = forms.ChoiceField(
+    choices=Niveis.getSimNao(),
+    required=True,
+    label='CAT por e-mail?',
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5", "placeholder":"Dados para movimentações financeiras.."}))
+  observacoes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
+  contatos = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
+
+  valor_hora_atual = forms.DecimalField(
+    max_digits=4, 
+    decimal_places=2, 
+    required=False,
+    label="Valor Hora",
+  )
+  
+  perc_desconto_atual = forms.DecimalField(
+    max_digits=4, 
+    decimal_places=2, 
+    required=False,
+    label="% Desconto",
+  )
+
   class Meta:
-      model = Niveis
-      fields = "__all__"
+    model = Cliente
+    fields = "__all__"
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -500,29 +555,45 @@ class ClienteForm(forms.ModelForm):
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-        Column('codigo', css_class='form-control-sm col-sm-4'),
-        Column('nome', css_class='form-control-sm col-sm-2'),
+        Column('nome', css_class='form-control-sm col-sm-8'),
+        Column('cnpj', css_class='form-control-sm col-sm-4'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('cnpj', css_class='form-control-sm col-sm-2'),
-        Column('edicao', css_class='form-control-sm col-sm-2'),
-        Column('exclusao', css_class='form-control-sm col-sm-2'),
+        Column('ie', css_class='form-control-sm col-sm-2'),
+        Column('telefone', css_class='form-control-sm col-sm-2'),
+        Column('email', css_class='form-control-sm col-sm-4'),
+        Column('active', css_class='form-control-sm my-4'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('logs',css_class='form-control-sm col-sm-4'),
-        Column('filtro',css_class='form-control-sm col-sm-4'),
+        Column('usa_email_cat', css_class='form-control-sm col-sm-2'),
+        Column('email_cat', css_class='form-control-sm col-sm-4'),
+        Column('bairro',css_class='form-control-sm col-sm-2'),
+        Column('cidade',css_class='form-control-sm col-sm-2'),
+        Column('estado', css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('active', css_class='form-control-sm'),
+        Column('endereco', css_class='form-control-sm col-sm-6'),
+        Column('complemento',css_class='form-control-sm col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('valor_hora_atual', css_class='form-control-sm col-sm-2'),
+        Column('perc_desconto_atual',css_class='form-control-sm col-sm-2'),
+        Column('dados_bancarios',css_class='form-control-sm col-sm-5'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('contatos', css_class='form-control-sm col-sm-5'),
+        Column('observacoes',css_class='form-control-sm col-sm-5'),
         css_class='form-row d-flex',
       ),
       Div(
         Row(
-          Submit('submit', 'Confirmar', css_class='mx-2'),
-          HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
+          Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
+          HTML('<a class="btn btn-danger mt-2" href="{% url "clientes" %}">Cancelar</a>'),
           css_class='form-row d-flex',
         )
       )

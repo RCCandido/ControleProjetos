@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block page_title %}Clientes{% endblock page_title %}
+{% block title %} Clientes {% endblock title %}
+{% block content %}
+
+	{% if altera %}
+
+		<form method="POST">{% csrf_token %}
+			{% crispy form %}
+			
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+			
+		</form>
+		
+	{% elif inclui %}
+		
+		<form method="POST" id="{{ cliente.helper.codigo }}">{% csrf_token %}
+			{% crispy form %}
+
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+
+		</form>
+
+	{% else %}
+
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Código</th>
+					<th>Nome</th>
+					<th>CNPJ</th>
+					<th>Ativo</th>
+					<th>Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for c in clientes %}
+				<tr>
+					<td>{{ c.codigo }}</td>
+					<td>{{ c.nome }}</td>
+					<td>{{ c.cnpj }}</td>
+					<td>{{ c.active }}</td>
+					<td>
+						<a href="{% url "clientes" opc='edit' pk=c.codigo %}" class="btn btn-sm btn-secondary">Editar</a>
+						<a href="{% url "clientes" opc='delete' pk=c.codigo	 %}" class="btn btn-sm btn-danger">Excluir</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+		<a href="{% url "clientes" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Cliente</a>
+	{% endif %}
+			
+{% endblock content %}
