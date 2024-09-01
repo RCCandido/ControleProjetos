@@ -8,68 +8,622 @@
 {% block title %} Dashboard {% endblock title %}
 {% block content %}
 
-<div class="container">
-	
-	<div class="row">
-		<div class="col-md informacoes_basicas">
-			<a class="link-opacity-40 text-decoration-none text-light" href="{% url 'usuarios' %}">
-				<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-people-fill"
-					viewBox="0 0 16 16">
-					<path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
-				</svg>
-				
-				<span id="total_usuarios" class="p-2"></span>
-				<span>Usuários</span>
-			</a>
+	<div
+		class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
+	>
+		<div>
+			<h6 class="op-7 mb-2">Free Bootstrap 5 Admin Dashboard</h6>
 		</div>
-
-		<div class="col-md informacoes_basicas">
-			<a class="link-opacity-40 text-decoration-none text-light" href="{% url 'projetos' %}">
-				<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-rocket" viewBox="0 0 16 16">
-					<path d="M8 8c.828 0 1.5-.895 1.5-2S8.828 4 8 4s-1.5.895-1.5 2S7.172 8 8 8"/>
-					<path d="M11.953 8.81c-.195-3.388-.968-5.507-1.777-6.819C9.707 1.233 9.23.751 8.857.454a3.5 3.5 0 0 0-.463-.315A2 2 0 0 0 8.25.064.55.55 0 0 0 8 0a.55.55 0 0 0-.266.073 2 2 0 0 0-.142.08 4 4 0 0 0-.459.33c-.37.308-.844.803-1.31 1.57-.805 1.322-1.577 3.433-1.774 6.756l-1.497 1.826-.004.005A2.5 2.5 0 0 0 2 12.202V15.5a.5.5 0 0 0 .9.3l1.125-1.5c.166-.222.42-.4.752-.57.214-.108.414-.192.625-.281l.198-.084c.7.428 1.55.635 2.4.635s1.7-.207 2.4-.635q.1.044.196.083c.213.09.413.174.627.282.332.17.586.348.752.57l1.125 1.5a.5.5 0 0 0 .9-.3v-3.298a2.5 2.5 0 0 0-.548-1.562zM12 10.445v.055c0 .866-.284 1.585-.75 2.14.146.064.292.13.425.199.39.197.8.46 1.1.86L13 14v-1.798a1.5 1.5 0 0 0-.327-.935zM4.75 12.64C4.284 12.085 4 11.366 4 10.5v-.054l-.673.82a1.5 1.5 0 0 0-.327.936V14l.225-.3c.3-.4.71-.664 1.1-.861.133-.068.279-.135.425-.199M8.009 1.073q.096.06.226.163c.284.226.683.621 1.09 1.28C10.137 3.836 11 6.237 11 10.5c0 .858-.374 1.48-.943 1.893C9.517 12.786 8.781 13 8 13s-1.517-.214-2.057-.607C5.373 11.979 5 11.358 5 10.5c0-4.182.86-6.586 1.677-7.928.409-.67.81-1.082 1.096-1.32q.136-.113.236-.18Z"/>
-					<path d="M9.479 14.361c-.48.093-.98.139-1.479.139s-.999-.046-1.479-.139L7.6 15.8a.5.5 0 0 0 .8 0z"/>
-				</svg>
-				<span id="faturamento_total" class="p-2">10</span>
-				<span>Projetos</span>
-			</a>
-		</div>
-
-		<div class="col-md informacoes_basicas">
-			<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-speedometer2" viewBox="0 0 16 16">
-				<path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.39.39 0 0 0-.029-.518z"/>
-				<path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3"/>
-			</svg>
-			<span id="faturamento_total" class="p-2">285</span>
-			<span>Horas</span>
-		</div>
-		
-		<div class="col-md informacoes_basicas">
-			<a class="link-opacity-40 text-decoration-none text-light" href="{% url 'clientes' %}">
-				<svg class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
-					<path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
-					<path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
-				</svg>
-				<span id="faturamento_total" class="p-2">26</span>
-				<span>Clientes</span>
-			</a>
+		<div class="ms-md-auto py-2 py-md-0">
+			<a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
+			<a href="#" class="btn btn-primary btn-round">Add Customer</a>
 		</div>
 	</div>
-
 	<div class="row">
-		<div class="col-md">
-			<br>
-			<h3>Projetos</h3>
-			<canvas id="projetos_total_chart" width="50" height="25"></canvas>
+		<div class="col-sm-6 col-md-3">
+			<div class="card card-stats card-round">
+				<div class="card-body">
+					<div class="row align-items-center">
+						<div class="col-icon">
+							<div
+								class="icon-big text-center icon-primary bubble-shadow-small"
+							>
+								<i class="fas fa-users"></i>
+							</div>
+						</div>
+						<div class="col col-stats ms-3 ms-sm-0">
+							<div class="numbers">
+								<p class="card-category">Visitors</p>
+								<h4 class="card-title">1,294</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-
-		<div class="col-md">
-			<br>
-			<h3>Despesas</h3>
-			<canvas id="faturamento_total" width="250" height="200"></canvas>
+		<div class="col-sm-6 col-md-3">
+			<div class="card card-stats card-round">
+				<div class="card-body">
+					<div class="row align-items-center">
+						<div class="col-icon">
+							<div
+								class="icon-big text-center icon-info bubble-shadow-small"
+							>
+								<i class="fas fa-user-check"></i>
+							</div>
+						</div>
+						<div class="col col-stats ms-3 ms-sm-0">
+							<div class="numbers">
+								<p class="card-category">Subscribers</p>
+								<h4 class="card-title">1303</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-md-3">
+			<div class="card card-stats card-round">
+				<div class="card-body">
+					<div class="row align-items-center">
+						<div class="col-icon">
+							<div
+								class="icon-big text-center icon-success bubble-shadow-small"
+							>
+								<i class="fas fa-luggage-cart"></i>
+							</div>
+						</div>
+						<div class="col col-stats ms-3 ms-sm-0">
+							<div class="numbers">
+								<p class="card-category">Sales</p>
+								<h4 class="card-title">$ 1,345</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-md-3">
+			<div class="card card-stats card-round">
+				<div class="card-body">
+					<div class="row align-items-center">
+						<div class="col-icon">
+							<div
+								class="icon-big text-center icon-secondary bubble-shadow-small"
+							>
+								<i class="far fa-check-circle"></i>
+							</div>
+						</div>
+						<div class="col col-stats ms-3 ms-sm-0">
+							<div class="numbers">
+								<p class="card-category">Order</p>
+								<h4 class="card-title">576</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-</div>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="card card-round">
+				<div class="card-header">
+					<div class="card-head-row">
+						<div class="card-title">User Statistics</div>
+						<div class="card-tools">
+							<a
+								href="#"
+								class="btn btn-label-success btn-round btn-sm me-2"
+							>
+								<span class="btn-label">
+									<i class="fa fa-pencil"></i>
+								</span>
+								Export
+							</a>
+							<a href="#" class="btn btn-label-info btn-round btn-sm">
+								<span class="btn-label">
+									<i class="fa fa-print"></i>
+								</span>
+								Print
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="chart-container" style="min-height: 375px">
+						<canvas id="statisticsChart"></canvas>
+					</div>
+					<div id="myChartLegend"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="card card-primary card-round">
+				<div class="card-header">
+					<div class="card-head-row">
+						<div class="card-title">Daily Sales</div>
+						<div class="card-tools">
+							<div class="dropdown">
+								<button
+									class="btn btn-sm btn-label-light dropdown-toggle"
+									type="button"
+									id="dropdownMenuButton"
+									data-bs-toggle="dropdown"
+									aria-haspopup="true"
+									aria-expanded="false"
+								>
+									Export
+								</button>
+								<div
+									class="dropdown-menu"
+									aria-labelledby="dropdownMenuButton"
+								>
+									<a class="dropdown-item" href="#">Action</a>
+									<a class="dropdown-item" href="#">Another action</a>
+									<a class="dropdown-item" href="#"
+										>Something else here</a
+									>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-category">March 25 - April 02</div>
+				</div>
+				<div class="card-body pb-0">
+					<div class="mb-4 mt-2">
+						<h1>$4,578.58</h1>
+					</div>
+					<div class="pull-in">
+						<canvas id="dailySalesChart"></canvas>
+					</div>
+				</div>
+			</div>
+			<div class="card card-round">
+				<div class="card-body pb-0">
+					<div class="h1 fw-bold float-end text-primary">+5%</div>
+					<h2 class="mb-2">17</h2>
+					<p class="text-muted">Users online</p>
+					<div class="pull-in sparkline-fix">
+						<div id="lineChart"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card card-round">
+				<div class="card-header">
+					<div class="card-head-row card-tools-still-right">
+						<h4 class="card-title">Users Geolocation</h4>
+						<div class="card-tools">
+							<button
+								class="btn btn-icon btn-link btn-primary btn-xs"
+							>
+								<span class="fa fa-angle-down"></span>
+							</button>
+							<button
+								class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"
+							>
+								<span class="fa fa-sync-alt"></span>
+							</button>
+							<button
+								class="btn btn-icon btn-link btn-primary btn-xs"
+							>
+								<span class="fa fa-times"></span>
+							</button>
+						</div>
+					</div>
+					<p class="card-category">
+						Map of the distribution of users around the world
+					</p>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="table-responsive table-hover table-sales">
+								<table class="table">
+									<tbody>
+										<tr>
+											<td>
+												<div class="flag">
+													<img
+														src="assets/img/flags/id.png"
+														alt="indonesia"
+													/>
+												</div>
+											</td>
+											<td>Indonesia</td>
+											<td class="text-end">2.320</td>
+											<td class="text-end">42.18%</td>
+										</tr>
+										<tr>
+											<td>
+												<div class="flag">
+													<img
+														src="assets/img/flags/us.png"
+														alt="united states"
+													/>
+												</div>
+											</td>
+											<td>USA</td>
+											<td class="text-end">240</td>
+											<td class="text-end">4.36%</td>
+										</tr>
+										<tr>
+											<td>
+												<div class="flag">
+													<img
+														src="assets/img/flags/au.png"
+														alt="australia"
+													/>
+												</div>
+											</td>
+											<td>Australia</td>
+											<td class="text-end">119</td>
+											<td class="text-end">2.16%</td>
+										</tr>
+										<tr>
+											<td>
+												<div class="flag">
+													<img
+														src="assets/img/flags/ru.png"
+														alt="russia"
+													/>
+												</div>
+											</td>
+											<td>Russia</td>
+											<td class="text-end">1.081</td>
+											<td class="text-end">19.65%</td>
+										</tr>
+										<tr>
+											<td>
+												<div class="flag">
+													<img
+														src="assets/img/flags/cn.png"
+														alt="china"
+													/>
+												</div>
+											</td>
+											<td>China</td>
+											<td class="text-end">1.100</td>
+											<td class="text-end">20%</td>
+										</tr>
+										<tr>
+											<td>
+												<div class="flag">
+													<img
+														src="assets/img/flags/br.png"
+														alt="brazil"
+													/>
+												</div>
+											</td>
+											<td>Brasil</td>
+											<td class="text-end">640</td>
+											<td class="text-end">11.63%</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="mapcontainer">
+								<div
+									id="world-map"
+									class="w-100"
+									style="height: 300px"
+								></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<div class="card card-round">
+				<div class="card-body">
+					<div class="card-head-row card-tools-still-right">
+						<div class="card-title">New Customers</div>
+						<div class="card-tools">
+							<div class="dropdown">
+								<button
+									class="btn btn-icon btn-clean me-0"
+									type="button"
+									id="dropdownMenuButton"
+									data-bs-toggle="dropdown"
+									aria-haspopup="true"
+									aria-expanded="false"
+								>
+									<i class="fas fa-ellipsis-h"></i>
+								</button>
+								<div
+									class="dropdown-menu"
+									aria-labelledby="dropdownMenuButton"
+								>
+									<a class="dropdown-item" href="#">Action</a>
+									<a class="dropdown-item" href="#">Another action</a>
+									<a class="dropdown-item" href="#"
+										>Something else here</a
+									>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-list py-4">
+						<div class="item-list">
+							<div class="avatar">
+								<img
+									src="assets/img/jm_denis.jpg"
+									alt="..."
+									class="avatar-img rounded-circle"
+								/>
+							</div>
+							<div class="info-user ms-3">
+								<div class="username">Jimmy Denis</div>
+								<div class="status">Graphic Designer</div>
+							</div>
+							<button class="btn btn-icon btn-link op-8 me-1">
+								<i class="far fa-envelope"></i>
+							</button>
+							<button class="btn btn-icon btn-link btn-danger op-8">
+								<i class="fas fa-ban"></i>
+							</button>
+						</div>
+						<div class="item-list">
+							<div class="avatar">
+								<span
+									class="avatar-title rounded-circle border border-white"
+									>CF</span
+								>
+							</div>
+							<div class="info-user ms-3">
+								<div class="username">Chandra Felix</div>
+								<div class="status">Sales Promotion</div>
+							</div>
+							<button class="btn btn-icon btn-link op-8 me-1">
+								<i class="far fa-envelope"></i>
+							</button>
+							<button class="btn btn-icon btn-link btn-danger op-8">
+								<i class="fas fa-ban"></i>
+							</button>
+						</div>
+						<div class="item-list">
+							<div class="avatar">
+								<img
+									src="assets/img/talha.jpg"
+									alt="..."
+									class="avatar-img rounded-circle"
+								/>
+							</div>
+							<div class="info-user ms-3">
+								<div class="username">Talha</div>
+								<div class="status">Front End Designer</div>
+							</div>
+							<button class="btn btn-icon btn-link op-8 me-1">
+								<i class="far fa-envelope"></i>
+							</button>
+							<button class="btn btn-icon btn-link btn-danger op-8">
+								<i class="fas fa-ban"></i>
+							</button>
+						</div>
+						<div class="item-list">
+							<div class="avatar">
+								<img
+									src="assets/img/chadengle.jpg"
+									alt="..."
+									class="avatar-img rounded-circle"
+								/>
+							</div>
+							<div class="info-user ms-3">
+								<div class="username">Chad</div>
+								<div class="status">CEO Zeleaf</div>
+							</div>
+							<button class="btn btn-icon btn-link op-8 me-1">
+								<i class="far fa-envelope"></i>
+							</button>
+							<button class="btn btn-icon btn-link btn-danger op-8">
+								<i class="fas fa-ban"></i>
+							</button>
+						</div>
+						<div class="item-list">
+							<div class="avatar">
+								<span
+									class="avatar-title rounded-circle border border-white bg-primary"
+									>H</span
+								>
+							</div>
+							<div class="info-user ms-3">
+								<div class="username">Hizrian</div>
+								<div class="status">Web Designer</div>
+							</div>
+							<button class="btn btn-icon btn-link op-8 me-1">
+								<i class="far fa-envelope"></i>
+							</button>
+							<button class="btn btn-icon btn-link btn-danger op-8">
+								<i class="fas fa-ban"></i>
+							</button>
+						</div>
+						<div class="item-list">
+							<div class="avatar">
+								<span
+									class="avatar-title rounded-circle border border-white bg-secondary"
+									>F</span
+								>
+							</div>
+							<div class="info-user ms-3">
+								<div class="username">Farrah</div>
+								<div class="status">Marketing</div>
+							</div>
+							<button class="btn btn-icon btn-link op-8 me-1">
+								<i class="far fa-envelope"></i>
+							</button>
+							<button class="btn btn-icon btn-link btn-danger op-8">
+								<i class="fas fa-ban"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="card card-round">
+				<div class="card-header">
+					<div class="card-head-row card-tools-still-right">
+						<div class="card-title">Transaction History</div>
+						<div class="card-tools">
+							<div class="dropdown">
+								<button
+									class="btn btn-icon btn-clean me-0"
+									type="button"
+									id="dropdownMenuButton"
+									data-bs-toggle="dropdown"
+									aria-haspopup="true"
+									aria-expanded="false"
+								>
+									<i class="fas fa-ellipsis-h"></i>
+								</button>
+								<div
+									class="dropdown-menu"
+									aria-labelledby="dropdownMenuButton"
+								>
+									<a class="dropdown-item" href="#">Action</a>
+									<a class="dropdown-item" href="#">Another action</a>
+									<a class="dropdown-item" href="#"
+										>Something else here</a
+									>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<!-- Projects table -->
+						<table class="table align-items-center mb-0">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">Payment Number</th>
+									<th scope="col" class="text-end">Date & Time</th>
+									<th scope="col" class="text-end">Amount</th>
+									<th scope="col" class="text-end">Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<button
+											class="btn btn-icon btn-round btn-success btn-sm me-2"
+										>
+											<i class="fa fa-check"></i>
+										</button>
+										Payment from #10231
+									</th>
+									<td class="text-end">Mar 19, 2020, 2.45pm</td>
+									<td class="text-end">$250.00</td>
+									<td class="text-end">
+										<span class="badge badge-success">Completed</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'js/script.js' %}"></script>

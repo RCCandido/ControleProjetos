@@ -7,22 +7,18 @@
 		
 	{% if altera %}
 		
-		<div class="row">
-			<div class="col-xs-4 mb-2 mt-2 p-2">
-				<form method="POST" >{% csrf_token %}
-					
-					{% crispy form %}
-					
-					{% if erro %}
-						<div class="form-group">
-							<p class="text danger">{{ erro }}</p>
-						</div>
-					{% endif %}
+		<form method="POST" >{% csrf_token %}
+			
+			{% crispy form %}
+			
+			{% if erro %}
+				<div class="form-group">
+					<p class="text danger">{{ erro }}</p>
+				</div>
+			{% endif %}
 
-				</form>
-			</div>
-		</div>
-		
+		</form>
+
 	{% else %}
 		
 		{% if user.usefilter %}	
