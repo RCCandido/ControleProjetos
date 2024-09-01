@@ -339,9 +339,15 @@ def servicos(request, opc=False, pk=False):
 def empresas(request, pk=False, opc=False):
   
   if request.method == "POST":
-    form = EmpresaForm(request.POST)
+    
+    if opc == "insert":
+      form = NewEmpresaForm(request.POST)
+    elif opc == "edit":
+      form = EmpresaForm(request.POST)
+
     if form.is_valid():
-      
+
+      codigo      = form.cleaned_data["codigo"]
       nome        = form.cleaned_data["nome"]
       cnpj        = form.cleaned_data["cnpj"]
       endereco    = form.cleaned_data["endereco"]
@@ -350,10 +356,11 @@ def empresas(request, pk=False, opc=False):
       telefone    = form.cleaned_data["telefone"]
       dados_bancarios = form.cleaned_data["dados_bancarios"]
       imposto     = form.cleaned_data["imposto"]
-      
+
       if opc == "insert":
 
         empresa = Empresa(
+          codigo          = codigo,
           nome            = nome,
           cnpj            = cnpj,
           endereco        = endereco,
@@ -390,7 +397,6 @@ def empresas(request, pk=False, opc=False):
           "projects/empresas.html",
           {"form": form, "message": form.errors, "type": "danger"},
       )
-
   else:
 
     if opc == "insert":
@@ -423,6 +429,7 @@ def empresas(request, pk=False, opc=False):
 def niveis(request, pk=False, opc=False):
 
   if request.method == "POST":
+    
     nivel_form = NivelForm(request.POST)
     if nivel_form.is_valid():
 
@@ -634,41 +641,6 @@ def cadastrar_servico(request):
     return render(
       request, "projects/cadastro_servicos.html", {"form": form_servico}
     )
-
-
-@login_required(login_url="/index")
-@nivel_access_required(view_name="empresas")
-def cadastrar_empresa(request):
-  
-  if request.method == "POST":
-    form = EmpresaForm(request.POST)
-    if form.is_valid():
-
-      empresa = Empresa(
-          codigo=form.cleaned_data["codigo"],
-          nome=form.cleaned_data["nome"],
-          endereco=form.cleaned_data["endereco"],
-          cidade=form.cleaned_data["cidade"],
-          estado=form.cleaned_data["estado"],
-          telefone=form.cleaned_data["telefone"],
-          dados_bancarios=form.cleaned_data["dados_bancarios"],
-          imposto=form.cleaned_data["imposto"],
-      )
-      empresa.save()
-
-      print(empresa)
-      return redirect("empresas")
-    else:
-      print("erro!!!")
-      print(form.errors)
-      return render(
-          request,
-          "projects/cadastro_empresa.html",
-          {"form": form, "message": form.errors, "type": "danger"},
-      )
-  else:
-    form_empresa = EmpresaForm()
-    return render(request, "projects/cadastro_empresa.html", {"form": form_empresa})
 
 
 ############ DASHBOARD ############

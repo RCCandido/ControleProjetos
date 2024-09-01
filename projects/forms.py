@@ -194,6 +194,14 @@ class EmpresaForm(forms.ModelForm):
   codigo = forms.CharField(disabled=True, required=False)
   dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
   endereco = forms.CharField(required=False)
+  
+  estado = forms.ChoiceField(
+    choices=Empresa.getUF(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+
   class Meta:
     model = Empresa
     fields = "__all__"

@@ -55,7 +55,7 @@ class Niveis(models.Model):
 
   class Meta:
     verbose_name_plural = "Niveis"
-    ordering = ('descricao',)
+    ordering = ('nivel_id','descricao',)
 
   def __str__(self):
     return self.descricao
@@ -106,6 +106,38 @@ class Usuario(AbstractUser):
   
 class Empresa(models.Model):
 
+  def getUF():
+    UF = (
+      ("AC", "AC"),
+      ("AL", "AL"),
+      ("AP", "AP"),
+      ("AM", "AM"),
+      ("BA", "BA"),
+      ("CE", "CE"),
+      ("DF", "DF"),
+      ("ES", "ES"),
+      ("GO", "GO"),
+      ("MA", "MA"),
+      ("MT", "MT"),
+      ("MS", "MS"),
+      ("MG", "MG"),
+      ("PA", "PA"),
+      ("PB", "PB"),
+      ("PR", "PR"),
+      ("PE", "PE"),
+      ("PI", "PI"),
+      ("RJ", "RJ"),
+      ("RN", "RN"),
+      ("RS", "RS"),
+      ("RO", "RO"),
+      ("RR", "RR"),
+      ("SC", "SC"),
+      ("SP", "SP"),
+      ("SE", "SE"),
+      ("TO", "TO"),
+    )
+    return UF
+
   created_at = models.DateTimeField(auto_now=True)
   codigo = models.CharField(
       primary_key=True,
@@ -118,7 +150,7 @@ class Empresa(models.Model):
   cnpj = models.CharField(verbose_name="CNPJ", max_length=14, default="")
   endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
   cidade = models.CharField(verbose_name="Cidade", max_length=80, default="")
-  estado = models.CharField(verbose_name="Estado", max_length=2, default="")
+  estado = models.CharField(verbose_name="Estado", max_length=2, choices=getUF())
   telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
   imposto = models.IntegerField(verbose_name="% Imposto", default=0)

@@ -4,6 +4,10 @@
 {% block title %} Empresas {% endblock title %}
 {% block content %}
 
+	{% if message %}
+		<span class="text-{{ type }}">{{ message }}</span >
+	{% endif %}
+
 	{% if altera %}
 		
 		<form method="POST">{% csrf_token %}

@@ -7,24 +7,23 @@
 	{% if altera %}
 
 		<form method="POST">{% csrf_token %}
-			
 			{% crispy form %}
 			
-			{% if erro %}
-				<div class="form-group">
-					<p class="text danger">{{ erro }}</p>
-				</div>
-			{% endif %}
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
 			
 		</form>
 		
 	{% elif inclui %}
 		
 		<form method="POST" id="{{ nivel.helper.nivel_id }}">{% csrf_token %}
-			{{ form|crispy }}
+			{% crispy form %}
 
-			<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-			<a href="{% url 'niveis' %}" class="btn btn-danger mt-4 mx-2">Cancelar</a>
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+
 		</form>
 
 	{% else %}
