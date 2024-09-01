@@ -29,109 +29,107 @@ from .filters import UsuarioFilter, ProjetoFilter
 ## LOGIN ##
 def logar_usuario(request):
 
-    cargaInicial()
+  if request.method == "POST":
+    email = request.POST["email"]
+    password = request.POST["password"]
+    usuario = authenticate(request, username=email, password=password)
+    if usuario is not None:
 
-    if request.method == "POST":
-        email = request.POST["email"]
-        password = request.POST["password"]
-        usuario = authenticate(request, username=email, password=password)
-        if usuario is not None:
-
-            # se usuaro nao esta ativo
-            if not usuario.active:
-                error = "Usuário Bloqueado."
-                form_login = AuthenticationForm()
-                return render(
-                    request,
-                    "projects/index.html",
-                    {"error": error, "form_login": form_login},
-                )
-            else:
-                login(request, usuario)
-
-                if usuario.resetpsw:
-                    return redirect("redefinir_senha")
-                else:
-                    return redirect("home")
-        else:
-            error = "Usuário ou Senha inválido(s)."
-            form_login = AuthenticationForm()
-            return render(
-                request,
-                "projects/index.html",
-                {"error": error, "form_login": form_login},
-            )
-    else:
-        error = ""
+      # se usuaro nao esta ativo
+      if not usuario.active:
+        error = "Usuário Bloqueado."
         form_login = AuthenticationForm()
         return render(
-            request, "projects/index.html", {"error": error, "form_login": form_login}
+            request,
+            "projects/index.html",
+            {"error": error, "form_login": form_login},
         )
+      else:
+        login(request, usuario)
+
+        if usuario.resetpsw:
+            return redirect("redefinir_senha")
+        else:
+            return redirect("home")
+    else:
+      error = "Usuário ou Senha inválido(s)."
+      form_login = AuthenticationForm()
+      return render(
+          request,
+          "projects/index.html",
+          {"error": error, "form_login": form_login},
+      )
+  else:
+    error = ""
+    form_login = AuthenticationForm()
+    return render(
+        request, "projects/index.html", {"error": error, "form_login": form_login}
+    )
 
 def recuperar_senha(request):
-    sucess = False
-    message = ""
-    if request.method == "POST":
+  sucess = False
+  message = ""
+  if request.method == "POST":
 
-        destinatario = request.POST["email"]
+    destinatario = request.POST["email"]
+    
+    if destinatario:
         
-        if destinatario:
-            
-            # verifica se o destinatario tem o email cadastrado
-            user = Usuario.objects.filter(email=destinatario).first()
-            if user:
+        # verifica se o destinatario tem o email cadastrado
+        user = Usuario.objects.filter(email=destinatario).first()
+        if user:
 
-                # cria nova senha aleatoria
-                nova_senha = SenhaAleatoria()
+          # cria nova senha aleatoria
+          nova_senha = SenhaAleatoria()
 
-                senha_criptografada = make_password(
-                    password=nova_senha, salt=None, hasher="pbkdf2_sha256"
-                )
+          senha_criptografada = make_password(
+            password=nova_senha, salt=None, hasher="pbkdf2_sha256"
+          )
 
-                user.password = senha_criptografada
-                user.save()
+          user.password = senha_criptografada
+          user.save()
 
-                mensagem = "Olá " + user.name + " Sua nova senha é: " + nova_senha
+          mensagem = "Olá " + user.name + " Sua nova senha é: " + nova_senha
 
-                # envia email de recuperação de senha
-                send_mail(
-                    "Recuperação de Senha",
-                    mensagem,
-                    "rodrigo.candido@alphaerp.com.br",
-                    [destinatario],
-                    fail_silently=False,
-                )
-                sucess = True
-                message = "E-mail de recuperação enviado com Sucesso!"
-                return render(
-                    request,
-                    "projects/recuperar_senha.html",
-                    {"sucess": sucess, "message": message},
-                )
-            else:
-                sucess = False
-                message = "E-mail inválido, não consta na base de dados."
-                return render(
-                    request,
-                    "projects/recuperar_senha.html",
-                    {"sucess": sucess, "message": message},
-                )
-
-        else:
-            sucess = False
-            message = "E-mail inválido, não consta na base de dados."
-            return render(
-                request,
-                "projects/recuperar_senha.html",
-                {"sucess": False, "message": message},
-            )
-
-    else:
-        return render(
+          # envia email de recuperação de senha
+          send_mail(
+            "Recuperação de Senha",
+            mensagem,
+            "rodrigo.candido@alphaerp.com.br",
+            [destinatario],
+            fail_silently=False,
+          )
+          sucess = True
+          message = "E-mail de recuperação enviado com Sucesso!"
+          return render(
             request,
             "projects/recuperar_senha.html",
-            {"sucess": False, "message": ""},
-        )
+            {"sucess": sucess, "message": message},
+          )
+        else:
+          sucess = False
+          message = "E-mail inválido, não consta na base de dados."
+          return render(
+            request,
+            "projects/recuperar_senha.html",
+            {"sucess": sucess, "message": message},
+          )
+
+    else:
+      sucess = False
+      message = "E-mail inválido, não consta na base de dados."
+      return render(
+        request,
+        "projects/recuperar_senha.html",
+        {"sucess": False, "message": message},
+      )
+
+  else:
+    return render(
+      request,
+      "projects/recuperar_senha.html",
+      {"sucess": False, "message": ""},
+    )
 
 @login_required(login_url="/index")
 def deslogar_usuario(request):
@@ -301,6 +299,13 @@ def servicos(request, opc=False, pk=False):
         servico.save()
 
         return redirect("servicos")
+    else:
+      erro = form.errors
+      return render(
+          request,
+          "projects/servicos.html",
+          {"altera": True, "form": form, "erro": erro},
+      )
   else:
 
     if opc == "insert":
@@ -800,80 +805,101 @@ def SenhaAleatoria():
   return str(numero)
 
 
-def cargainicial():
+def cargainicial(request):
 
-  usuarios = Usuario.objects.all().count()
+  niveis = [
+      {"descricao": "Nivel 1"},
+      {"descricao": "Nivel 2"},
+      {"descricao": "Nivel 3"},
+      {"descricao": "Nivel 4"},
+    ]
 
-  if not usuarios:
+  users = [
+      {"nome": "rodrigo", "email": "rodrigo.cesar91@yahoo.com.br"},
+      {"nome": "velton", "email": "velton@alphaerp.com.br"},
+      {"nome": "joao", "email": "joao@alphaerp.com.br"},
+      {"nome": "jose", "email": "jose@alphaerp.com.br"},
+      {"nome": "antonio", "email": "antonio@alphaerp.com.br"},
+      {"nome": "carlos", "email": "carlos@alphaerp.com.br"},
+      {"nome": "alfredo", "email": "alfredo@alphaerp.com.br"},
+    ]
 
-    users = [
-        {"nome": "rodrigo", "email": "rodrigo.cesar91@yahoo.com.br"},
-        {"nome":"velton", "email": "velton@alphaerp.com.br"},
-      ]
+  clientes = [
+      {"nome": "Cliente Teste 1", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
+      {"nome": "Outro Cliente de Teste", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
+    ]
 
-    niveis = [
-        {"descricao": "Nivel 1"},
-        {"descricao": "Nivel 2"},
-      ]
-    
-    clientes = [
-        {"nome": "Cliente Teste 1", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
-        {"nome": "Outro Cliente de Teste", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
-      ]
+  servicos = [
+      {"codigo": "SV0001", "descricao": "Serviço de Teste 1", "tipo": "Pontual"},
+      {"codigo": "SV0002", "descricao": "Serviço 002", "tipo": "Sustentação"},
+      {"codigo": "SERV01", "descricao": "Serviço para Testar", "tipo": "Projeto"},
+    ]
 
-    servicos = [
-        {"codigo": "SV00001", "descricao": "Serviço de Teste 1", "tipo": "Pontual"},
-        {"codigo": "SV00002", "descricao": "Serviço 002", "tipo": "Sustentação"},
-        {"codigo": "SERV001", "descricao": "Serviço para Testar", "tipo": "Projeto"},
-      ]
+  empresas = [
+    {"codigo": "EMP001", "nome": "Empresa Teste", "cnpj": "07876633951", "cidade": "Curitiba", "estado": "PR", "telefone": "41998044063", "imposto": 2},
+    {"codigo": "EMP002", "nome": "Empresa de Teste 2", "cnpj": "0732312456", "cidade": "Curitiba", "estado": "RJ", "telefone": "41998044063", "imposto": 10},
+  ]
 
-    for i in users:
-      user = Usuario(
-          firstname=i.nome,
-          name=i.nome,
-          email=i.email,
-          password=make_password("123"),
-          password2=make_password("123"),
-          active=True,
-          tipo="1",
-          resetpsw=0,
-      )
-      user.save()
-
-    for i in niveis:
-      nivel = Niveis(
-              descricao=i.descricao,
-              rotina="0",
-              inclusao="S",
-              edicao="S",
-              exclusao="S",
-              logs="S",
-              filtro="S",
-              active=True
-          )
-      nivel.save()
-    
-    for i in clientes:
-      cliente = Cliente(
-          nome               = i.nome,
-          cnpj               = i.cnpj,
-          estado             = i.estado,
-          email              = i.email,
-          usa_email_cat      = "S",
-          telefone           = i.telefone,
-          active             = True,
+  for i in niveis:
+    nivel = Niveis(
+            descricao=i['descricao'],
+            rotina="0",
+            inclusao="S",
+            edicao="S",
+            exclusao="S",
+            logs="S",
+            filtro="S",
+            active=True
         )
-      cliente.save()
-    
-    for i in servicos:
-      servico = Servicos(
-        codigo= i.codigo,
-        descricao= i.descricao,
-        versao="001", 
-        cliente="Cliente Teste 1",
-        tipo= i.tipo,
-      )
-      servico.save()
+    nivel.save()
 
-  else:
-    return
+  for i in users:
+    user = Usuario(
+        firstname=i['nome'].capitalize(),
+        name=i['nome'].capitalize(),
+        email=i['email'],
+        password=make_password("123"),
+        password2=make_password("123"),
+        active=True,
+        tipo="2",
+        perfil=nivel,
+        resetpsw=0,
+    )
+    user.save()
+
+  
+  for i in clientes:
+    cliente = Cliente(
+        nome               = i['nome'],
+        cnpj               = i['cnpj'],
+        estado             = i['estado'],
+        email              = i['email'],
+        usa_email_cat      = "S",
+        telefone           = i['telefone'],
+        active             = True,
+      )
+    cliente.save()
+  
+  for i in servicos:
+    servico = Servicos(
+      codigo= i['codigo'],
+      descricao= i['descricao'],
+      versao="001", 
+      cliente=cliente,
+      tipo= i['tipo'],
+    )
+    servico.save()
+  
+  for i in empresas:
+    empresa = Empresa(
+      codigo          = i['codigo'],
+      nome            = i['nome'],
+      cnpj            = i['cnpj'],
+      cidade          = i['cidade'],
+      estado          = i['estado'],
+      telefone        = i['telefone'],
+      imposto         = i['imposto'],
+    )
+    empresa.save()
+
+  return redirect("home")

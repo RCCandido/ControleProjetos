@@ -187,8 +187,8 @@ class Cliente(models.Model):
   contatos = models.TextField(verbose_name="Contatos", null=True, blank=True, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancárias", null=True, blank=True, default="")
   observacoes = models.TextField(verbose_name="Observações", null=True, blank=True, default="")
-  valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default="")
-  perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default="")
+  valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
+  perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
   active = models.BooleanField(default=True, verbose_name="Cliente ativo ?")
 
   created_at = models.DateTimeField(auto_now=True)
@@ -266,7 +266,7 @@ class Projetos(models.Model):
   )
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
-  
+
   cliente = models.ForeignKey(
     Cliente,
     on_delete=models.SET_NULL,

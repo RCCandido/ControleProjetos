@@ -8,6 +8,7 @@ from projects.views import *
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", logar_usuario, name="logar_usuario"),
+    path("cargainicial", cargainicial, name="cargainicial"),
     path("index", logar_usuario, name="logar_usuario"),
     path("deslogar_usuario", deslogar_usuario, name="deslogar_usuario"),
     path("empresas", empresas, name="empresas"),
