@@ -10,6 +10,7 @@ urlpatterns = [
     path("home", home, name="home"),
     path("cargainicial", cargainicial, name="cargainicial"),
     path("index", logar_usuario, name="logar_usuario"),
+    path("profile", profile, name="profile"),
     path("deslogar_usuario", deslogar_usuario, name="deslogar_usuario"),
     path("recuperar_senha", recuperar_senha, name="recuperar_senha"),
     path("redefinir_senha", redefinir_senha, name="redefinir_senha"),
@@ -34,6 +35,9 @@ urlpatterns = [
     path("colaboradores", colaboradores, name="colaboradores"),
     path("colaboradores/<opc>", colaboradores, name="colaboradores"),
     path("colaboradores/<opc>/<pk>", colaboradores, name="colaboradores"),
+    path("valores", valores, name="valores"),
+    path("valores/<opc>", valores, name="valores"),
+    path("valores/<opc>/<pk>", valores, name="valores"),
     path("relatorios", relatorios, name="relatorios"),
     path(
         "retorna_total_usuarios", retorna_total_usuarios, name="retorna_total_usuarios"

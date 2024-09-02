@@ -24,6 +24,8 @@ from .forms import (
     ClienteForm,
     Colaborador,
     ColaboradorForm,
+    Valores,
+    ValoresForm,
 )
 from .decorators import nivel_access_required
 from .filters import UsuarioFilter, ProjetoFilter
@@ -724,12 +726,108 @@ def colaboradores(request, opc=False, pk=False):
       context = {"colaboradores": colaboradores}
       return render(request, "projects/colaboradores.html", context)
 
+@login_required(login_url="/index")
+def valores(request, opc=False, pk=False):
+  
+  if request.method == "POST":
+   
+    form = ValoresForm(request.POST)
+
+    if form.is_valid():
+
+      codigo      = form.cleaned_data["codigo"]
+      data        = form.cleaned_data["data"]
+      valor_hora  = form.cleaned_data["valor_hora"]
+      valor_fixo  = form.cleaned_data["valor_fixo"]
+      comissao    = form.cleaned_data["comissao"]
+      imposto     = form.cleaned_data["imposto"]
+      desconto    = form.cleaned_data["desconto"]
+      active      = form.cleaned_data["active"]
+      observacao  = form.cleaned_data["observacao"]
+
+      if opc == "insert":
+
+        valores = Valores(
+          codigo     = codigo,
+          data       = data,
+          valor_hora = valor_hora,
+          valor_fixo = valor_fixo,
+          comissao   = comissao,
+          imposto    = imposto,
+          desconto   = desconto,
+          active     = active,
+          observacao = observacao,
+        )
+
+        valores.save()
+
+        return redirect("valores")
+
+      elif opc == "edit":
+        
+        valores = Valores.objects.filter(codigo=pk).first()
+
+        valores.codigo     = codigo
+        valores.data       = data
+        valores.valor_hora = valor_hora
+        valores.valor_fixo = valor_fixo
+        valores.comissao   = comissao
+        valores.imposto    = imposto
+        valores.desconto   = desconto
+        valores.active     = active
+        valores.observacao = observacao
+        
+        valores.save()
+
+        return redirect("valores")
+    else:
+      return render(
+          request,
+          "projects/valores.html",
+          {"form": form, "message": form.errors, "type": "danger"},
+      )
+  else:
+
+    if opc == "insert":
+      form = ValoresForm()
+      context = {"inclui": True, "form": form}
+      return render(request, "projects/valores.html", context)
+
+    elif opc == "edit":
+      if pk:
+        valores = Valores.objects.filter(codigo=pk).first()
+        form = ValoresForm(instance=valores)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/valores.html", context)
+
+    elif opc == "delete":
+      if pk:
+        valores = Valores.objects.filter(codigo=pk).first()
+        valores.delete()
+        valores = Valores.objects.all()
+        context = {"valores": valores}
+        return render(request, "projects/valores.html", context)
+
+    else:
+      valores = Valores.objects.all()
+      context = {"valores": valores}
+      return render(request, "projects/valores.html", context)
+
 
 @login_required(login_url="/index")
 def relatorios(request):
     context = {
         "type": "primary",
         "title": "Relatórios",
+        "message": "Página em construção.",
+    }
+    return render(request, "projects/em_construcao.html", context)
+
+@login_required(login_url="/index")
+def profile(request):
+    context = {
+        "type": "primary",
+        "title": "Profile",
         "message": "Página em construção.",
     }
     return render(request, "projects/em_construcao.html", context)

@@ -1,12 +1,12 @@
 from django import forms
 from crispy_forms.helper import FormHelper 
 from crispy_forms.layout import Layout, Submit, Row, Field 
-from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 
-from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador
+from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador, Valores
+
+import datetime
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(disabled=True, required=False)
@@ -749,6 +749,129 @@ class ColaboradorForm(forms.ModelForm):
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
           HTML('<a class="btn btn-danger mt-2" href="{% url "colaboradores" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+        )
+      )
+    )
+
+class ValoresForm(forms.ModelForm):
+
+  codigo = forms.CharField(
+    label='Código',
+    required=True,
+    widget = forms.TextInput(
+      attrs={
+        'data-mask':"000000"
+      })
+  )
+
+  data = forms.DateField(
+    localize=True,
+    initial=datetime.date.today,
+    required=True,
+  )
+
+  valor_hora = forms.DecimalField(
+    max_digits=4, 
+    decimal_places=2, 
+    required=False,
+    label="Valor Hora",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"R$ 000,00"
+      }
+    )
+  )
+  
+  valor_fixo = forms.DecimalField(
+    max_digits=4, 
+    decimal_places=2, 
+    required=False,
+    label="Valor Fixo",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"R$ 0000.00"
+      }
+    )
+  )
+  
+  comissao = forms.DecimalField(
+    max_digits=3, 
+    decimal_places=2, 
+    required=False,
+    label="Comissão",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"% 00,00"
+      }
+    )
+  )
+  
+  imposto = forms.DecimalField(
+    max_digits=3, 
+    decimal_places=2, 
+    required=False,
+    label="Imposto",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"% 0,00"
+      }
+    )
+  )
+  
+  desconto = forms.DecimalField(
+    max_digits=3, 
+    decimal_places=2, 
+    required=False,
+    label="Desconto",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"% 0,00"
+        }
+      )
+    )
+
+  observacao = forms.CharField(
+    label="Observações", 
+    required=False, 
+    widget=forms.Textarea(
+      attrs={
+        "rows":"5"
+        }
+      )
+    )
+  
+  class Meta:
+    model = Valores
+    fields = "__all__"
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = ''
+    self.helper.layout = Layout(
+      Row(
+        Column('codigo', css_class='form-control-sm col-sm-2'),
+        Column('data', css_class='form-control-sm col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('valor_hora', css_class='form-control-sm col-sm-2'),
+        Column('valor_fixo',css_class='form-control-sm col-sm-2'),
+        Column('comissao',css_class='form-control-sm col-sm-2'),
+        Column('imposto',css_class='form-control-sm col-sm-2'),
+        Column('desconto',css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('observacao',css_class='form-control-sm col-sm-5'),
+        Column('active', css_class='form-control-sm col-sm-4 my-4'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
+          HTML('<a class="btn btn-danger mt-2" href="{% url "valores" %}">Cancelar</a>'),
           css_class='form-row d-flex',
         )
       )

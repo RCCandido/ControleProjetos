@@ -369,4 +369,35 @@ class Colaborador(models.Model):
 
   def __str__(self):
       return self.nome
+
+class Valores(models.Model):
+
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Registro ativo ?")
+
+  codigo = models.CharField(
+    primary_key=True, verbose_name="Código", max_length=6, blank=False, unique=True
+  )
+  
+  data = models.DateField(
+    verbose_name="Data", 
+    auto_now=False,
+    auto_now_add=False,
+    null=True, 
+    blank=True
+  )
+
+  valor_hora = models.DecimalField(verbose_name="Valor Hora", max_digits=6, decimal_places=2, null=True, blank=True)
+  valor_fixo = models.DecimalField(verbose_name="Valor Fixo", max_digits=6, decimal_places=2, null=True, blank=True)
+  comissao = models.DecimalField(verbose_name="% Comissão", max_digits=3, decimal_places=2, null=True, blank=True)
+  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=3, decimal_places=2, null=True, blank=True)
+  desconto = models.DecimalField(verbose_name="% Desconto", max_digits=3, decimal_places=2, null=True, blank=True)
+  observacao = models.TextField(verbose_name="Observações")
+  
+  class Meta:
+      verbose_name_plural = "Valores"
+
+  def __str__(self):
+      return self.codigo
   

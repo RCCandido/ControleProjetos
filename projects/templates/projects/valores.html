@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block page_title %}Valores{% endblock page_title %}
+{% block title %} Valores {% endblock title %}
+{% block content %}
+{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+			
+	{% if altera %}
+
+		<form method="POST">{% csrf_token %}
+			{% crispy form %}
+			
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+			
+		</form>
+		
+	{% elif inclui %}
+		
+		<form method="POST" id="{{ valores.helper.codigo }}">{% csrf_token %}
+			{% crispy form %}
+
+			{% if message %}
+        <span class="text-{{ type }}">{{ message }}</span >
+      {% endif %}
+
+		</form>
+
+	{% else %}
+
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Código</th>
+					<th>Data</th>
+					<th>Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for v in valores %}
+				<tr>
+					<td>{{ v.codigo }}</td>
+					<td>{{ v.data }}</td>
+					<td>{{ v.active }}</td>
+					<td>
+						<a href="{% url "valores" opc='edit' pk=v.codigo %}" class="mx-2">
+							<i class="fa fa-edit align-middle text-primary"></i>
+						</a>
+						<a href="{% url "valores" opc='delete' pk=v.codigo	 %}">
+							<i class="fa fa-times fs-5 align-middle text-danger"></i>
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+		<a href="{% url "valores" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Valores</a>
+	{% endif %}
+			
+{% endblock content %}
