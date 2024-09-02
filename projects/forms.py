@@ -6,7 +6,7 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 
-from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente
+from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(disabled=True, required=False)
@@ -615,6 +615,140 @@ class ClienteForm(forms.ModelForm):
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
           HTML('<a class="btn btn-danger mt-2" href="{% url "clientes" %}">Cancelar</a>'),
+          css_class='form-row d-flex',
+        )
+      )
+    )
+
+class ColaboradorForm(forms.ModelForm):
+
+  codigo = forms.CharField(
+    label='Código',
+    required=True,
+    widget = forms.TextInput(
+      attrs={
+        'data-mask':"000000"
+      })
+  )
+
+  cpf = forms.CharField(
+    label='CPF',
+    required=True,
+    widget = forms.TextInput(
+      attrs={
+        "placeholder": "999.999.999-99",
+        "data-mask": "999.999.999-99",
+      })
+  )
+
+  estado = forms.ChoiceField(
+    choices=Empresa.getUF(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5", "placeholder":"Dados para movimentações financeiras.."}))
+
+  valor_hora = forms.DecimalField(
+    max_digits=4, 
+    decimal_places=2, 
+    required=False,
+    label="Valor Hora",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"R$ 000.00"
+      }
+    )
+  )
+  
+  valor_fixo = forms.DecimalField(
+    max_digits=4, 
+    decimal_places=2, 
+    required=False,
+    label="Valor Fixo",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"R$ 000.00"
+      }
+    )
+  )
+  
+  comissao = forms.DecimalField(
+    max_digits=3, 
+    decimal_places=2, 
+    required=True,
+    label="Comissão",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"% 0,00"
+      }
+    )
+  )
+  
+  funcao = forms.ChoiceField(
+    choices=Colaborador.getFuncao(),
+    required=True,
+    label='Função',
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  periodo_lancamento = forms.DateField(
+    input_formats='%d-%m-%Y',
+    required=False,
+    widget = forms.TextInput(
+      attrs={
+        "type": "date"
+      })
+  )
+
+
+  class Meta:
+    model = Colaborador
+    fields = "__all__"
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = ''
+    self.helper.layout = Layout(
+      Row(
+        Column('codigo', css_class='form-control-sm col-sm-2'),
+        Column('nome', css_class='form-control-sm col-sm-6'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('email', css_class='form-control-sm col-sm-4'),
+        Column('cpf', css_class='form-control-sm col-sm-3'),
+        Column('funcao', css_class='form-control-sm col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('endereco', css_class='form-control-sm col-sm-5'),
+        Column('telefone', css_class='form-control-sm col-sm-3'),
+        Column('active', css_class='form-control-sm my-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('bairro',css_class='form-control-sm col-sm-3'),
+        Column('cidade',css_class='form-control-sm col-sm-3'),
+        Column('estado', css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('periodo_lancamento',css_class='form-control-sm col-sm-3'),
+        Column('valor_hora', css_class='form-control-sm col-sm-2'),
+        Column('valor_fixo',css_class='form-control-sm col-sm-2'),
+        Column('comissao',css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('dados_bancarios',css_class='form-control-sm col-sm-5'),
+        css_class='form-row d-flex',
+      ),
+      Div(
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
+          HTML('<a class="btn btn-danger mt-2" href="{% url "colaboradores" %}">Cancelar</a>'),
           css_class='form-row d-flex',
         )
       )

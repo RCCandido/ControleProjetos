@@ -29,6 +29,10 @@ class Niveis(models.Model):
   def __unicode__(self):
       return self.descricao
 
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
+
   nivel_id = models.AutoField(primary_key=True)
   descricao = models.CharField(
     verbose_name="Descrição", max_length=200, null=False, blank=False
@@ -50,8 +54,7 @@ class Niveis(models.Model):
   filtro = models.CharField(
     verbose_name="Filtro", max_length=1, null=False, blank=False, choices=getSimNao()
   )
-  active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
-  created_at = models.DateTimeField(auto_now=True)
+  
 
   class Meta:
     verbose_name_plural = "Niveis"
@@ -85,6 +88,10 @@ class Usuario(AbstractUser):
 
   username = None # desabilita o uso do username
   USERNAME_FIELD = 'user_id'
+  
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
 
   user_id = models.AutoField(primary_key=True)
   firstname = models.CharField(verbose_name="Primeiro Nome", max_length=20, null=False, blank=False)
@@ -92,7 +99,6 @@ class Usuario(AbstractUser):
   email = models.EmailField('E-mail', unique=True)
   password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
   password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
-  active = models.BooleanField(default=True, verbose_name="Usuário ativo ?")
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=getTipos())
   perfil = models.ForeignKey(
     Niveis,
@@ -102,7 +108,6 @@ class Usuario(AbstractUser):
   )
   resetpsw = models.BooleanField(default=True, verbose_name="Altera Senha ?")
   usefilter = models.BooleanField(default=True, verbose_name="Permite o uso de Filtros ?")
-  created_at = models.DateTimeField(auto_now=True)
   
 class Empresa(models.Model):
 
@@ -139,6 +144,9 @@ class Empresa(models.Model):
     return UF
 
   created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Empresa ativa ?")
+
   codigo = models.CharField(
       primary_key=True,
       verbose_name="Código", unique=True, max_length=6, null=False, blank=False
@@ -171,6 +179,10 @@ class Cliente(models.Model):
     )
     return TIPO
   
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Cliente ativo ?")
+
   codigo = models.AutoField(primary_key=True)
   nome = models.CharField(verbose_name="Nome", null=False, blank=False, max_length=200)
   cnpj = models.CharField(verbose_name="CNPJ", max_length=14)
@@ -189,11 +201,7 @@ class Cliente(models.Model):
   observacoes = models.TextField(verbose_name="Observações", null=True, blank=True, default="")
   valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
   perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
-  active = models.BooleanField(default=True, verbose_name="Cliente ativo ?")
-
-  created_at = models.DateTimeField(auto_now=True)
-  updated_at = models.DateTimeField(auto_now=True)
-
+  
   class Meta:
     verbose_name_plural = "Clientes"
 
@@ -211,7 +219,10 @@ class Servicos(models.Model):
       ('hradicional', 'Hora Adicional'),
     )
     return TIPOS
-    
+  
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
   codigo = models.CharField(verbose_name="Código", max_length=6, null=False, blank=False)
   descricao = models.CharField(verbose_name="Descrição", max_length=80, null=False, blank=False)
   versao = models.CharField(verbose_name="Versão", max_length=3, null=False, blank=False)
@@ -225,8 +236,7 @@ class Servicos(models.Model):
 
   tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=getTipos())
   observacao = models.TextField(verbose_name="Observações")
-  created_at = models.DateTimeField(auto_now=True)
-
+  
   class Meta:
     verbose_name_plural = "Serviços"
 
@@ -258,15 +268,17 @@ class Projetos(models.Model):
     )
     return STATUS
 
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Projeto ativo ?")
+
   codigo = models.CharField(
       primary_key=True, verbose_name="Código", max_length=8, blank=False, unique=True
   )
   name = models.CharField(
       verbose_name="Descrição", null=False, blank=False, max_length=200
   )
-  created_at = models.DateTimeField(auto_now=True)
-  updated_at = models.DateTimeField(auto_now=True)
-
+  
   cliente = models.ForeignKey(
     Cliente,
     on_delete=models.SET_NULL,
@@ -303,6 +315,58 @@ class Projetos(models.Model):
   def __str__(self):
       return self.name
 
+class Colaborador(models.Model):
 
+  def getFuncao():
+    TIPOS = (
+      ("1", "Arquiteto"), 
+      ("2", "Analista"),
+      ("3", "Desenvolvedor"),
+      ("4", "Gerente de Projetos"),
+      ("5", "QA"),
+      ("6", "Gerente Geral"),
+      ("7", "Diretor"),
+    )
+    return TIPOS
+
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  active = models.BooleanField(default=True, verbose_name="Colaborador ativo ?")
+
+  codigo = models.CharField(
+    primary_key=True, verbose_name="Código", max_length=6, blank=False, unique=True
+  )
+   
+  nome = models.CharField(
+    verbose_name="Nome", null=False, blank=False, max_length=200
+  )
+
+  cpf = models.CharField(
+    verbose_name="CPF", null=False, blank=False, max_length=11
+  )
+
+  endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
+  cidade = models.CharField(verbose_name="Cidade", max_length=80, default="")
+  bairro = models.CharField(verbose_name="Bairro", max_length=50, blank=True)
+  estado = models.CharField(verbose_name="Estado", max_length=2, choices=Empresa.getUF())
+  telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
+  email = models.EmailField(verbose_name='E-mail')
+  dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
+  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+  valor_fixo = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+  comissao = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+  funcao = models.CharField(verbose_name="Função", max_length=20, choices=getFuncao())
+  periodo_lancamento = models.DateField(
+      verbose_name="Periodo Lancto", 
+      auto_now=False,
+      auto_now_add=False,
+      null=True, 
+      blank=True,
+  )
   
+  class Meta:
+      verbose_name_plural = "Colaboradores"
+
+  def __str__(self):
+      return self.nome
   

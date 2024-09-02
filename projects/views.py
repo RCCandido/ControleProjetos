@@ -22,6 +22,8 @@ from .forms import (
     NewEmpresaForm,
     Cliente,
     ClienteForm,
+    Colaborador,
+    ColaboradorForm,
 )
 from .decorators import nivel_access_required
 from .filters import UsuarioFilter, ProjetoFilter
@@ -616,6 +618,114 @@ def clientes(request, opc=False, pk=False):
       return render(request, "projects/clientes.html", context)
 
 @login_required(login_url="/index")
+def colaboradores(request, opc=False, pk=False):
+  
+  if request.method == "POST":
+   
+    form = ColaboradorForm(request.POST)
+
+    if form.is_valid():
+
+      codigo              = form.cleaned_data["codigo"]
+      nome                = form.cleaned_data["nome"]
+      cpf                 = form.cleaned_data["cpf"]
+      endereco            = form.cleaned_data["endereco"]
+      bairro              = form.cleaned_data["bairro"]
+      cidade              = form.cleaned_data["cidade"]
+      estado              = form.cleaned_data["estado"]
+      email               = form.cleaned_data["email"]
+      telefone            = form.cleaned_data["telefone"]
+      dados_bancarios     = form.cleaned_data["dados_bancarios"]
+      valor_hora          = form.cleaned_data["valor_hora"]
+      valor_fixo          = form.cleaned_data["valor_fixo"]
+      comissao            = form.cleaned_data["comissao"]
+      funcao              = form.cleaned_data["funcao"]
+      active              = form.cleaned_data["active"]
+      periodo_lancamento  = form.cleaned_data["periodo_lancamento"]
+
+      if opc == "insert":
+
+        colaborador = Colaborador(
+          codigo             = codigo,
+          nome               = nome,
+          cpf                = cpf,
+          endereco           = endereco,
+          bairro             = bairro,
+          cidade             = cidade,
+          estado             = estado,
+          email              = email,
+          telefone           = telefone,
+          dados_bancarios    = dados_bancarios,
+          valor_hora         = valor_hora,
+          valor_fixo         = valor_fixo,
+          comissao           = comissao,
+          funcao             = funcao,
+          active             = active,
+          periodo_lancamento = periodo_lancamento,
+        )
+
+        colaborador.save()
+
+        return redirect("colaboradores")
+
+      elif opc == "edit":
+        
+        colaborador = Colaborador.objects.filter(codigo=pk).first()
+
+        colaborador.nome               = nome
+        colaborador.cpf                = cpf
+        colaborador.endereco           = endereco
+        colaborador.bairro             = bairro
+        colaborador.cidade             = cidade
+        colaborador.estado             = estado
+        colaborador.email              = email
+        colaborador.telefone           = telefone
+        colaborador.dados_bancarios    = dados_bancarios
+        colaborador.valor_hora         = valor_hora
+        colaborador.valor_fixo         = valor_fixo
+        colaborador.comissao           = comissao
+        colaborador.funcao             = funcao
+        colaborador.active             = active
+        colaborador.periodo_lancamento = periodo_lancamento
+        
+        colaborador.save()
+
+        return redirect("colaboradores")
+    else:
+      return render(
+          request,
+          "projects/colaboradores.html",
+          {"form": form, "message": form.errors, "type": "danger"},
+      )
+  else:
+
+    if opc == "insert":
+      form = ColaboradorForm()
+      context = {"inclui": True, "form": form}
+      return render(request, "projects/colaboradores.html", context)
+
+    elif opc == "edit":
+      if pk:
+        colaborador = Colaborador.objects.filter(codigo=pk).first()
+        form = ColaboradorForm(instance=colaborador)
+        context = {"altera": True, "form": form}
+        return render(request, "projects/colaboradores.html", context)
+
+    elif opc == "delete":
+      if pk:
+        colaborador = Colaborador.objects.filter(codigo=pk).first()
+        colaborador.delete()
+        colaboradores = Colaborador.objects.all()
+        context = {"colaborador": colaboradores}
+        return render(request, "projects/colaboradores.html", context)
+
+    else:
+      colaboradores = Colaborador.objects.all()
+      context = {"colaboradores": colaboradores}
+      return render(request, "projects/colaboradores.html", context)
+
+
+@login_required(login_url="/index")
 def relatorios(request):
     context = {
         "type": "primary",
@@ -725,26 +835,6 @@ def logs(request):
         "message": "Página em construção.",
     }
     return render(request, "projects/em_construcao.html", context)
-
-## CADASTROS ##
-@login_required(login_url="/index")
-@nivel_access_required(view_name="servicos")
-def cadastrar_servico(request):
-  if request.method == "POST":
-    form_servico = ServicosForm(request.POST)
-    if form_servico.is_valid():
-      form_servico.save()
-      return redirect("servicos")
-    else:
-      form_servico = ServicosForm()
-      return render(
-        request, "projects/cadastro_servicos.html", {"form": form_servico}
-      )
-  else:
-    form_servico = ServicosForm()
-    return render(
-      request, "projects/cadastro_servicos.html", {"form": form_servico}
-    )
 
 
 ############ DASHBOARD ############
