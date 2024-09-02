@@ -32,7 +32,8 @@
 
 	{% else %}
 		
-		{% if user.usefilter %}	
+	
+	{% if user.usefilter %}	
 			<div class="filtro col mb-4 fs-6 mx-5">
 				<form method="GET">
 					<label>Nome: </label>
@@ -45,41 +46,50 @@
 					<input class="filter_buttons" type="button" value="Limpar" onclick="limparCampos()" />
 				</form>
 			</div>
-		{% endif %}
-		
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>E-mail</th>
-					<th>Ativo</th>
-					<th>Tipo</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				
-				{% for user in filter.qs %}
-				<tr>
-					<td>{{ user.user_id }}</td>
-					<td>{{ user.name }}</td>
-					<td>{{ user.email }}</td>
-					<td>{{ user.active }}</td>
-					<td>{{ user.get_tipo_display }}</td>
-					<td>
-						<a href="{% url "usuarios" opc='edit' pk=user.email %}" class="btn btn-sm btn-secondary">Editar</a>
-						<a href="{% url "usuarios" opc='delete' pk=user.email %}" class="btn btn-sm btn-danger">Excluir</a>
-					</td>
-				</tr>
-				{% endfor %}
-				
-			</tbody>
-		</table>
-		
+			{% endif %}
+			
+		<div class="table-responsive-sm">
+			<table class="table table-sm table-hover">
+				<thead class="">
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>E-mail</th>
+						<th>Ativo</th>
+						<th>Tipo</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					{% for user in filter.qs %}
+					{% if  user.active %}
+						<tr class="">
+					{% else %}
+						<tr class="table-secondary">
+					{% endif %}
+						<td>{{ user.user_id }}</td>
+						<td>{{ user.name }}</td>
+						<td>{{ user.email }}</td>
+						<td>{{ user.active }}</td>
+						<td>{{ user.get_tipo_display }}</td>
+						<td>
+							<a href="{% url "usuarios" opc='edit' pk=user.email %}" class="mx-2">
+								<i class="fa fa-edit align-middle text-primary"></i>
+							</a>
+							<a href="{% url "usuarios" opc='delete' pk=user.email %}">
+								<i class="fa fa-times fs-5 align-middle text-danger"></i>
+							</a>
+						</td>
+					</tr>
+					{% endfor %}
+					
+				</tbody>
+			</table>
+		</div>
 		<a href="{% url "usuarios" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Usuário</a>
 	{% endif %}
-
+	
 <script>
 	function limparCampos(){
 		document.getElementById('id_name').value='';

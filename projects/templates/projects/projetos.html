@@ -75,8 +75,12 @@
 					<td>{{ projeto.get_status_display }}</td>
 					<td>
 						<a href="" class="btn btn-sm btn-success">Apontamentos</a>
-						<a href="{% url "projetos" opc='edit' pk=projeto.codigo %}" class="btn btn-sm btn-secondary">Editar</a>
-						<a href="{% url "projetos" opc='delete' pk=projeto.codigo %}" class="btn btn-sm btn-danger">Excluir</a>
+						<a href="{% url "projetos" opc='edit' pk=projeto.codigo %}" class="btn btn-sm btn-primary">
+							<i class="fa fa-edit"></i>
+						</a>
+						<a href="{% url "projetos" opc='delete' pk=projeto.codigo %}" class="btn btn-sm btn-danger">
+							<i class="fa fa-times"></i>
+						</a>
 					</td>
 					
 				</tr>

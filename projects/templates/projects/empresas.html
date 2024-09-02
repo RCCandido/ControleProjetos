@@ -46,8 +46,12 @@
 					<td>{{ e.codigo }}</td>
 					<td>{{ e.nome }}</td>
 					<td>
-						<a href="{% url 'empresas' opc='edit' pk=e.codigo %}" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
-						<a href="{% url 'empresas' opc='delete' pk=e.codigo %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
+						<a href="{% url 'empresas' opc='edit' pk=e.codigo %}" class="mx-2">
+							<i class="fa fa-edit align-middle text-primary"></i>
+						</a>
+						<a href="{% url 'empresas' opc='delete' pk=e.codigo %}">
+							<i class="fa fa-times fs-5 align-middle text-danger"></i>
+						</a>
 					</td>
 				</tr>
 				{% endfor %}

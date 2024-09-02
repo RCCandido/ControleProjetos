@@ -46,8 +46,12 @@
 					<td>{{ c.get_funcao_display }}</td>
 					<td>{{ c.active }}</td>
 					<td>
-						<a href="{% url "colaboradores" opc='edit' pk=c.codigo %}" class="btn btn-sm btn-secondary">Editar</a>
-						<a href="{% url "colaboradores" opc='delete' pk=c.codigo	 %}" class="btn btn-sm btn-danger">Excluir</a>
+						<a href="{% url "colaboradores" opc='edit' pk=c.codigo %}" class="mx-2">
+							<i class="fa fa-edit align-middle text-primary"></i>
+						</a>
+						<a href="{% url "colaboradores" opc='delete' pk=c.codigo	 %}">
+							<i class="fa fa-times fs-5 align-middle text-danger"></i>
+						</a>
 					</td>
 				</tr>
 				{% endfor %}
