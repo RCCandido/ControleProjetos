@@ -363,16 +363,16 @@ class NewProjetoForm(forms.ModelForm):
   class Meta:
     model = Projetos
     fields = '__all__'
-
+    
   codigo = forms.CharField(
     label='Codigo do Projeto',
     required=True,
     widget = forms.TextInput(
       attrs={
-        "placeholder": "ERP-0001",
+        'data-mask':"ERP-0000"
       })
   )
-  
+
   name = forms.CharField(
     label='Descrição',
     required=True,
@@ -383,7 +383,7 @@ class NewProjetoForm(forms.ModelForm):
     required=False,
     widget = forms.TextInput(
       attrs={
-        "type": "date",
+        "type": "date"
       })
   )
   
@@ -401,6 +401,11 @@ class NewProjetoForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Horas Apontadas",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"00.00"
+      }
+    )
   )
   
   qtd_horas_projeto = forms.DecimalField(
@@ -408,18 +413,34 @@ class NewProjetoForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Horas do Projeto",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"00.00"
+      }
+    )
   )
 
   valor_hora = forms.DecimalField(
     localize=True, 
     required=False,
     label="Valor Hora",
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"R$ 000.00"
+      }
+    )
   )
   
   valor_total = forms.DecimalField(
     localize=True, 
     required=False,
-    label="Valor Total"
+    label="Valor Total",
+    min_value=1,
+    widget=forms.DateInput(
+      attrs={
+        'data-mask':"R$ 000.00"
+      }
+    )
   )
   
   desenvolvedor = forms.ModelChoiceField(
@@ -459,31 +480,31 @@ class NewProjetoForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = 'border p-12'
+    self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-          Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
-          Column('name', css_class='form-control-sm col-sm-6 mb-2 p-2'),
-          Column('status', css_class='form-control-sm col-sm-3 mb-2 p-2'),
+          Column('codigo', css_class='form-control-sm col-sm-2'),
+          Column('name', css_class='form-control-sm col-sm-6'),
+          Column('status', css_class='form-control-sm col-sm-3'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('cliente',css_class='form-control-sm col-sm-6 mb-2 p-2'),
-        Column('responsavel',css_class='form-control-sm col-sm-4 mb-2 p-2'),
+        Column('cliente',css_class='form-control-sm col-sm-6'),
+        Column('responsavel',css_class='form-control-sm col-sm-3'),
         css_class='form-row d-flex',
       ),
       Row(
-          Column('data_inicio', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-          Column('data_entrega', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-          Column('desenvolvedor', css_class='form-control-sm col-sm-4 mb-0 p-2'),
-          Column('arquiteto', css_class='form-control-sm col-sm-4 mb-0 p-2'),
+          Column('data_inicio', css_class='form-control-sm col-sm-3'),
+          Column('data_entrega', css_class='form-control-sm col-sm-3'),
+          Column('desenvolvedor', css_class='form-control-sm col-sm-3'),
+          Column('arquiteto', css_class='form-control-sm col-sm-3'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('qtd_horas_projeto', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-        Column('qtd_horas_apontadas', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-        Column('valor_hora', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-        Column('valor_total', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('qtd_horas_projeto', css_class='form-control-sm col-sm-2'),
+        Column('qtd_horas_apontadas', css_class='form-control-sm col-sm-2'),
+        Column('valor_hora', css_class='form-control-sm col-sm-2'),
+        Column('valor_total', css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
       ),
       Div(
