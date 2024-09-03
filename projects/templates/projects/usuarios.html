@@ -4,36 +4,16 @@
 {% block page_title %} Usuários {% endblock page_title %}
 {% block title %} Usuários {% endblock title %}
 {% block content %}
-		
-	{% if inclui %}
+	
+	{% if inclui or altera%}
 
 	 	<form method="post">{% csrf_token %}
-      
       {% crispy form %}
-      
-      {% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-
     </form>
-
-	{% elif altera %}
-		
-		<form method="POST" >{% csrf_token %}
-			{% crispy form %}
-			
-			{% if erro %}
-				<div class="form-group">
-					<p class="text danger">{{ erro }}</p>
-				</div>
-			{% endif %}
-
-		</form>
 
 	{% else %}
 		
-	
-	{% if user.usefilter %}	
+		{% if user.usefilter %}	
 			<div class="filtro col mb-4 fs-6 mx-5">
 				<form method="GET">
 					<label>Nome: </label>
@@ -46,11 +26,11 @@
 					<input class="filter_buttons" type="button" value="Limpar" onclick="limparCampos()" />
 				</form>
 			</div>
-			{% endif %}
+		{% endif %}
 			
 		<div class="table-responsive-sm">
 			<table class="table table-sm table-hover">
-				<thead class="">
+				<thead>
 					<tr>
 						<th>ID</th>
 						<th>Name</th>

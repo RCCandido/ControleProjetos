@@ -1,33 +1,14 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+
 {% block page_title %}Empresas{% endblock page_title %}
 {% block title %} Empresas {% endblock title %}
 {% block content %}
 
-	{% if message %}
-		<span class="text-{{ type }}">{{ message }}</span >
-	{% endif %}
-
-	{% if altera %}
+	{% if inclui or altera %}
 		
 		<form method="POST">{% csrf_token %}
 			{% crispy form %}
-			
-			{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-
-		</form>
-
-	{% elif inclui %}
-		
-		<form method="POST" id="{{ empresa.helper.codigo }}">{% csrf_token %}
-			{% crispy form %}
-			
-			{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-			
 		</form>
 
 	{% else %}
@@ -37,6 +18,7 @@
 				<tr>
 					<th>Codigo</th>
 					<th>Nome</th>
+					<th>CNPJ</th>
 					<th>Ações</th>
 				</tr>
 			</thead>
@@ -45,6 +27,7 @@
 				<tr>
 					<td>{{ e.codigo }}</td>
 					<td>{{ e.nome }}</td>
+					<td>{{ e.cnpj }}</td>
 					<td>
 						<a href="{% url 'empresas' opc='edit' pk=e.codigo %}" class="mx-2">
 							<i class="fa fa-edit align-middle text-primary"></i>

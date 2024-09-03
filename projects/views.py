@@ -140,7 +140,6 @@ def deslogar_usuario(request):
     logout(request)
     return redirect("home")
 
-
 @login_required(login_url="/index")
 def redefinir_senha(request):
     form = RedefinirSenhaForm(instance=request.user)
@@ -167,7 +166,6 @@ def redefinir_senha(request):
 
     return render(request, "projects/redefinir_senha.html", {"form": form, "erro": ""})
 
-
 ## MENUS ##
 @login_required(login_url="/index")
 def home(request):
@@ -179,61 +177,56 @@ def usuarios(request, opc=False, pk=False):
   
   if request.method == "POST":
     
-    form = UsuarioForm(request.POST)
-    if form.is_valid():
-      
-      firstname = form.cleaned_data["firstname"]
-      name      = form.cleaned_data["name"]
-      active    = form.cleaned_data["active"]
-      tipo      = form.cleaned_data["tipo"]
-      perfil    = form.cleaned_data["perfil"]
-      usefilter = form.cleaned_data["usefilter"]
+    if opc == "insert":
 
-      if opc == "insert":
-        
-        user = Usuario(
-          firstname = firstname,
-          name      = name,
+      form = NewUsuarioForm(request.POST)
+      if form.is_valid():
+
+        usuario = Usuario(
+          firstname = form.cleaned_data["firstname"],
+          name      = form.cleaned_data["name"],
           email     = form.cleaned_data["email"],
           password  = make_password(form.cleaned_data["password"]),
           password2 = make_password(form.cleaned_data["password2"]),
-          active    = active,
-          tipo      = tipo,
-          perfil    = perfil,
-          usefilter = usefilter,
+          active    = form.cleaned_data["active"],
+          tipo      = form.cleaned_data["tipo"],
+          perfil    = form.cleaned_data["perfil"],
+          usefilter = form.cleaned_data["usefilter"],
         )
-        user.save()
-
-      elif opc == "edit":
-
-        usuario = Usuario.objects.filter(email=pk).first()
-
-        usuario.firstname = firstname
-        usuario.name      = name
-        usuario.active    = active
-        usuario.tipo      = tipo
-        usuario.perfil    = perfil
-        usuario.usefilter = usefilter
         usuario.save()
 
         return redirect("usuarios")
-    else:
-      erro = form.errors
-      return render(
+
+      else:
+        return render(
           request,
           "projects/usuarios.html",
-          {"altera": True, "form": form, "erro": erro},
-      )
+          {"inclui": True, "form": form},
+        )
 
+    elif opc == "edit":
+      
+      usuario = Usuario.objects.filter(email=pk).first()
+      form = UsuarioForm(request.POST, instance=usuario)
+      if form.is_valid():
+
+        usuario = form.save(commit=False)
+        usuario.firstname = form.cleaned_data["firstname"]
+        usuario.name      = form.cleaned_data["name"]
+        usuario.active    = form.cleaned_data["active"]
+        usuario.tipo      = form.cleaned_data["tipo"]
+        usuario.perfil    = form.cleaned_data["perfil"]
+        usuario.usefilter = form.cleaned_data["usefilter"]
+        usuario.save()
+
+        return redirect("usuarios")
+      else:
+        return render(request,"projects/usuarios.html",{"altera": True, "form": form})
   else:
     if opc == "insert":
       form = NewUsuarioForm()
       context = {"inclui": True, "form": form}
-      return render(
-          request,
-          "projects/usuarios.html",
-          context,
-      )
+      return render(request,"projects/usuarios.html", context)
 
     elif opc == "edit":
       if pk:
@@ -253,63 +246,61 @@ def usuarios(request, opc=False, pk=False):
         context = {"usuarios": filter, "filter": filter}
         return render(request, "projects/usuarios.html", context)
 
-    else:
-      users = Usuario.objects.all().order_by("user_id")
-      filter = UsuarioFilter(request.GET, queryset=users)
+    users = Usuario.objects.all().order_by("user_id")
+    filter = UsuarioFilter(request.GET, queryset=users)
 
-      context = {"usuarios": filter, "filter": filter}
-      return render(request, "projects/usuarios.html", context)
+    context = {"usuarios": filter, "filter": filter}
+    return render(request, "projects/usuarios.html", context)
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
 def servicos(request, opc=False, pk=False):
-
+  
   if request.method == "POST":
-    form = ServicosForm(request.POST)
-    if form.is_valid():
+    
+    if opc == "insert":
 
-      codigo      = form.cleaned_data["codigo"]
-      descricao   = form.cleaned_data["descricao"]
-      versao      = form.cleaned_data["versao"]
-      cliente     = form.cleaned_data["cliente"]
-      tipo        = form.cleaned_data["tipo"]
-      observacao  = form.cleaned_data["observacao"]
-
-      if opc == "insert":
+      form = ServicosForm(request.POST)
+      if form.is_valid():
 
         servico = Servicos(
-          codigo      = codigo,
-          descricao   = descricao,
-          versao      = versao,
-          cliente     = cliente,
-          tipo        = tipo,
-          observacao  = observacao,
+          descricao   = form.cleaned_data["descricao"],
+          versao      = form.cleaned_data["versao"],
+          cliente     = form.cleaned_data["cliente"],
+          tipo        = form.cleaned_data["tipo"],
+          observacao  = form.cleaned_data["observacao"],
         )
-
         servico.save()
 
         return redirect("servicos")
-
-      elif opc == "edit":
-
-        servico = Servicos.objects.filter(codigo=pk).first()
-
-        servico.descricao   = descricao
-        servico.versao      = versao
-        servico.cliente     = cliente
-        servico.tipo        = tipo
-        servico.observacao  = observacao
-       
-        servico.save()
-
-        return redirect("servicos")
-    else:
-      erro = form.errors
-      return render(
+      else:
+        return render(
           request,
           "projects/servicos.html",
-          {"altera": True, "form": form, "erro": erro},
-      )
+          {"altera": True, "form": form, "erro": form.errors},
+        )
+
+    elif opc == "edit":
+
+      servico = Servicos.objects.filter(codigo=pk).first()
+      form = ServicosForm(request.POST, instance=servico)
+      if form.is_valid():
+        
+        servico = form.save(commit=False)
+        servico.descricao   = form.cleaned_data["descricao"]
+        servico.versao      = form.cleaned_data["versao"]
+        servico.cliente     = form.cleaned_data["cliente"]
+        servico.tipo        = form.cleaned_data["tipo"]
+        servico.observacao  = form.cleaned_data["observacao"]
+        servico.save()
+
+        return redirect("servicos")
+      else:
+        return render(
+          request,
+          "projects/servicos.html",
+          {"altera": True, "form": form, "erro": form.errors},
+        )
   else:
 
     if opc == "insert":
@@ -344,62 +335,54 @@ def empresas(request, pk=False, opc=False):
   if request.method == "POST":
     
     if opc == "insert":
-      form = NewEmpresaForm(request.POST)
-    elif opc == "edit":
+    
       form = EmpresaForm(request.POST)
-
-    if form.is_valid():
-
-      codigo      = form.cleaned_data["codigo"]
-      nome        = form.cleaned_data["nome"]
-      cnpj        = form.cleaned_data["cnpj"]
-      endereco    = form.cleaned_data["endereco"]
-      cidade      = form.cleaned_data["cidade"]
-      estado      = form.cleaned_data["estado"]
-      telefone    = form.cleaned_data["telefone"]
-      dados_bancarios = form.cleaned_data["dados_bancarios"]
-      imposto     = form.cleaned_data["imposto"]
-
-      if opc == "insert":
+      if form.is_valid():
 
         empresa = Empresa(
-          codigo          = codigo,
-          nome            = nome,
-          cnpj            = cnpj,
-          endereco        = endereco,
-          cidade          = cidade,
-          estado          = estado,
-          telefone        = telefone,
-          dados_bancarios = dados_bancarios,
-          imposto         = imposto,
+          nome            = form.cleaned_data["nome"],
+          cnpj            = form.cleaned_data["cnpj"],
+          endereco        = form.cleaned_data["endereco"],
+          cidade          = form.cleaned_data["cidade"],
+          estado          = form.cleaned_data["estado"],
+          telefone        = form.cleaned_data["telefone"],
+          dados_bancarios = form.cleaned_data["dados_bancarios"],
+          imposto         = form.cleaned_data["imposto"],
         )
+        empresa.save()
+        
+        return redirect("empresas")
 
+      else:
+        return render(
+            request,
+            "projects/empresas.html",
+            {"inclui": True, "form": form, "erro": form.errors},
+        )
+    elif opc == "edit":
+        
+      empresa = Empresa.objects.filter(codigo=pk).first()
+      form = EmpresaForm(request.POST, instance=empresa)
+      if form.is_valid():
+
+        empresa = form.save(commit=False)
+        empresa.nome            = form.cleaned_data["nome"]
+        empresa.cnpj            = form.cleaned_data["cnpj"]
+        empresa.endereco        = form.cleaned_data["endereco"]
+        empresa.cidade          = form.cleaned_data["cidade"]
+        empresa.estado          = form.cleaned_data["estado"]
+        empresa.telefone        = form.cleaned_data["telefone"]
+        empresa.dados_bancarios = form.cleaned_data["dados_bancarios"]
+        empresa.imposto         = form.cleaned_data["imposto"]
         empresa.save()
 
         return redirect("empresas")
-
-      elif opc == "edit":
-        
-        empresa = Empresa.objects.filter(codigo=pk).first()
-
-        empresa.nome            = nome
-        empresa.cnpj            = cnpj
-        empresa.endereco        = endereco
-        empresa.cidade          = cidade
-        empresa.estado          = estado
-        empresa.telefone        = telefone
-        empresa.dados_bancarios = dados_bancarios
-        empresa.imposto         = imposto
-        
-        empresa.save()
-
-        return redirect("empresas")
-    else:
-      return render(
-          request,
-          "projects/empresas.html",
-          {"form": form, "message": form.errors, "type": "danger"},
-      )
+      else:
+        return render(
+            request,
+            "projects/empresas.html",
+            {"altera": True, "form": form, "erro": form.errors},
+        )
   else:
 
     if opc == "insert":
@@ -418,66 +401,65 @@ def empresas(request, pk=False, opc=False):
       if pk:
         empresa = Empresa.objects.filter(codigo=pk).first()
         empresa.delete()
+
         empresas = Empresa.objects.all()
+        
         context = {"empresa": empresas}
         return render(request, "projects/empresas.html", context)
 
-    else:
-      empresas = Empresa.objects.all()
-      context = {"empresa": empresas}
-      return render(request, "projects/empresas.html", context)
-           
+    empresas = Empresa.objects.all()
+    context = {"empresa": empresas}
+    return render(request, "projects/empresas.html", context)
+          
 @login_required(login_url="/index")
 @nivel_access_required(view_name="niveis")
 def niveis(request, pk=False, opc=False):
 
   if request.method == "POST":
-    
-    nivel_form = NivelForm(request.POST)
-    if nivel_form.is_valid():
+    if opc == "insert":
 
-      descricao = nivel_form.cleaned_data["descricao"]
-      rotina    = nivel_form.cleaned_data["rotina"]
-      inclusao  = nivel_form.cleaned_data["inclusao"]
-      edicao    = nivel_form.cleaned_data["edicao"]
-      exclusao  = nivel_form.cleaned_data["exclusao"]
-      logs      = nivel_form.cleaned_data["logs"]
-      filtro    = nivel_form.cleaned_data["filtro"]
-      active    = nivel_form.cleaned_data["active"]
-
-      if opc == "insert":
+      form = NivelForm(request.POST)
+      if form.is_valid():
 
         nivel = Niveis(
-            descricao=descricao,
-            rotina=rotina,
-            inclusao=inclusao,
-            edicao=edicao,
-            exclusao=exclusao,
-            logs=logs,
-            filtro=filtro,
-            active=active
+            descricao = form.cleaned_data["descricao"],
+            rotina    = form.cleaned_data["rotina"],
+            inclusao  = form.cleaned_data["inclusao"],
+            edicao    = form.cleaned_data["edicao"],
+            exclusao  = form.cleaned_data["exclusao"],
+            logs      = form.cleaned_data["logs"],
+            filtro    = form.cleaned_data["filtro"],
+            active    = form.cleaned_data["active"],
         )
-
         nivel.save()
 
         return redirect("niveis")
 
-      elif opc == "edit":
+      else:
+        context = {"inclui": True, "form": form}
+        return render(request, "projects/niveis.html", context,)
+        
+    elif opc == "edit":
 
-        nivel = Niveis.objects.filter(nivel_id=pk).first()
-
-        nivel.descricao = descricao
-        nivel.rotina    = rotina   
-        nivel.inclusao  = inclusao 
-        nivel.edicao    = edicao   
-        nivel.exclusao  = exclusao 
-        nivel.logs      = logs     
-        nivel.filtro    = filtro   
-        nivel.active    = active   
-
+      nivel = Niveis.objects.filter(nivel_id=pk).first()
+      form = NivelForm(request.POST, instance=nivel)
+      if form.is_valid():
+        
+        nivel = form.save(commit=False)
+        nivel.descricao = form.cleaned_data["descricao"]
+        nivel.rotina    = form.cleaned_data["rotina"]
+        nivel.inclusao  = form.cleaned_data["inclusao"]
+        nivel.edicao    = form.cleaned_data["edicao"]
+        nivel.exclusao  = form.cleaned_data["exclusao"]
+        nivel.logs      = form.cleaned_data["logs"]
+        nivel.filtro    = form.cleaned_data["filtro"]
+        nivel.active    = form.cleaned_data["active"]
         nivel.save()
 
         return redirect("niveis")
+      else:
+        context = {"inclui": True, "form": form}
+        return render(request, "projects/niveis.html", context)
   else:
 
     if opc == "insert":
@@ -500,98 +482,76 @@ def niveis(request, pk=False, opc=False):
         context = {"niveis": niveis}
         return render(request, "projects/niveis.html", context)
 
-    else:
-      niveis = Niveis.objects.all()
-      context = {"niveis": niveis}
-      return render(request, "projects/niveis.html", context)
+    niveis = Niveis.objects.all()
+    context = {"niveis": niveis}
+    return render(request, "projects/niveis.html", context)
 
 @login_required(login_url="/index")
 def clientes(request, opc=False, pk=False):
   
   if request.method == "POST":
-   
-    form = ClienteForm(request.POST)
+    
+    if opc == "insert":
 
-    if form.is_valid():
-
-      nome                = form.cleaned_data["nome"]
-      cnpj                = form.cleaned_data["cnpj"]
-      ie                  = form.cleaned_data["ie"]
-      endereco            = form.cleaned_data["endereco"]
-      complemento         = form.cleaned_data["complemento"]
-      bairro              = form.cleaned_data["bairro"]
-      cidade              = form.cleaned_data["cidade"]
-      estado              = form.cleaned_data["estado"]
-      email               = form.cleaned_data["email"]
-      email_cat           = form.cleaned_data["email_cat"]
-      usa_email_cat       = form.cleaned_data["usa_email_cat"]
-      telefone            = form.cleaned_data["telefone"]
-      contatos            = form.cleaned_data["contatos"]
-      dados_bancarios     = form.cleaned_data["dados_bancarios"]
-      observacoes         = form.cleaned_data["observacoes"]
-      valor_hora_atual    = form.cleaned_data["valor_hora_atual"]
-      perc_desconto_atual = form.cleaned_data["perc_desconto_atual"]
-      active              = form.cleaned_data["active"]
-
-      if opc == "insert":
+      form = ClienteForm(request.POST)
+      if form.is_valid():
 
         cliente = Cliente(
-          nome               = nome,
-          cnpj               = cnpj,
-          ie                 = ie,
-          endereco           = endereco,
-          complemento        = complemento,
-          bairro             = bairro,
-          cidade             = cidade,
-          estado             = estado,
-          email              = email,
-          email_cat          = email_cat,
-          usa_email_cat      = usa_email_cat,
-          telefone           = telefone,
-          contatos           = contatos,
-          dados_bancarios    = dados_bancarios,
-          observacoes        = observacoes,
-          valor_hora_atual   = valor_hora_atual,
-          perc_desconto_atual= perc_desconto_atual,
-          active             = active,
+          nome               = form.cleaned_data["nome"],
+          cnpj               = form.cleaned_data["cnpj"],
+          ie                 = form.cleaned_data["ie"],
+          endereco           = form.cleaned_data["endereco"],
+          complemento        = form.cleaned_data["complemento"],
+          bairro             = form.cleaned_data["bairro"],
+          cidade             = form.cleaned_data["cidade"],
+          estado             = form.cleaned_data["estado"],
+          email              = form.cleaned_data["email"],
+          email_cat          = form.cleaned_data["email_cat"],
+          usa_email_cat      = form.cleaned_data["usa_email_cat"],
+          telefone           = form.cleaned_data["telefone"],
+          contatos           = form.cleaned_data["contatos"],
+          dados_bancarios    = form.cleaned_data["dados_bancarios"],
+          observacoes        = form.cleaned_data["observacoes"],
+          valor_hora_atual   = form.cleaned_data["valor_hora_atual"],
+          perc_desconto_atual= form.cleaned_data["perc_desconto_atual"],
+          active             = form.cleaned_data["active"],
         )
-
         cliente.save()
 
         return redirect("clientes")
+      else:
+        return render(request, "projects/clientes.html", {"inclui": True, "form": form})
 
-      elif opc == "edit":
+    elif opc == "edit":
         
-        cliente = Cliente.objects.filter(codigo=pk).first()
-
-        cliente.nome                = nome               
-        cliente.cnpj                = cnpj               
-        cliente.ie                  = ie                 
-        cliente.endereco            = endereco           
-        cliente.complemento         = complemento        
-        cliente.bairro              = bairro             
-        cliente.cidade              = cidade             
-        cliente.estado              = estado             
-        cliente.email               = email              
-        cliente.email_cat           = email_cat          
-        cliente.usa_email_cat       = usa_email_cat      
-        cliente.telefone            = telefone           
-        cliente.contatos            = contatos           
-        cliente.dados_bancarios     = dados_bancarios    
-        cliente.observacoes         = observacoes        
-        cliente.valor_hora_atual    = valor_hora_atual   
-        cliente.perc_desconto_atual = perc_desconto_atual
-        cliente.active              = active             
+      cliente = Cliente.objects.filter(codigo=pk).first()
+      form = ClienteForm(request.POST, instance=cliente)
+      if form.is_valid():
         
+        cliente = form.save(commit=False)
+        cliente.nome                = form.cleaned_data["nome"]
+        cliente.cnpj                = form.cleaned_data["cnpj"]
+        cliente.ie                  = form.cleaned_data["ie"]
+        cliente.endereco            = form.cleaned_data["endereco"]
+        cliente.complemento         = form.cleaned_data["complemento"]
+        cliente.bairro              = form.cleaned_data["bairro"]
+        cliente.cidade              = form.cleaned_data["cidade"]
+        cliente.estado              = form.cleaned_data["estado"]
+        cliente.email               = form.cleaned_data["email"]
+        cliente.email_cat           = form.cleaned_data["email_cat"]
+        cliente.usa_email_cat       = form.cleaned_data["usa_email_cat"]
+        cliente.telefone            = form.cleaned_data["telefone"]
+        cliente.contatos            = form.cleaned_data["contatos"]
+        cliente.dados_bancarios     = form.cleaned_data["dados_bancarios"]
+        cliente.observacoes         = form.cleaned_data["observacoes"]
+        cliente.valor_hora_atual    = form.cleaned_data["valor_hora_atual"]
+        cliente.perc_desconto_atual = form.cleaned_data["perc_desconto_atual"]
+        cliente.active              = form.cleaned_data["active"]
         cliente.save()
 
         return redirect("clientes")
-    else:
-      return render(
-          request,
-          "projects/clientes.html",
-          {"form": form, "message": form.errors, "type": "danger"},
-      )
+      else:
+        return render(request, "projects/clientes.html", {"altera": True, "form": form})
   else:
 
     if opc == "insert":
@@ -614,91 +574,72 @@ def clientes(request, opc=False, pk=False):
         context = {"cliente": clientes}
         return render(request, "projects/clientes.html", context)
 
-    else:
-      clientes = Cliente.objects.all()
-      context = {"clientes": clientes}
-      return render(request, "projects/clientes.html", context)
+    clientes = Cliente.objects.all()
+    context = {"clientes": clientes}
+    return render(request, "projects/clientes.html", context)
 
 @login_required(login_url="/index")
 def colaboradores(request, opc=False, pk=False):
   
   if request.method == "POST":
    
-    form = ColaboradorForm(request.POST)
+    if opc == "insert":
 
-    if form.is_valid():
-
-      codigo              = form.cleaned_data["codigo"]
-      nome                = form.cleaned_data["nome"]
-      cpf                 = form.cleaned_data["cpf"]
-      endereco            = form.cleaned_data["endereco"]
-      bairro              = form.cleaned_data["bairro"]
-      cidade              = form.cleaned_data["cidade"]
-      estado              = form.cleaned_data["estado"]
-      email               = form.cleaned_data["email"]
-      telefone            = form.cleaned_data["telefone"]
-      dados_bancarios     = form.cleaned_data["dados_bancarios"]
-      valor_hora          = form.cleaned_data["valor_hora"]
-      valor_fixo          = form.cleaned_data["valor_fixo"]
-      comissao            = form.cleaned_data["comissao"]
-      funcao              = form.cleaned_data["funcao"]
-      active              = form.cleaned_data["active"]
-      periodo_lancamento  = form.cleaned_data["periodo_lancamento"]
-
-      if opc == "insert":
+      form = ColaboradorForm(request.POST)
+      if form.is_valid():
 
         colaborador = Colaborador(
-          codigo             = codigo,
-          nome               = nome,
-          cpf                = cpf,
-          endereco           = endereco,
-          bairro             = bairro,
-          cidade             = cidade,
-          estado             = estado,
-          email              = email,
-          telefone           = telefone,
-          dados_bancarios    = dados_bancarios,
-          valor_hora         = valor_hora,
-          valor_fixo         = valor_fixo,
-          comissao           = comissao,
-          funcao             = funcao,
-          active             = active,
-          periodo_lancamento = periodo_lancamento,
+          nome               = form.cleaned_data["nome"],
+          cpf                = form.cleaned_data["cpf"],
+          endereco           = form.cleaned_data["endereco"],
+          bairro             = form.cleaned_data["bairro"],
+          cidade             = form.cleaned_data["cidade"],
+          estado             = form.cleaned_data["estado"],
+          email              = form.cleaned_data["email"],
+          telefone           = form.cleaned_data["telefone"],
+          dados_bancarios    = form.cleaned_data["dados_bancarios"],
+          valor_hora         = form.cleaned_data["valor_hora"],
+          valor_fixo         = form.cleaned_data["valor_fixo"],
+          comissao           = form.cleaned_data["comissao"],
+          funcao             = form.cleaned_data["funcao"],
+          active             = form.cleaned_data["active"],
+          periodo_lancamento = form.cleaned_data["periodo_lancamento"],
         )
 
         colaborador.save()
 
         return redirect("colaboradores")
+      else:
+        return render(request,"projects/colaboradores.html",{"inclui": True, "form": form})
 
-      elif opc == "edit":
+    elif opc == "edit":
         
-        colaborador = Colaborador.objects.filter(codigo=pk).first()
-
-        colaborador.nome               = nome
-        colaborador.cpf                = cpf
-        colaborador.endereco           = endereco
-        colaborador.bairro             = bairro
-        colaborador.cidade             = cidade
-        colaborador.estado             = estado
-        colaborador.email              = email
-        colaborador.telefone           = telefone
-        colaborador.dados_bancarios    = dados_bancarios
-        colaborador.valor_hora         = valor_hora
-        colaborador.valor_fixo         = valor_fixo
-        colaborador.comissao           = comissao
-        colaborador.funcao             = funcao
-        colaborador.active             = active
-        colaborador.periodo_lancamento = periodo_lancamento
+      colaborador = Colaborador.objects.filter(codigo=pk).first()
+      form = ColaboradorForm(request.POST, instance=colaborador)
+      if form.is_valid():
+            
+        colaborador.nome               = form.cleaned_data["nome"]
+        colaborador.cpf                = form.cleaned_data["cpf"]
+        colaborador.endereco           = form.cleaned_data["endereco"]
+        colaborador.bairro             = form.cleaned_data["bairro"]
+        colaborador.cidade             = form.cleaned_data["cidade"]
+        colaborador.estado             = form.cleaned_data["estado"]
+        colaborador.email              = form.cleaned_data["email"]
+        colaborador.telefone           = form.cleaned_data["telefone"]
+        colaborador.dados_bancarios    = form.cleaned_data["dados_bancarios"]
+        colaborador.valor_hora         = form.cleaned_data["valor_hora"]
+        colaborador.valor_fixo         = form.cleaned_data["valor_fixo"]
+        colaborador.comissao           = form.cleaned_data["comissao"]
+        colaborador.funcao             = form.cleaned_data["funcao"]
+        colaborador.active             = form.cleaned_data["active"]
+        colaborador.periodo_lancamento = form.cleaned_data["periodo_lancamento"]
         
         colaborador.save()
 
         return redirect("colaboradores")
-    else:
-      return render(
-          request,
-          "projects/colaboradores.html",
-          {"form": form, "message": form.errors, "type": "danger"},
-      )
+      else:
+        return render(request,"projects/colaboradores.html",{"altera": True, "form": form})
+
   else:
 
     if opc == "insert":
@@ -721,10 +662,9 @@ def colaboradores(request, opc=False, pk=False):
         context = {"colaborador": colaboradores}
         return render(request, "projects/colaboradores.html", context)
 
-    else:
-      colaboradores = Colaborador.objects.all()
-      context = {"colaboradores": colaboradores}
-      return render(request, "projects/colaboradores.html", context)
+    colaboradores = Colaborador.objects.all()
+    context = {"colaboradores": colaboradores}
+    return render(request, "projects/colaboradores.html", context)
 
 @login_required(login_url="/index")
 def valores(request, opc=False, pk=False):
@@ -735,7 +675,6 @@ def valores(request, opc=False, pk=False):
 
     if form.is_valid():
 
-      codigo      = form.cleaned_data["codigo"]
       data        = form.cleaned_data["data"]
       valor_hora  = form.cleaned_data["valor_hora"]
       valor_fixo  = form.cleaned_data["valor_fixo"]
@@ -748,7 +687,6 @@ def valores(request, opc=False, pk=False):
       if opc == "insert":
 
         valores = Valores(
-          codigo     = codigo,
           data       = data,
           valor_hora = valor_hora,
           valor_fixo = valor_fixo,
@@ -767,7 +705,6 @@ def valores(request, opc=False, pk=False):
         
         valores = Valores.objects.filter(codigo=pk).first()
 
-        valores.codigo     = codigo
         valores.data       = data
         valores.valor_hora = valor_hora
         valores.valor_fixo = valor_fixo
@@ -1070,7 +1007,6 @@ def cargainicial(request):
   
   for i in servicos:
     servico = Servicos(
-      codigo= i['codigo'],
       descricao= i['descricao'],
       versao="001", 
       cliente=cliente,
@@ -1080,7 +1016,6 @@ def cargainicial(request):
   
   for i in empresas:
     empresa = Empresa(
-      codigo          = i['codigo'],
       nome            = i['nome'],
       cnpj            = i['cnpj'],
       cidade          = i['cidade'],

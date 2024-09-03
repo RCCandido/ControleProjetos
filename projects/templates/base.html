@@ -123,18 +123,8 @@
                       </a>
                     </li>
                     <li>
-                      <a href="{% url 'servicos' %}">
-                        <span class="sub-item">Serviços</span>
-                      </a>
-                    </li>
-                    <li>
                       <a href="{% url 'colaboradores' %}">
                         <span class="sub-item">Colaboradores</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'valores' %}">
-                        <span class="sub-item">Valores</span>
                       </a>
                     </li>
                   </ul>
@@ -143,11 +133,16 @@
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarLayouts">
                   <i class="fas fa-th-list"></i>
-                  <p>Projetos</p>
+                  <p>Oportunidades</p>
                   <span class="caret"></span>
                 </a>
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
+                    <li>
+                      <a href="{% url 'servicos' %}">
+                        <span class="sub-item">Serviços</span>
+                      </a>
+                    </li>
                     <li>
                       <a href="{% url 'projetos' %}">
                         <span class="sub-item">Projetos</span>
@@ -156,7 +151,7 @@
                   </ul>
                 </div>
               </li>
-              <li class="nav-item">
+              <!--<li class="nav-item">
                 <a data-bs-toggle="collapse" href="#forms">
                   <i class="fas fa-pen-square"></i>
                   <p>Relatórios</p>
@@ -171,7 +166,7 @@
                     </li>
                   </ul>
                 </div>
-              </li>
+              </li>-->
             </ul>
           </div>
         </div>

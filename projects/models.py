@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+from django.utils.translation import gettext as _
 
 class Niveis(models.Model):
   
@@ -55,7 +56,6 @@ class Niveis(models.Model):
     verbose_name="Filtro", max_length=1, null=False, blank=False, choices=getSimNao()
   )
   
-
   class Meta:
     verbose_name_plural = "Niveis"
     ordering = ('nivel_id','descricao',)
@@ -81,7 +81,7 @@ class Usuario(AbstractUser):
 
   class Meta:
     verbose_name_plural = "Usuários"
-    ordering = ('name',)
+    ordering = ('user_id',)
 
   def __str__(self):
     return self.name
@@ -96,7 +96,7 @@ class Usuario(AbstractUser):
   user_id = models.AutoField(primary_key=True)
   firstname = models.CharField(verbose_name="Primeiro Nome", max_length=20, null=False, blank=False)
   name = models.CharField(verbose_name="Nome Completo", max_length=200, null=False, blank=False)
-  email = models.EmailField('E-mail', unique=True)
+  email = models.EmailField('E-mail', unique=True, null=False, blank=False)
   password = models.CharField(verbose_name="Senha", max_length=30, null=False, blank=False)
   password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=getTipos())
@@ -146,22 +146,19 @@ class Empresa(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Empresa ativa ?")
+  codigo = models.AutoField(primary_key=True)
 
-  codigo = models.CharField(
-      primary_key=True,
-      verbose_name="Código", unique=True, max_length=6, null=False, blank=False
-  )
   nome = models.CharField(
       verbose_name="Empresa", max_length=200, null=False, blank=False
   )
 
-  cnpj = models.CharField(verbose_name="CNPJ", max_length=14, default="")
+  cnpj = models.CharField(verbose_name="CNPJ", max_length=18, default="")
   endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
   cidade = models.CharField(verbose_name="Cidade", max_length=80, default="")
   estado = models.CharField(verbose_name="Estado", max_length=2, choices=getUF())
   telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
-  imposto = models.IntegerField(verbose_name="% Imposto", default=0)
+  imposto = models.FloatField(_("imposto"))
 
   def __str__(self):
     return self.nome
@@ -182,8 +179,8 @@ class Cliente(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Cliente ativo ?")
-
   codigo = models.AutoField(primary_key=True)
+
   nome = models.CharField(verbose_name="Nome", null=False, blank=False, max_length=200)
   cnpj = models.CharField(verbose_name="CNPJ", max_length=14)
   ie = models.CharField(verbose_name="IE", max_length=14, blank=True)
@@ -212,18 +209,18 @@ class Servicos(models.Model):
   
   def getTipos():
     TIPOS = (
-      ('pontual', 'Pontual'),
-      ('sustentacao', 'Sustentação'),
-      ('sd', 'Service Desk'),
-      ('projeto', 'Projeto'),
-      ('hradicional', 'Hora Adicional'),
+      ('Pontual', 'Pontual'),
+      ('Sustentação', 'Sustentação'),
+      ('Service Desk', 'Service Desk'),
+      ('Projeto', 'Projeto'),
+      ('Hora Adicional', 'Hora Adicional'),
     )
     return TIPOS
   
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
+  codigo = models.AutoField(primary_key=True)
 
-  codigo = models.CharField(verbose_name="Código", max_length=6, null=False, blank=False)
   descricao = models.CharField(verbose_name="Descrição", max_length=80, null=False, blank=False)
   versao = models.CharField(verbose_name="Versão", max_length=3, null=False, blank=False)
   
@@ -271,10 +268,8 @@ class Projetos(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Projeto ativo ?")
+  codigo = models.AutoField(primary_key=True)
 
-  codigo = models.CharField(
-      primary_key=True, verbose_name="Código", max_length=8, blank=False, unique=True
-  )
   name = models.CharField(
       verbose_name="Descrição", null=False, blank=False, max_length=200
   )
@@ -332,17 +327,14 @@ class Colaborador(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Colaborador ativo ?")
-
-  codigo = models.CharField(
-    primary_key=True, verbose_name="Código", max_length=6, blank=False, unique=True
-  )
+  codigo = models.AutoField(primary_key=True)
    
   nome = models.CharField(
     verbose_name="Nome", null=False, blank=False, max_length=200
   )
 
   cpf = models.CharField(
-    verbose_name="CPF", null=False, blank=False, max_length=11
+    verbose_name="CPF", null=False, blank=False, max_length=14
   )
 
   endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
@@ -375,10 +367,7 @@ class Valores(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Registro ativo ?")
-
-  codigo = models.CharField(
-    primary_key=True, verbose_name="Código", max_length=6, blank=False, unique=True
-  )
+  codigo = models.AutoField(primary_key=True)
   
   data = models.DateField(
     verbose_name="Data", 

@@ -4,32 +4,17 @@
 {% block title %} Serviços {% endblock title %}
 {% block content %}
 
-	{% if altera %}
+	{% if incluir or altera %}
 
 		<form method="POST">{% csrf_token %}
 			{% crispy form %}
-			
-			{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-			
 		</form>
 		
-	{% elif inclui %}
-		
-		<form method="POST" id="{{ servicos.helper.codigo }}">{% csrf_token %}
-			{% crispy form %}
-			
-			{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-
-		</form>
-
 	{% else %}
 
-		<table class="table table-hover">
-			<thead>
+		<div class="table-responsive-sm">
+			<table class="table table-sm table-hover">
+				<thead>
 				<tr>
 					<th>Codigo</th>
 					<th>Descrição</th>
@@ -38,27 +23,28 @@
 					<th>Tipo</th>
 					<th>Ação</th>
 				</tr>
-			</thead>
-			<tbody>
-				{% for s in servicos %}
-				<tr>
-					<td>{{ s.codigo }}</td>
-					<td>{{ s.descricao }}</td>
-					<td>{{ s.versao }}</td>
-					<td>{{ s.cliente }}</td>
-					<td>{{ s.tipo }}</td>
-					<td>
-						<a href="{% url "servicos" opc='edit' pk=s.codigo %}" class="mx-2">
-							<i class="fa fa-edit align-middle text-primary"></i>
-						</a>
-						<a href="{% url "servicos" opc='delete' pk=s.codigo	 %}">
-							<i class="fa fa-times fs-5 align-middle text-danger"></i>
-						</a>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					{% for s in servicos %}
+					<tr>
+						<td>{{ s.codigo }}</td>
+						<td>{{ s.descricao }}</td>
+						<td>{{ s.versao }}</td>
+						<td>{{ s.cliente }}</td>
+						<td>{{ s.tipo }}</td>
+						<td>
+							<a href="{% url "servicos" opc='edit' pk=s.codigo %}" class="mx-2">
+								<i class="fa fa-edit align-middle text-primary"></i>
+							</a>
+							<a href="{% url "servicos" opc='delete' pk=s.codigo	 %}">
+								<i class="fa fa-times fs-5 align-middle text-danger"></i>
+							</a>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
 		
 		<a href="{% url "servicos" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
 	{% endif %}

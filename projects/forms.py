@@ -1,4 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
 from crispy_forms.helper import FormHelper 
 from crispy_forms.layout import Layout, Submit, Row, Field 
 from crispy_forms.helper import FormHelper
@@ -27,14 +30,27 @@ class RedefinirSenhaForm(forms.ModelForm):
 
 class UsuarioForm(forms.ModelForm):
 
-  email = forms.EmailField(disabled=True, required=False,)
+  def clean(self):
+   super(UsuarioForm, self).clean()
+  
+   if 'password' in self.cleaned_data and 'password2' in self.cleaned_data:
+     if self.cleaned_data['password'] != self.cleaned_data['password2']:
+       raise ValidationError("As senhas não conferem.") 
+
+  email = forms.EmailField(disabled=True)
 
   password = forms.CharField(
-    widget=forms.PasswordInput(), disabled=False, required=False
+    label="Senha",
+    widget=forms.PasswordInput(), 
+    disabled=False, 
+    required=False
   )
 
   password2 = forms.CharField(
-    widget=forms.PasswordInput(), disabled=False, required=False
+    label="Repita a Senha",
+    widget=forms.PasswordInput(), 
+    disabled=False, 
+    required=False
   )
 
   tipo = forms.ChoiceField(
@@ -78,12 +94,12 @@ class UsuarioForm(forms.ModelForm):
       Row(
         Column('email', css_class='form-control-sm col-sm-6'),
         Column('tipo', css_class='form-control-sm col-sm-2'),
-        Column('perfil', css_class='form-control-sm col-sm-4'),
+        Column('perfil', css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('password',css_class='form-control-sm col-sm-4'),
-        Column('password2',css_class='form-control-sm col-sm-4'),
+        Column('password',css_class='form-control-sm col-sm-2'),
+        Column('password2',css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
       ),
       Row(
@@ -191,15 +207,77 @@ class NivelForm(forms.ModelForm):
 
 class EmpresaForm(forms.ModelForm):
 
-  codigo = forms.CharField(disabled=True, required=False)
-  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
-  endereco = forms.CharField(required=False)
+  #def clean(self):
+  #  super(EmpresaForm, self).clean()
+  #
+  #  if 'cnpj' in self.cleaned_data:
+  #    cnpj = self.cleaned_data['cnpj']
+  #    if cnpj:
+  #      raise ValidationError(cnpj)
+
+  def validaPercent(value):
+    if value > 100:
+        raise ValidationError(
+            _("%(value)s não é valido."),
+            params={"value": value},
+        )
+
+  dados_bancarios = forms.CharField(
+    required=False, 
+    label="Dados Bancários",
+    widget=forms.Textarea(
+      attrs={
+        "rows":"5",
+        "placeholder": "Informações bancárias"
+        }
+      )
+    )
+
+  endereco = forms.CharField(
+    required=False,
+    label="Endereço",
+    widget = forms.TextInput(
+      attrs={
+        'placeholder': "Av. da Esquina",
+      })
+    )
   
   estado = forms.ChoiceField(
     choices=Empresa.getUF(),
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
+
+  imposto = forms.FloatField(
+    validators=[validaPercent],
+    required=False,
+    label='% Imposto',
+    widget = forms.NumberInput(
+      attrs={
+        'placeholder': "2.50",
+      })
+    )
+  
+  telefone = forms.CharField(
+    required=False,
+    label='Telefone',
+    widget = forms.TextInput(
+      attrs={
+        'data-mask': "(99) 99999-9999",
+        'placeholder': "(99) 99999-9999",
+      })
+    )
+  
+  cnpj = forms.CharField(
+    required=False,
+    max_length=18,
+    label='CNPJ',
+    widget = forms.TextInput(
+      attrs={
+        'data-mask': "99.999.999/9999-99",
+        'placeholder': "99.999.999/9999-99",
+      })
+    )
   
   class Meta:
     model = Empresa
@@ -211,7 +289,6 @@ class EmpresaForm(forms.ModelForm):
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-          Column('codigo', css_class='form-control-sm col-sm-2'),
           Column('nome', css_class='form-control-sm col-sm-8'),
           css_class='form-row d-flex',
       ),
@@ -271,7 +348,6 @@ class ServicosForm(forms.ModelForm):
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-        Column('codigo', css_class='form-control-sm col-sm-2'),
         Column('descricao', css_class='form-control-sm col-sm-6'),
         Column('versao', css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
@@ -401,7 +477,7 @@ class NewProjetoForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Horas Apontadas",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
         'data-mask':"00.00"
       }
@@ -413,7 +489,7 @@ class NewProjetoForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Horas do Projeto",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
         'data-mask':"00.00"
       }
@@ -424,9 +500,10 @@ class NewProjetoForm(forms.ModelForm):
     localize=True, 
     required=False,
     label="Valor Hora",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
-        'data-mask':"R$ 000.00"
+        'data-mask':"000.00",
+        'placeholder':"R$ 000.00",
       }
     )
   )
@@ -436,9 +513,10 @@ class NewProjetoForm(forms.ModelForm):
     required=False,
     label="Valor Total",
     min_value=1,
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
-        'data-mask':"R$ 000.00"
+        'data-mask':"0000.00",
+        'placeholder':"R$ 000.00"
       }
     )
   )
@@ -622,15 +700,11 @@ class ClienteForm(forms.ModelForm):
 
 class ColaboradorForm(forms.ModelForm):
 
-  codigo = forms.CharField(
-    label='Código',
+  nome = forms.CharField(
+    label='Nome Completo',
     required=True,
-    widget = forms.TextInput(
-      attrs={
-        'data-mask':"000000"
-      })
   )
-
+  
   cpf = forms.CharField(
     label='CPF',
     required=True,
@@ -647,7 +721,14 @@ class ColaboradorForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
   
-  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5", "placeholder":"Dados para movimentações financeiras.."}))
+  dados_bancarios = forms.CharField(
+    required=False, 
+    widget=forms.Textarea(
+      attrs={
+        "rows":"5", 
+        "placeholder":"Dados para movimentações financeiras"
+      })
+  )
 
   valor_hora = forms.DecimalField(
     max_digits=4, 
@@ -673,14 +754,12 @@ class ColaboradorForm(forms.ModelForm):
     )
   )
   
-  comissao = forms.DecimalField(
-    max_digits=3, 
-    decimal_places=2, 
-    required=True,
+  comissao = forms.FloatField(
+    required=False,
     label="Comissão",
-    widget=forms.DateInput(
+    widget=forms.NumberInput(
       attrs={
-        'data-mask':"% 0,00"
+        'placeholder':"% 2,50",
       }
     )
   )
@@ -701,7 +780,6 @@ class ColaboradorForm(forms.ModelForm):
       })
   )
 
-
   class Meta:
     model = Colaborador
     fields = "__all__"
@@ -712,7 +790,6 @@ class ColaboradorForm(forms.ModelForm):
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-        Column('codigo', css_class='form-control-sm col-sm-2'),
         Column('nome', css_class='form-control-sm col-sm-6'),
         css_class='form-row d-flex',
       ),
@@ -756,19 +833,16 @@ class ColaboradorForm(forms.ModelForm):
 
 class ValoresForm(forms.ModelForm):
 
-  codigo = forms.CharField(
-    label='Código',
-    required=True,
-    widget = forms.TextInput(
-      attrs={
-        'data-mask':"000000"
-      })
-  )
-
   data = forms.DateField(
     localize=True,
     initial=datetime.date.today,
     required=True,
+     widget=forms.DateInput(
+      attrs={
+        'data-mask':"00/00/0000",
+        'placeholder':"dd/mm/yyyy",
+      }
+    )
   )
 
   valor_hora = forms.DecimalField(
@@ -776,9 +850,10 @@ class ValoresForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Valor Hora",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
-        'data-mask':"R$ 000,00"
+        'data-mask':"R$ 000,00",
+        'placeholder':"R$ 000,00",
       }
     )
   )
@@ -788,9 +863,10 @@ class ValoresForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Valor Fixo",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
-        'data-mask':"R$ 0000.00"
+        'data-mask':"R$ 0000,00",
+        'placeholder':"R$ 000,00",
       }
     )
   )
@@ -800,9 +876,10 @@ class ValoresForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Comissão",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
-        'data-mask':"% 00,00"
+        'data-mask':"% 00,00",
+        'placeholder':"% 2,00",
       }
     )
   )
@@ -811,10 +888,11 @@ class ValoresForm(forms.ModelForm):
     max_digits=3, 
     decimal_places=2, 
     required=False,
-    label="Imposto",
-    widget=forms.DateInput(
+    label="% Imposto",
+    widget=forms.NumberInput(
       attrs={
-        'data-mask':"% 0,00"
+        'data-mask':"00,00",
+        'placeholder':"% 2,50",
       }
     )
   )
@@ -824,9 +902,10 @@ class ValoresForm(forms.ModelForm):
     decimal_places=2, 
     required=False,
     label="Desconto",
-    widget=forms.DateInput(
+    widget=forms.TextInput(
       attrs={
-        'data-mask':"% 0,00"
+        'data-mask':"00,00",
+        'placeholder':"% 10,00",
         }
       )
     )
@@ -851,8 +930,8 @@ class ValoresForm(forms.ModelForm):
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
-        Column('codigo', css_class='form-control-sm col-sm-2'),
         Column('data', css_class='form-control-sm col-sm-3'),
+        Column('active', css_class='form-control-sm col-sm-4 my-4'),
         css_class='form-row d-flex',
       ),
       Row(
@@ -865,7 +944,6 @@ class ValoresForm(forms.ModelForm):
       ),
       Row(
         Column('observacao',css_class='form-control-sm col-sm-5'),
-        Column('active', css_class='form-control-sm col-sm-4 my-4'),
         css_class='form-row d-flex',
       ),
       Div(
