@@ -259,11 +259,11 @@ def servicos(request, opc=False, pk=False):
   if request.method == "POST":
     
     if opc == "insert":
-
       form = ServicosForm(request.POST)
       if form.is_valid():
 
         servico = Servicos(
+          codigo      = form.cleaned_data["codigo"],
           descricao   = form.cleaned_data["descricao"],
           versao      = form.cleaned_data["versao"],
           cliente     = form.cleaned_data["cliente"],
@@ -277,7 +277,7 @@ def servicos(request, opc=False, pk=False):
         return render(
           request,
           "projects/servicos.html",
-          {"altera": True, "form": form, "erro": form.errors},
+          {"altera": True, "form": form},
         )
 
     elif opc == "edit":
@@ -299,11 +299,12 @@ def servicos(request, opc=False, pk=False):
         return render(
           request,
           "projects/servicos.html",
-          {"altera": True, "form": form, "erro": form.errors},
+          {"altera": True, "form": form},
         )
   else:
 
     if opc == "insert":
+      
       form = ServicosForm()
       context = {"inclui": True, "form": form}
       return render(request, "projects/servicos.html", context)
@@ -312,7 +313,10 @@ def servicos(request, opc=False, pk=False):
       if pk:
         servico = Servicos.objects.filter(codigo=pk).first()
         form = ServicosForm(instance=servico)
-        context = {"altera": True, "form": form}
+        context = {
+          "altera": True, 
+          "form": form,
+          }
         return render(request, "projects/servicos.html", context)
 
     elif opc == "delete":
@@ -357,7 +361,7 @@ def empresas(request, pk=False, opc=False):
         return render(
             request,
             "projects/empresas.html",
-            {"inclui": True, "form": form, "erro": form.errors},
+            {"inclui": True, "form": form},
         )
     elif opc == "edit":
         
@@ -381,7 +385,7 @@ def empresas(request, pk=False, opc=False):
         return render(
             request,
             "projects/empresas.html",
-            {"altera": True, "form": form, "erro": form.errors},
+            {"altera": True, "form": form},
         )
   else:
 
@@ -556,14 +560,23 @@ def clientes(request, opc=False, pk=False):
 
     if opc == "insert":
       form = ClienteForm()
-      context = {"inclui": True, "form": form}
+      context = {
+        "inclui": True, 
+        "form": form,
+        }
       return render(request, "projects/clientes.html", context)
 
     elif opc == "edit":
       if pk:
         cliente = Cliente.objects.filter(codigo=pk).first()
         form = ClienteForm(instance=cliente)
-        context = {"altera": True, "form": form}
+        form_valores = Valores.objects.filter(codigo=pk)
+
+        context = {
+          "altera": True, 
+          "form": form,
+          "valores": form_valores,
+        }
         return render(request, "projects/clientes.html", context)
 
     elif opc == "delete":
@@ -721,7 +734,7 @@ def valores(request, opc=False, pk=False):
       return render(
           request,
           "projects/valores.html",
-          {"form": form, "message": form.errors, "type": "danger"},
+          {"form": form, "altera": True},
       )
   else:
 
@@ -750,7 +763,6 @@ def valores(request, opc=False, pk=False):
       context = {"valores": valores}
       return render(request, "projects/valores.html", context)
 
-
 @login_required(login_url="/index")
 def relatorios(request):
     context = {
@@ -768,7 +780,6 @@ def profile(request):
         "message": "Página em construção.",
     }
     return render(request, "projects/em_construcao.html", context)
-
 
 @login_required(login_url="/index")
 def projetos(request, opc=False, pk=False):
@@ -797,11 +808,10 @@ def projetos(request, opc=False, pk=False):
 
         return redirect("projetos")
       else:
-          erro = form.errors
           return render(
               request,
               "projects/projetos.html",
-              {"inclui": True, "form": form, "message": "erro", "type": "danger"},
+              {"inclui": True, "form": form},
           )
     else:
         form = ProjetoForm(request.POST)
@@ -822,12 +832,10 @@ def projetos(request, opc=False, pk=False):
 
           return redirect("projetos")
         else:
-          erro = form.errors
-          print(erro)
           return render(
               request,
               "projects/projetos.html",
-              {"altera": True, "form": form, "erro": erro},
+              {"altera": True, "form": form},
           )
   else:
     if opc == "insert":
@@ -860,7 +868,6 @@ def projetos(request, opc=False, pk=False):
 
       context = {"projetos": filter, "filter": filter}
       return render(request, "projects/projetos.html", context)
-
 
 @login_required(login_url="/index")
 def logs(request):
@@ -1005,14 +1012,14 @@ def cargainicial(request):
       )
     cliente.save()
   
-  for i in servicos:
-    servico = Servicos(
-      descricao= i['descricao'],
-      versao="001", 
-      cliente=cliente,
-      tipo= i['tipo'],
-    )
-    servico.save()
+  #for i in servicos:
+  #  servico = Servicos(
+  #    descricao= i['descricao'],
+  #    versao="001", 
+  #    cliente=cliente,
+  #    tipo= i['tipo'],
+  #  )
+  #  servico.save()
   
   for i in empresas:
     empresa = Empresa(

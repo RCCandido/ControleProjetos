@@ -4,7 +4,7 @@
 {% block title %} Serviços {% endblock title %}
 {% block content %}
 
-	{% if incluir or altera %}
+	{% if inclui or altera %}
 
 		<form method="POST">{% csrf_token %}
 			{% crispy form %}
@@ -35,9 +35,6 @@
 						<td>
 							<a href="{% url "servicos" opc='edit' pk=s.codigo %}" class="mx-2">
 								<i class="fa fa-edit align-middle text-primary"></i>
-							</a>
-							<a href="{% url "servicos" opc='delete' pk=s.codigo	 %}">
-								<i class="fa fa-times fs-5 align-middle text-danger"></i>
 							</a>
 						</td>
 					</tr>

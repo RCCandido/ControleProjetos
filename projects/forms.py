@@ -323,10 +323,16 @@ class NewEmpresaForm(EmpresaForm):
 
 class ServicosForm(forms.ModelForm):
 
+  codigo = forms.CharField(
+    label='Codigo',
+    disabled=True,
+    required=False,
+  )
+
   cliente = forms.ModelChoiceField(
     queryset=Cliente.objects.all().filter(active="1"),
     to_field_name='codigo',
-    required=False,
+    required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
 
@@ -336,7 +342,24 @@ class ServicosForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
 
-  observacao = forms.CharField(required=False, label="Observações", widget=forms.Textarea(attrs={"rows":"5"}))
+  observacao = forms.CharField(
+    required=False, 
+    label="Observações", 
+    widget=forms.Textarea(
+      attrs={
+        "rows":"5"
+        })
+  )
+
+  versao = forms.CharField(
+    initial="001",
+    label='Versão',
+    required=True,
+    widget = forms.TextInput(
+      attrs={
+        'data-mask':"000"
+      })
+  )
 
   class Meta:
       model = Servicos
@@ -344,10 +367,12 @@ class ServicosForm(forms.ModelForm):
   
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    self.initial['codigo'] = Servicos.getNextCodigo()
     self.helper = FormHelper()
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
+        Column('codigo', css_class='form-control-sm col-sm-3'),
         Column('descricao', css_class='form-control-sm col-sm-6'),
         Column('versao', css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
@@ -845,66 +870,51 @@ class ValoresForm(forms.ModelForm):
     )
   )
 
-  valor_hora = forms.DecimalField(
-    max_digits=4, 
-    decimal_places=2, 
+  valor_hora = forms.CharField(
     required=False,
     label="Valor Hora",
     widget=forms.TextInput(
       attrs={
-        'data-mask':"R$ 000,00",
         'placeholder':"R$ 000,00",
       }
     )
   )
   
-  valor_fixo = forms.DecimalField(
-    max_digits=4, 
-    decimal_places=2, 
+  valor_fixo = forms.CharField(
     required=False,
     label="Valor Fixo",
     widget=forms.TextInput(
       attrs={
-        'data-mask':"R$ 0000,00",
         'placeholder':"R$ 000,00",
       }
     )
   )
   
-  comissao = forms.DecimalField(
-    max_digits=3, 
-    decimal_places=2, 
+  comissao = forms.CharField(
     required=False,
     label="Comissão",
     widget=forms.TextInput(
       attrs={
-        'data-mask':"% 00,00",
         'placeholder':"% 2,00",
       }
     )
   )
   
-  imposto = forms.DecimalField(
-    max_digits=3, 
-    decimal_places=2, 
+  imposto = forms.CharField(
     required=False,
     label="% Imposto",
     widget=forms.NumberInput(
       attrs={
-        'data-mask':"00,00",
         'placeholder':"% 2,50",
       }
     )
   )
   
-  desconto = forms.DecimalField(
-    max_digits=3, 
-    decimal_places=2, 
+  desconto = forms.CharField(
     required=False,
     label="Desconto",
     widget=forms.TextInput(
       attrs={
-        'data-mask':"00,00",
         'placeholder':"% 10,00",
         }
       )
@@ -935,7 +945,7 @@ class ValoresForm(forms.ModelForm):
         css_class='form-row d-flex',
       ),
       Row(
-        Column('valor_hora', css_class='form-control-sm col-sm-2'),
+        Column('valor_hora', css_class='form-control-sm col-sm-2'), 
         Column('valor_fixo',css_class='form-control-sm col-sm-2'),
         Column('comissao',css_class='form-control-sm col-sm-2'),
         Column('imposto',css_class='form-control-sm col-sm-2'),

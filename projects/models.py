@@ -217,9 +217,13 @@ class Servicos(models.Model):
     )
     return TIPOS
   
+  def getNextCodigo():
+    codigo = 'ERP-%04d' % (Servicos.objects.count()+1)
+    return codigo
+
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
-  codigo = models.AutoField(primary_key=True)
+  codigo = models.CharField(primary_key=True, max_length=8)
 
   descricao = models.CharField(verbose_name="Descrição", max_length=80, null=False, blank=False)
   versao = models.CharField(verbose_name="Versão", max_length=3, null=False, blank=False)
@@ -268,7 +272,7 @@ class Projetos(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Projeto ativo ?")
-  codigo = models.AutoField(primary_key=True)
+  codigo = models.CharField(primary_key=True, max_length=8)
 
   name = models.CharField(
       verbose_name="Descrição", null=False, blank=False, max_length=200
@@ -367,8 +371,15 @@ class Valores(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Registro ativo ?")
-  codigo = models.AutoField(primary_key=True)
+  valor_id = models.AutoField(primary_key=True)
   
+  codigo = models.ForeignKey(
+    Servicos,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+  )
+
   data = models.DateField(
     verbose_name="Data", 
     auto_now=False,
