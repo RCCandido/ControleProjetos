@@ -4,6 +4,7 @@
 {% block title %} Clientes {% endblock title %}
 {% block content %}
 
+
 	{% if inclui or altera %}
 
 		<form method="POST">{% csrf_token %}
@@ -46,12 +47,12 @@
 		<a href="{% url "clientes" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Cliente</a>
 	{% endif %}
 	
-	{% if valores %}
+	{% if valores or inclui or altera %}
 	<hr>
 	<small class="text-muted">
 		Histórico de valores:
 	</small>
-		<div id="valores" style="border: 1px solid black;">
+		<div id="valores">
 			<div class="table-responsive-sm">
 				<table class="table table-sm table-striped table-bordered" >
 					<thead>
@@ -68,6 +69,8 @@
 						{% for valor in valores %}
 							<tr>
 								<td>{{ valor.data }}</td>
+								<td>{{ valor.tipo }}</td>
+								<td>{{ valor.codigo }}</td>
 								<td>{{ valor.valor_hora }}</td>
 								<td>{{ valor.valor_fixo }}</td>
 								<td>{{ valor.comissao }}</td>

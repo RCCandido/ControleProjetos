@@ -3,30 +3,11 @@
 {% block page_title %}Valores{% endblock page_title %}
 {% block title %} Valores {% endblock title %}
 {% block content %}
-{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
 			
-	{% if altera %}
+	{% if inclui or altera %}
 
 		<form method="POST">{% csrf_token %}
 			{% crispy form %}
-			
-			{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-			
-		</form>
-		
-	{% elif inclui %}
-		
-		<form method="POST" id="{{ valores.helper.codigo }}">{% csrf_token %}
-			{% crispy form %}
-
-			{% if message %}
-        <span class="text-{{ type }}">{{ message }}</span >
-      {% endif %}
-
 		</form>
 
 	{% else %}

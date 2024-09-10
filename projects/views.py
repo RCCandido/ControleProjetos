@@ -1,4 +1,5 @@
 import random
+import decimal 
 
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -263,21 +264,58 @@ def servicos(request, opc=False, pk=False):
       if form.is_valid():
 
         servico = Servicos(
-          codigo      = form.cleaned_data["codigo"],
+          codigo      = Servicos.getNextCodigo(),
           descricao   = form.cleaned_data["descricao"],
           versao      = form.cleaned_data["versao"],
           cliente     = form.cleaned_data["cliente"],
           tipo        = form.cleaned_data["tipo"],
-          observacao  = form.cleaned_data["observacao"],
+          valor_hora  = form.cleaned_data["valor_hora"],
+          comissao    = form.cleaned_data["comissao"],
+          imposto     = form.cleaned_data["imposto"],
+          valor_imposto   = form.cleaned_data["valor_imposto"],
+          horas_especificacao = form.cleaned_data["horas_especificacao"],
+          horas_tecnicas  = form.cleaned_data["horas_tecnicas"],
+          valor_bruto     = form.cleaned_data["valor_bruto"],
+          desconto        = form.cleaned_data["desconto"],
+          valor_desconto  = form.cleaned_data["valor_desconto"],
+          valor_recebido  = form.cleaned_data["valor_recebido"],
+          base_comissao   = form.cleaned_data["base_comissao"],
+          valor_comissao  = form.cleaned_data["valor_comissao"],
+          custo_operacional = form.cleaned_data["custo_operacional"],
+          liquido         = form.cleaned_data["liquido"],
+          horas_save      = form.cleaned_data["horas_save"],
+          horas_execucao  = form.cleaned_data["horas_execucao"],
+          etapa_comercial = form.cleaned_data["etapa_comercial"],
+          etapa_tecnica   = form.cleaned_data["etapa_tecnica"],
+          justificativa   = form.cleaned_data["justificativa"],
+          anotacoes       = form.cleaned_data["anotacoes"],
+          versao_valida   = form.cleaned_data["versao_valida"],
+          parcelamento    = form.cleaned_data["parcelamento"],
         )
         servico.save()
 
+        # insere o registro na tabela de valores
+        valor = Valores(
+          data = datetime.today,
+          codigo = form.cleaned_data["codigo"],
+          tipo = 'Servico',
+          valor_hora = form.cleaned_data["valor_hora"],
+          comissao = form.cleaned_data["comissao"],
+          imposto = form.cleaned_data["imposto"],
+          desconto = form.cleaned_data["desconto"],
+        )
+        valor.save()
+
         return redirect("servicos")
+
       else:
         return render(
           request,
           "projects/servicos.html",
-          {"altera": True, "form": form},
+          {
+            "inclui": True,
+            "form": form,
+          },
         )
 
     elif opc == "edit":
@@ -285,27 +323,40 @@ def servicos(request, opc=False, pk=False):
       servico = Servicos.objects.filter(codigo=pk).first()
       form = ServicosForm(request.POST, instance=servico)
       if form.is_valid():
-        
-        servico = form.save(commit=False)
-        servico.descricao   = form.cleaned_data["descricao"]
-        servico.versao      = form.cleaned_data["versao"]
-        servico.cliente     = form.cleaned_data["cliente"]
-        servico.tipo        = form.cleaned_data["tipo"]
-        servico.observacao  = form.cleaned_data["observacao"]
-        servico.save()
+        form.save()
+        #servico = form.save(commit=False)
+        #servico.descricao   = form.cleaned_data["descricao"]
+        #servico.descricao   = form.cleaned_data["descricao"],
+        #servico.versao      = form.cleaned_data["versao"],
+        #servico.tipo        = form.cleaned_data["tipo"],
+        ##servico.comissao    = form.cleaned_data["comissao"],
+        #servico.save()
+
+        # insere o registro na tabela de valores
+        valor = Valores(
+          data = datetime.today,
+          codigo = form.cleaned_data["codigo"],
+          tipo = 'Servico',
+          valor_hora = form.cleaned_data["valor_hora"],
+          comissao = form.cleaned_data["comissao"],
+          imposto = form.cleaned_data["imposto"],
+          desconto = form.cleaned_data["desconto"],
+        )
+        valor.save()
 
         return redirect("servicos")
       else:
         return render(
           request,
           "projects/servicos.html",
-          {"altera": True, "form": form},
+          {"altera": True, "form": form, 'form_errors': form.errors},
         )
   else:
 
     if opc == "insert":
       
-      form = ServicosForm()
+      form = ServicosForm(initial={'codigo' : Servicos.getNextCodigo()})
+
       context = {"inclui": True, "form": form}
       return render(request, "projects/servicos.html", context)
 
@@ -313,9 +364,12 @@ def servicos(request, opc=False, pk=False):
       if pk:
         servico = Servicos.objects.filter(codigo=pk).first()
         form = ServicosForm(instance=servico)
+        form_valores = Valores.objects.filter(codigo=pk)
+
         context = {
           "altera": True, 
           "form": form,
+          "valores": form_valores,
           }
         return render(request, "projects/servicos.html", context)
 
@@ -531,7 +585,14 @@ def clientes(request, opc=False, pk=False):
       cliente = Cliente.objects.filter(codigo=pk).first()
       form = ClienteForm(request.POST, instance=cliente)
       if form.is_valid():
-        
+        #return HttpResponse(cliente.codigo)
+        #valor = Valores(
+        #  codigo = cliente.codigo,
+        #  data = datetime.date,
+        #  valor_hora = form.cleaned_data["valor_hora_atual"],
+        #)
+        #valor.save()
+
         cliente = form.save(commit=False)
         cliente.nome                = form.cleaned_data["nome"]
         cliente.cnpj                = form.cleaned_data["cnpj"]
@@ -552,7 +613,7 @@ def clientes(request, opc=False, pk=False):
         cliente.perc_desconto_atual = form.cleaned_data["perc_desconto_atual"]
         cliente.active              = form.cleaned_data["active"]
         cliente.save()
-
+       
         return redirect("clientes")
       else:
         return render(request, "projects/clientes.html", {"altera": True, "form": form})

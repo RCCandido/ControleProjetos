@@ -217,6 +217,29 @@ class Servicos(models.Model):
     )
     return TIPOS
   
+  def getEtapasComercial():
+    TIPOS = (
+      ('Oportunidade', 'Oportunidade'),
+      ('Proposta', 'Proposta'),
+      ('Fechado', 'Fechado'),
+      ('Perdido', 'Perdido'),
+    )
+    return TIPOS
+  
+  def getEtapasTecnicas():
+    TIPOS = (
+      ('DOS16', 'DOS16'),
+      ('Definição de Analista', 'Definição de Analista'),
+      ('Repasse', 'Repasse'),
+      ('Desenvolvimento', 'Desenvolvimento'),
+      ('Validação', 'Validação'),
+      ('Revisão', 'Revisão'),
+      ('Acompanhamento', 'Acompanhamento'),
+      ('Finalizado', 'Finalizado'),
+      ('Outros', 'Outros'),
+    )
+    return TIPOS
+  
   def getNextCodigo():
     codigo = 'ERP-%04d' % (Servicos.objects.count()+1)
     return codigo
@@ -236,8 +259,33 @@ class Servicos(models.Model):
   )
 
   tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=getTipos())
-  observacao = models.TextField(verbose_name="Observações")
+  valor_hora = models.DecimalField(verbose_name="Valor Hora", max_digits=6, decimal_places=2)
+  comissao = models.DecimalField(verbose_name="% Comissão", max_digits=6, decimal_places=2)
+  valor_comissao = models.DecimalField(verbose_name="R$ Valor Comissao", max_digits=6,decimal_places=2,null=True, blank=True)
+  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=6, decimal_places=2,null=True, blank=True)
+  valor_imposto = models.DecimalField(verbose_name="R$ Imposto", max_digits=6, decimal_places=2,null=True, blank=True)
+  horas_especificacao = models.DecimalField(verbose_name="Horas Especificação", max_digits=6, decimal_places=2,null=True, blank=True)
+  horas_tecnicas = models.DecimalField(verbose_name="Horas Técnicas", max_digits=6, decimal_places=2,null=True, blank=True)
+  desconto = models.DecimalField(verbose_name="% Desconto", max_digits=6, decimal_places=2,null=True, blank=True)
+  valor_desconto = models.DecimalField(verbose_name="R$ Desconto", max_digits=6,decimal_places=2,null=True, blank=True)
+  valor_recebido = models.DecimalField(verbose_name="R$ Valor Recebido", max_digits=8,decimal_places=2,null=True, blank=True)
+  base_comissao = models.DecimalField(verbose_name="Base Comissao", max_digits=6,decimal_places=2,null=True, blank=True)
+  custo_operacional = models.DecimalField(verbose_name="Custo Operacional", max_digits=6, decimal_places=2,null=True, blank=True)
+  liquido = models.DecimalField(verbose_name="R$ Liquido", max_digits=8, decimal_places=2,null=True, blank=True)
+  valor_bruto = models.DecimalField(verbose_name="R$ Valor Bruto", max_digits=8, decimal_places=2,null=True, blank=True)
+  horas_save = models.DecimalField(verbose_name="Horas Save", max_digits=6, decimal_places=2,null=True, blank=True)
+  horas_execucao = models.DecimalField(verbose_name="Horas Execução", max_digits=6, decimal_places=2,null=True, blank=True)
+  etapa_comercial = models.CharField(verbose_name="Etapa Comercial", max_length=30,  choices=getEtapasComercial())
+  etapa_tecnica = models.CharField(verbose_name="Etapa Técnica", max_length=30,  choices=getEtapasTecnicas())
+  justificativa = models.TextField(verbose_name="Justificativa")
+  anotacoes = models.TextField(verbose_name="Anotações")
+  versao_valida = models.CharField(verbose_name="Versão Valida", max_length=3)
+  parcelamento = models.CharField(verbose_name="Parcelamento", max_length=50, blank=True, null=True)
   
+  #def save(self, *args, **kwargs):
+  #  self.valor_hora = float(self.valor_hora)
+  #  super(Servicos, self).save(*args, **kwargs)
+
   class Meta:
     verbose_name_plural = "Serviços"
 
@@ -348,9 +396,9 @@ class Colaborador(models.Model):
   telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
   email = models.EmailField(verbose_name='E-mail')
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
-  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
   valor_fixo = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-  comissao = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+  comissao = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
   funcao = models.CharField(verbose_name="Função", max_length=20, choices=getFuncao())
   periodo_lancamento = models.DateField(
       verbose_name="Periodo Lancto", 
@@ -367,32 +415,37 @@ class Colaborador(models.Model):
       return self.nome
 
 class Valores(models.Model):
+ 
+  def getTipos():
+    TIPOS = (
+      ('Empresa', 'Empresa'),
+      ('Colaborador', 'Colaborador'),
+      ('Cliente', 'Cliente'),
+      ('Servico', 'Servico'),
+    )
+    return TIPOS
 
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Registro ativo ?")
   valor_id = models.AutoField(primary_key=True)
   
-  codigo = models.ForeignKey(
-    Servicos,
-    on_delete=models.SET_NULL,
-    null=True,
-    blank=True,
-  )
+  tipo = models.CharField(verbose_name="Tipo", max_length=20, choices=getTipos())
+  codigo = models.CharField(verbose_name="Codigo", max_length=6, null=False, blank=False)
 
   data = models.DateField(
     verbose_name="Data", 
-    auto_now=False,
+    auto_now=True,
     auto_now_add=False,
-    null=True, 
-    blank=True
+    null=False, 
+    blank=False,
   )
 
   valor_hora = models.DecimalField(verbose_name="Valor Hora", max_digits=6, decimal_places=2, null=True, blank=True)
   valor_fixo = models.DecimalField(verbose_name="Valor Fixo", max_digits=6, decimal_places=2, null=True, blank=True)
-  comissao = models.DecimalField(verbose_name="% Comissão", max_digits=3, decimal_places=2, null=True, blank=True)
-  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=3, decimal_places=2, null=True, blank=True)
-  desconto = models.DecimalField(verbose_name="% Desconto", max_digits=3, decimal_places=2, null=True, blank=True)
+  comissao = models.DecimalField(verbose_name="% Comissão", max_digits=6, decimal_places=2, null=True, blank=True)
+  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=6, decimal_places=2, null=True, blank=True)
+  desconto = models.DecimalField(verbose_name="% Desconto", max_digits=6, decimal_places=2, null=True, blank=True)
   observacao = models.TextField(verbose_name="Observações")
   
   class Meta:

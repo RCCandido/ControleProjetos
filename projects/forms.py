@@ -3,13 +3,11 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from crispy_forms.helper import FormHelper 
-from crispy_forms.layout import Layout, Submit, Row, Field 
+from crispy_forms.layout import Layout, Submit, Row
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 
 from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador, Valores
-
-import datetime
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(disabled=True, required=False)
@@ -341,10 +339,31 @@ class ServicosForm(forms.ModelForm):
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
+  
+  etapa_comercial = forms.ChoiceField(
+    choices=Servicos.getEtapasComercial(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  etapa_tecnica = forms.ChoiceField(
+    choices=Servicos.getEtapasTecnicas(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
 
-  observacao = forms.CharField(
+  justificativa = forms.CharField(
     required=False, 
-    label="Observações", 
+    label="Justificativa", 
+    widget=forms.Textarea(
+      attrs={
+        "rows":"5"
+        })
+  )
+  
+  anotacoes = forms.CharField(
+    required=False, 
+    label="Anotações", 
     widget=forms.Textarea(
       attrs={
         "rows":"5"
@@ -360,30 +379,93 @@ class ServicosForm(forms.ModelForm):
         'data-mask':"000"
       })
   )
-
+  
+  versao_valida = forms.CharField(
+    initial="001",
+    label='Versão',
+    required=True,
+    widget = forms.TextInput(
+      attrs={
+        'data-mask':"000"
+      })
+  )
+  
   class Meta:
-      model = Servicos
-      fields = "__all__"
+    model = Servicos
+    fields = "__all__"
+    widgets = {
+      'valor_hora': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'comissao': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '10.00'}),
+      'valor_comissao': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 10.00'}),
+      'base_comissao': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 10.00'}),
+      'imposto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '2.50'}),
+      'valor_imposto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 25.00'}),
+      'desconto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '2.50'}),
+      'valor_desconto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 25.00'}),
+      'valor_recebido': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 25.00'}),
+      'custo_operacional': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 25.00'}),
+      'valor_bruto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 25,000.00'}),
+      'liquido': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 25,000.00'}),
+      'horas_especificacao': forms.NumberInput(attrs={'step': '0.10', 'placeholder': '00'}),
+      'horas_tecnicas': forms.NumberInput(attrs={'step': '0.10', 'placeholder': '00'}),
+      'horas_save': forms.NumberInput(attrs={'step': '0.10', 'placeholder': '00'}),
+      'horas_execucao': forms.NumberInput(attrs={'step': '0.15', 'placeholder': '00'}),
+    }
   
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
-    self.initial['codigo'] = Servicos.getNextCodigo()
     self.helper = FormHelper()
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
         Column('codigo', css_class='form-control-sm col-sm-3'),
-        Column('descricao', css_class='form-control-sm col-sm-6'),
+        Column('tipo', css_class='form-control-sm col-sm-3'),
         Column('versao', css_class='form-control-sm col-sm-2'),
+        Column('versao_valida', css_class='form-control-sm col-sm-2'),
         css_class='form-row d-flex',
       ),
       Row(
+        Column('descricao', css_class='form-control-sm col-sm-6'),
         Column('cliente', css_class='form-control-sm col-sm-6'),
-        Column('tipo',css_class='form-control-sm col-sm-4'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('observacao',css_class='form-control-sm col-sm-6'),
+        Column('etapa_comercial',css_class='form-control-sm col-sm-4'),
+        Column('etapa_tecnica',css_class='form-control-sm col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('valor_hora',css_class='form-control-sm col-sm-2'),
+        Column('valor_comissao',css_class='form-control-sm col-sm-2'),
+        Column('comissao',css_class='form-control-sm col-sm-2'),
+        Column('base_comissao',css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('imposto',css_class='form-control-sm col-sm-2'),
+        Column('valor_imposto',css_class='form-control-sm col-sm-2'),
+        Column('desconto',css_class='form-control-sm col-sm-2'),
+        Column('valor_desconto',css_class='form-control-sm col-sm-2'),
+        Column('parcelamento',css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('custo_operacional',css_class='form-control-sm col-sm-3'),
+        Column('horas_save',css_class='form-control-sm col-sm-2'),
+        Column('horas_execucao',css_class='form-control-sm col-sm-2'),
+        Column('horas_especificacao',css_class='form-control-sm col-sm-2'),
+        Column('horas_tecnicas',css_class='form-control-sm col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('valor_bruto',css_class='form-control-sm col-sm-4'),
+        Column('liquido',css_class='form-control-sm col-sm-4'),
+        Column('valor_recebido',css_class='form-control-sm col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('justificativa',css_class='form-control-sm col-sm-6'),
+        Column('anotacoes',css_class='form-control-sm col-sm-6'),
         css_class='form-row d-flex',
       ),
       Div(
@@ -636,7 +718,6 @@ class ClienteForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
  
-  
   usa_email_cat = forms.ChoiceField(
     choices=Niveis.getSimNao(),
     required=True,
@@ -755,12 +836,10 @@ class ColaboradorForm(forms.ModelForm):
       })
   )
 
-  valor_hora = forms.DecimalField(
-    max_digits=4, 
-    decimal_places=2, 
+  valor_hora = forms.FloatField(
     required=False,
     label="Valor Hora",
-    widget=forms.DateInput(
+    widget=forms.NumberInput(
       attrs={
         'data-mask':"R$ 000.00"
       }
@@ -858,14 +937,16 @@ class ColaboradorForm(forms.ModelForm):
 
 class ValoresForm(forms.ModelForm):
 
-  data = forms.DateField(
-    localize=True,
-    initial=datetime.date.today,
+  tipo = forms.ChoiceField(
+    choices=Valores.getTipos(),
     required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  data = forms.DateField(
      widget=forms.DateInput(
       attrs={
-        'data-mask':"00/00/0000",
-        'placeholder':"dd/mm/yyyy",
+        'type': 'date',
       }
     )
   )
@@ -940,6 +1021,7 @@ class ValoresForm(forms.ModelForm):
     self.helper.form_class = ''
     self.helper.layout = Layout(
       Row(
+        Column('tipo', css_class='form-control-sm col-sm-3'),
         Column('data', css_class='form-control-sm col-sm-3'),
         Column('active', css_class='form-control-sm col-sm-4 my-4'),
         css_class='form-row d-flex',
@@ -964,3 +1046,4 @@ class ValoresForm(forms.ModelForm):
         )
       )
     )
+
