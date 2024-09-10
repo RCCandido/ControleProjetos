@@ -262,9 +262,11 @@ def servicos(request, opc=False, pk=False):
     if opc == "insert":
       form = ServicosForm(request.POST)
       if form.is_valid():
+        
+        codigo = Servicos.getNextCodigo()
 
         servico = Servicos(
-          codigo      = Servicos.getNextCodigo(),
+          codigo      = codigo,
           descricao   = form.cleaned_data["descricao"],
           versao      = form.cleaned_data["versao"],
           cliente     = form.cleaned_data["cliente"],
@@ -297,7 +299,7 @@ def servicos(request, opc=False, pk=False):
         # insere o registro na tabela de valores
         valor = Valores(
           data = datetime.today,
-          codigo = form.cleaned_data["codigo"],
+          codigo = codigo,
           tipo = 'Servico',
           valor_hora = form.cleaned_data["valor_hora"],
           comissao = form.cleaned_data["comissao"],
@@ -364,7 +366,7 @@ def servicos(request, opc=False, pk=False):
       if pk:
         servico = Servicos.objects.filter(codigo=pk).first()
         form = ServicosForm(instance=servico)
-        form_valores = Valores.objects.filter(codigo=pk)
+        form_valores = Valores.objects.filter(codigo=pk).order_by("-valor_id")
 
         context = {
           "altera": True, 

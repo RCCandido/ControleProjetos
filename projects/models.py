@@ -282,10 +282,6 @@ class Servicos(models.Model):
   versao_valida = models.CharField(verbose_name="Versão Valida", max_length=3)
   parcelamento = models.CharField(verbose_name="Parcelamento", max_length=50, blank=True, null=True)
   
-  #def save(self, *args, **kwargs):
-  #  self.valor_hora = float(self.valor_hora)
-  #  super(Servicos, self).save(*args, **kwargs)
-
   class Meta:
     verbose_name_plural = "Serviços"
 
@@ -441,11 +437,11 @@ class Valores(models.Model):
     blank=False,
   )
 
-  valor_hora = models.DecimalField(verbose_name="Valor Hora", max_digits=6, decimal_places=2, null=True, blank=True)
-  valor_fixo = models.DecimalField(verbose_name="Valor Fixo", max_digits=6, decimal_places=2, null=True, blank=True)
-  comissao = models.DecimalField(verbose_name="% Comissão", max_digits=6, decimal_places=2, null=True, blank=True)
-  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=6, decimal_places=2, null=True, blank=True)
-  desconto = models.DecimalField(verbose_name="% Desconto", max_digits=6, decimal_places=2, null=True, blank=True)
+  valor_hora = models.DecimalField(verbose_name="Valor Hora", max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
+  valor_fixo = models.DecimalField(verbose_name="Valor Fixo", max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
+  comissao = models.DecimalField(verbose_name="% Comissão", max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
+  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
+  desconto = models.DecimalField(verbose_name="% Desconto", max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
   observacao = models.TextField(verbose_name="Observações")
   
   class Meta:
