@@ -1006,22 +1006,17 @@ def cargainicial(request):
       {"descricao": "Nivel 1"},
       {"descricao": "Nivel 2"},
       {"descricao": "Nivel 3"},
-      {"descricao": "Nivel 4"},
     ]
 
   users = [
       {"nome": "rodrigo", "email": "rodrigo.cesar91@yahoo.com.br"},
       {"nome": "velton", "email": "velton@alphaerp.com.br"},
       {"nome": "joao", "email": "joao@alphaerp.com.br"},
-      {"nome": "jose", "email": "jose@alphaerp.com.br"},
-      {"nome": "antonio", "email": "antonio@alphaerp.com.br"},
-      {"nome": "carlos", "email": "carlos@alphaerp.com.br"},
-      {"nome": "alfredo", "email": "alfredo@alphaerp.com.br"},
     ]
 
   clientes = [
-      {"nome": "Cliente Teste 1", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
-      {"nome": "Outro Cliente de Teste", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
+      {"nome": "Unimed Participações", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
+      {"nome": "Grupo AIZ LTDA", "cnpj": "123456789", "telefone": "98045036","email":"emailteste.com.br", "estado":"PR"},
     ]
 
   servicos = [
@@ -1031,49 +1026,52 @@ def cargainicial(request):
     ]
 
   empresas = [
-    {"codigo": "EMP001", "nome": "Empresa Teste", "cnpj": "07876633951", "cidade": "Curitiba", "estado": "PR", "telefone": "41998044063", "imposto": 2},
-    {"codigo": "EMP002", "nome": "Empresa de Teste 2", "cnpj": "0732312456", "cidade": "Curitiba", "estado": "RJ", "telefone": "41998044063", "imposto": 10},
+    {"codigo": "EMP001", "nome": "ALPHA ERP", "cnpj": "07876633951", "cidade": "Curitiba", "estado": "PR", "telefone": "41998044063", "imposto": 2},
+    {"codigo": "EMP002", "nome": "Administradora", "cnpj": "0732312456", "cidade": "Curitiba", "estado": "RJ", "telefone": "41998044063", "imposto": 10},
   ]
 
-  for i in niveis:
-    nivel = Niveis(
-            descricao=i['descricao'],
-            rotina="0",
-            inclusao="S",
-            edicao="S",
-            exclusao="S",
-            logs="S",
-            filtro="S",
-            active=True
+  if Niveis.objects.all().count() == 0:
+    for i in niveis:
+      nivel = Niveis(
+              descricao=i['descricao'],
+              rotina="0",
+              inclusao="S",
+              edicao="S",
+              exclusao="S",
+              logs="S",
+              filtro="S",
+              active=True
+          )
+      nivel.save()
+
+    if not Usuario.objects.all().count():
+      for i in users:
+        user = Usuario(
+            firstname=i['nome'].capitalize(),
+            name=i['nome'].capitalize(),
+            email=i['email'],
+            password=make_password("123"),
+            password2=make_password("123"),
+            active=True,
+            tipo="2",
+            perfil=nivel,
+            resetpsw=0,
         )
-    nivel.save()
+        user.save()
 
-  for i in users:
-    user = Usuario(
-        firstname=i['nome'].capitalize(),
-        name=i['nome'].capitalize(),
-        email=i['email'],
-        password=make_password("123"),
-        password2=make_password("123"),
-        active=True,
-        tipo="2",
-        perfil=nivel,
-        resetpsw=0,
-    )
-    user.save()
-
+  if not Cliente.objects.all().count():
+    for i in clientes:
+      cliente = Cliente(
+          nome               = i['nome'],
+          cnpj               = i['cnpj'],
+          estado             = i['estado'],
+          email              = i['email'],
+          usa_email_cat      = "S",
+          telefone           = i['telefone'],
+          active             = True,
+        )
+      cliente.save()
   
-  for i in clientes:
-    cliente = Cliente(
-        nome               = i['nome'],
-        cnpj               = i['cnpj'],
-        estado             = i['estado'],
-        email              = i['email'],
-        usa_email_cat      = "S",
-        telefone           = i['telefone'],
-        active             = True,
-      )
-    cliente.save()
   
   #for i in servicos:
   #  servico = Servicos(
@@ -1084,15 +1082,16 @@ def cargainicial(request):
   #  )
   #  servico.save()
   
-  for i in empresas:
-    empresa = Empresa(
-      nome            = i['nome'],
-      cnpj            = i['cnpj'],
-      cidade          = i['cidade'],
-      estado          = i['estado'],
-      telefone        = i['telefone'],
-      imposto         = i['imposto'],
-    )
-    empresa.save()
+  if not Empresa.objects.all().count():
+    for i in empresas:
+      empresa = Empresa(
+        nome            = i['nome'],
+        cnpj            = i['cnpj'],
+        cidade          = i['cidade'],
+        estado          = i['estado'],
+        telefone        = i['telefone'],
+        imposto         = i['imposto'],
+      )
+      empresa.save()
 
   return redirect("home")

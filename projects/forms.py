@@ -205,14 +205,6 @@ class NivelForm(forms.ModelForm):
 
 class EmpresaForm(forms.ModelForm):
 
-  #def clean(self):
-  #  super(EmpresaForm, self).clean()
-  #
-  #  if 'cnpj' in self.cleaned_data:
-  #    cnpj = self.cleaned_data['cnpj']
-  #    if cnpj:
-  #      raise ValidationError(cnpj)
-
   def validaPercent(value):
     if value > 100:
         raise ValidationError(
@@ -252,7 +244,7 @@ class EmpresaForm(forms.ModelForm):
     label='% Imposto',
     widget = forms.NumberInput(
       attrs={
-        'placeholder': "2.50",
+        'placeholder': "0.00",
       })
     )
   
@@ -836,38 +828,6 @@ class ColaboradorForm(forms.ModelForm):
       })
   )
 
-  valor_hora = forms.FloatField(
-    required=False,
-    label="Valor Hora",
-    widget=forms.NumberInput(
-      attrs={
-        'data-mask':"R$ 000.00"
-      }
-    )
-  )
-  
-  valor_fixo = forms.DecimalField(
-    max_digits=4, 
-    decimal_places=2, 
-    required=False,
-    label="Valor Fixo",
-    widget=forms.DateInput(
-      attrs={
-        'data-mask':"R$ 000.00"
-      }
-    )
-  )
-  
-  comissao = forms.FloatField(
-    required=False,
-    label="Comissão",
-    widget=forms.NumberInput(
-      attrs={
-        'placeholder':"% 2,50",
-      }
-    )
-  )
-  
   funcao = forms.ChoiceField(
     choices=Colaborador.getFuncao(),
     required=True,
@@ -875,18 +835,20 @@ class ColaboradorForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
 
-  periodo_lancamento = forms.DateField(
-    input_formats='%d-%m-%Y',
-    required=False,
-    widget = forms.TextInput(
-      attrs={
-        "type": "date"
-      })
-  )
-
   class Meta:
     model = Colaborador
     fields = "__all__"
+    widgets = {
+      'valor_hora': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'valor_fixo': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'comissao': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '10.00'}),
+      'periodo_lancamento': forms.DateInput(
+        attrs={
+          'format': "dd/mm/yyyy",
+          'placeholder': "dd/mm/yyyy",
+          "data-mask": "00/00/0000",
+          }),
+    }
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)

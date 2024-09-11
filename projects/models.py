@@ -158,7 +158,7 @@ class Empresa(models.Model):
   estado = models.CharField(verbose_name="Estado", max_length=2, choices=getUF())
   telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
-  imposto = models.FloatField(_("imposto"))
+  imposto = models.DecimalField(verbose_name="% Imposto", max_digits=6, decimal_places=2,null=True, blank=True)
 
   def __str__(self):
     return self.nome
@@ -196,8 +196,8 @@ class Cliente(models.Model):
   contatos = models.TextField(verbose_name="Contatos", null=True, blank=True, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancárias", null=True, blank=True, default="")
   observacoes = models.TextField(verbose_name="Observações", null=True, blank=True, default="")
-  valor_hora_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
-  perc_desconto_atual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
+  valor_hora_atual = models.DecimalField(verbose_name="Valor Hora", max_digits=6, decimal_places=2, null=True, blank=True, default=0)
+  perc_desconto_atual = models.DecimalField(verbose_name="% Desconto", max_digits=6, decimal_places=2, null=True, blank=True, default=0)
   
   class Meta:
     verbose_name_plural = "Clientes"
@@ -392,9 +392,9 @@ class Colaborador(models.Model):
   telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
   email = models.EmailField(verbose_name='E-mail')
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
-  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0)
-  valor_fixo = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-  comissao = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
+  valor_fixo = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
+  comissao = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
   funcao = models.CharField(verbose_name="Função", max_length=20, choices=getFuncao())
   periodo_lancamento = models.DateField(
       verbose_name="Periodo Lancto", 

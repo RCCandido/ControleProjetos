@@ -144,4 +144,6 @@ DEFAULT_FROM_EMAIL = 'rodrigoicmbn@gmail.com'
 
 DECIMAL_SEPARATOR = ","
 USE_THOUSAND_SEPARATOR = True
-DATE_INPUT_FORMATS = ['%d/%m/%Y']
+DATE_INPUT_FORMATS = ('%d-%m-%Y','%Y-%m-%d')
+DATE_FORMAT = "d/m/Y"
+USE_L10N = False
