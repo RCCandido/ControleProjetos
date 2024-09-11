@@ -239,13 +239,15 @@ def usuarios(request, opc=False, pk=False):
     elif opc == "delete":
       if pk:
         usuario = Usuario.objects.filter(email=pk).first()
-        usuario.delete()
 
-        users = Usuario.objects.all()
-        filter = UsuarioFilter(request.GET, queryset=users)
+        if usuario:
+          usuario.delete()
 
-        context = {"usuarios": filter, "filter": filter}
-        return render(request, "projects/usuarios.html", context)
+          users = Usuario.objects.all()
+          filter = UsuarioFilter(request.GET, queryset=users)
+
+          context = {"usuarios": filter, "filter": filter}
+          return render(request, "projects/usuarios.html", context)
 
     users = Usuario.objects.all().order_by("user_id")
     filter = UsuarioFilter(request.GET, queryset=users)
