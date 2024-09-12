@@ -44,4 +44,31 @@
 		<a href="{% url "empresas" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Empresa</a>
 	{% endif %}
 
+	{% if valores or altera %}
+		<hr>
+		<small class="text-muted">
+			Histórico de valores:
+		</small>
+		<div class="table-responsive-sm">
+			<table class="table table-sm table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Data</th>
+						<th>% Imposto</th>
+						<th>Observação</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for valor in valores %}
+					<tr>
+						<td>{{ valor.data|date:'d/m/Y' }}</td>
+						<td>{{ valor.imposto }}</td>
+						<td>{{ valor.observacao }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+
 {% endblock content %}

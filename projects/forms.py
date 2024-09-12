@@ -10,7 +10,7 @@ from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
 from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador, Valores
 
 class RedefinirSenhaForm(forms.ModelForm):
-  email = forms.CharField(disabled=True, required=False)
+  email = forms.CharField(label="E-mail", disabled=True, required=False)
   password = forms.CharField(
       widget=forms.PasswordInput(), required=True, label="Nova Senha"
   )
@@ -25,6 +25,30 @@ class RedefinirSenhaForm(forms.ModelForm):
           "password",
           "password2",
       )
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = 'form-control'
+    self.helper.layout = Layout(
+      Div(
+        Row(
+          Column('email', css_class='col-sm-8'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('password', css_class='col-sm-4'),
+          Column('password2', css_class='col-sm-4'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Submit('submit', 'Confirmar', css_class='mx-2'),
+          HTML('<a class="btn btn-danger" href="{% url "home" %}">Cancelar</a>'),
+          css_class='form-row d-flex mt-4 mb-2',
+        ),
+        css_class="form-control"
+      )
+    )
 
 class UsuarioForm(forms.ModelForm):
 
@@ -82,36 +106,37 @@ class UsuarioForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
-      Row(
-        Column('firstname', css_class='form-control-sm col-sm-4'),
-        Column('name', css_class='form-control-sm col-sm-8'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('email', css_class='form-control-sm col-sm-6'),
-        Column('tipo', css_class='form-control-sm col-sm-2'),
-        Column('perfil', css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('password',css_class='form-control-sm col-sm-2'),
-        Column('password2',css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('resetpsw', css_class='form-control-sm'),
-        Column('active', css_class='form-control-sm'),
-        Column('usefilter', css_class='form-control-sm'),
-        css_class='form-row d-flex',
-      ),
       Div(
+        Row(
+          Column('firstname', css_class='col-sm-4'),
+          Column('name', css_class='col-sm-8'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('email', css_class='col-sm-6'),
+          Column('tipo', css_class='col-sm-2'),
+          Column('perfil', css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('password',css_class='col-sm-2'),
+          Column('password2',css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('resetpsw', css_class='form-control-sm'),
+          Column('active', css_class='form-control-sm'),
+          Column('usefilter', css_class='form-control-sm'),
+          css_class='form-row d-flex',
+        ),
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2'),
           HTML('<a class="btn btn-danger" href="{% url "usuarios" %}">Cancelar</a>'),
           css_class='form-row d-flex',
-        )
+        ),
+        css_class="form-control"
       )
     )
 
@@ -172,34 +197,35 @@ class NivelForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
-      Row(
-        Column('descricao', css_class='form-control-sm col-sm-4'),
-        Column('rotina', css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('inclusao', css_class='form-control-sm col-sm-2'),
-        Column('edicao', css_class='form-control-sm col-sm-2'),
-        Column('exclusao', css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('logs',css_class='form-control-sm col-sm-4'),
-        Column('filtro',css_class='form-control-sm col-sm-4'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('active', css_class='form-control-sm'),
-        css_class='form-row d-flex',
-      ),
       Div(
+        Row(
+          Column('descricao', css_class='col-sm-4'),
+          Column('rotina', css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('inclusao', css_class='col-sm-2'),
+          Column('edicao', css_class='col-sm-2'),
+          Column('exclusao', css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('logs',css_class='col-sm-4'),
+          Column('filtro',css_class='col-sm-4'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('active', css_class='form-control-sm'),
+          css_class='form-row d-flex',
+        ),
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2'),
           HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
           css_class='form-row d-flex',
-        )
+        ),
+        css_class="form-control"
       )
     )
 
@@ -238,16 +264,6 @@ class EmpresaForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
 
-  imposto = forms.FloatField(
-    validators=[validaPercent],
-    required=False,
-    label='% Imposto',
-    widget = forms.NumberInput(
-      attrs={
-        'placeholder': "0.00",
-      })
-    )
-  
   telefone = forms.CharField(
     required=False,
     label='Telefone',
@@ -268,42 +284,55 @@ class EmpresaForm(forms.ModelForm):
         'placeholder': "99.999.999/9999-99",
       })
     )
-  
+
+  imposto = forms.DecimalField(
+    required=False,
+    label="% Imposto",
+    widget=forms.NumberInput(
+      attrs={
+        'placeholder':"% 0.00",
+        'step': '0.01',
+        }
+      )
+    )
+
   class Meta:
     model = Empresa
     fields = "__all__"
+    
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
-      Row(
-          Column('nome', css_class='form-control-sm col-sm-8'),
-          css_class='form-row d-flex',
-      ),
-      Row(
-        Column('cnpj', css_class='form-control-sm col-lg-6'),
-        Column('cidade',css_class='form-control-sm col-sm-4'),
-        Column('estado',css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-          Column('telefone', css_class='form-control-sm col-sm-4'),
-          Column('endereco', css_class='form-control-sm col-sm-6'),
-          Column('imposto', css_class='form-control-sm col-sm-2'),
-          css_class='form-row d-flex',
-      ),
-      Row(
-          Column('dados_bancarios', css_class='form-control-sm col-sm-8'),
-          css_class='form-row d-flex',
-      ),
       Div(
+        Row(
+            Column('nome', css_class='col-sm-8'),
+            css_class='form-row d-flex',
+        ),
+        Row(
+          Column('cnpj', css_class='col-lg-6'),
+          Column('cidade',css_class='col-sm-4'),
+          Column('estado',css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+            Column('telefone', css_class='col-sm-4'),
+            Column('endereco', css_class='col-sm-6'),
+            Column('imposto', css_class='col-sm-2'),
+            css_class='form-row d-flex',
+        ),
+        Row(
+            Column('dados_bancarios', css_class='col-sm-8'),
+            css_class='form-row d-flex',
+        ),
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2'),
           HTML('<a class="btn btn-danger" href="{% url "empresas" %}">Cancelar</a>'),
           css_class='form-row d-flex',
-          )
+        ),
+        css_class="form-control"
       )
     )
 
@@ -374,7 +403,7 @@ class ServicosForm(forms.ModelForm):
   
   versao_valida = forms.CharField(
     initial="001",
-    label='Versão',
+    label='Versão Válida',
     required=True,
     widget = forms.TextInput(
       attrs={
@@ -407,65 +436,66 @@ class ServicosForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
-      Row(
-        Column('codigo', css_class='form-control-sm col-sm-3'),
-        Column('tipo', css_class='form-control-sm col-sm-3'),
-        Column('versao', css_class='form-control-sm col-sm-2'),
-        Column('versao_valida', css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('descricao', css_class='form-control-sm col-sm-6'),
-        Column('cliente', css_class='form-control-sm col-sm-6'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('etapa_comercial',css_class='form-control-sm col-sm-4'),
-        Column('etapa_tecnica',css_class='form-control-sm col-sm-4'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('valor_hora',css_class='form-control-sm col-sm-2'),
-        Column('valor_comissao',css_class='form-control-sm col-sm-2'),
-        Column('comissao',css_class='form-control-sm col-sm-2'),
-        Column('base_comissao',css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('imposto',css_class='form-control-sm col-sm-2'),
-        Column('valor_imposto',css_class='form-control-sm col-sm-2'),
-        Column('desconto',css_class='form-control-sm col-sm-2'),
-        Column('valor_desconto',css_class='form-control-sm col-sm-2'),
-        Column('parcelamento',css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('custo_operacional',css_class='form-control-sm col-sm-3'),
-        Column('horas_save',css_class='form-control-sm col-sm-2'),
-        Column('horas_execucao',css_class='form-control-sm col-sm-2'),
-        Column('horas_especificacao',css_class='form-control-sm col-sm-2'),
-        Column('horas_tecnicas',css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('valor_bruto',css_class='form-control-sm col-sm-4'),
-        Column('liquido',css_class='form-control-sm col-sm-4'),
-        Column('valor_recebido',css_class='form-control-sm col-sm-4'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('justificativa',css_class='form-control-sm col-sm-6'),
-        Column('anotacoes',css_class='form-control-sm col-sm-6'),
-        css_class='form-row d-flex',
-      ),
       Div(
+        Row(
+          Column('codigo', css_class='col-sm-3'),
+          Column('tipo', css_class='col-sm-3'),
+          Column('versao', css_class='col-sm-2'),
+          Column('versao_valida', css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('descricao', css_class='col-sm-6'),
+          Column('cliente', css_class='col-sm-6'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('etapa_comercial',css_class='col-sm-4'),
+          Column('etapa_tecnica',css_class='col-sm-4'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('valor_hora',css_class='col-sm-2'),
+          Column('valor_comissao',css_class='col-sm-2'),
+          Column('comissao',css_class='col-sm-2'),
+          Column('base_comissao',css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('imposto',css_class='col-sm-2'),
+          Column('valor_imposto',css_class='col-sm-2'),
+          Column('desconto',css_class='col-sm-2'),
+          Column('valor_desconto',css_class='col-sm-2'),
+          Column('parcelamento',css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('custo_operacional',css_class='col-sm-3'),
+          Column('horas_save',css_class='col-sm-2'),
+          Column('horas_execucao',css_class='col-sm-2'),
+          Column('horas_especificacao',css_class='col-sm-2'),
+          Column('horas_tecnicas',css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('valor_bruto',css_class='col-sm-4'),
+          Column('liquido',css_class='col-sm-4'),
+          Column('valor_recebido',css_class='col-sm-4'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('justificativa',css_class='col-sm-6'),
+          Column('anotacoes',css_class='col-sm-6'),
+          css_class='form-row d-flex',
+        ),
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2'),
           HTML('<a class="btn btn-danger" href="{% url "servicos" %}">Cancelar</a>'),
           css_class='form-row d-flex',
-        )
+        ),
+        css_class="form-control"
       )
     )
 
@@ -498,31 +528,31 @@ class ProjetoForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = 'border p-12'
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
       Row(
-          Column('codigo', css_class='form-control-sm col-sm-2 mb-2 p-2'),
-          Column('name', css_class='form-control-sm col-sm-6 mb-2 p-2'),
-          Column('status', css_class='form-control-sm col-lg-3 mb-2 p-2'),
+          Column('codigo', css_class='col-sm-2 mb-2 p-2'),
+          Column('name', css_class='col-sm-6 mb-2 p-2'),
+          Column('status', css_class='col-lg-3 mb-2 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('cliente',css_class='form-control-sm col-sm-6 mb-2 p-2'),
-        Column('responsavel',css_class='form-control-sm col-sm-4 mb-2 p-2'),
+        Column('cliente',css_class='col-sm-6 mb-2 p-2'),
+        Column('responsavel',css_class='col-sm-4 mb-2 p-2'),
         css_class='form-row d-flex',
       ),
       Row(
-          Column('data_inicio', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-          Column('data_entrega', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-          Column('desenvolvedor', css_class='form-control-sm col-sm-4 mb-0 p-2'),
-          Column('arquiteto', css_class='form-control-sm col-sm-4 mb-0 p-2'),
+          Column('data_inicio', css_class='col-sm-2 mb-0 p-2'),
+          Column('data_entrega', css_class='col-sm-2 mb-0 p-2'),
+          Column('desenvolvedor', css_class='col-sm-4 mb-0 p-2'),
+          Column('arquiteto', css_class='col-sm-4 mb-0 p-2'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('qtd_horas_projeto', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-        Column('qtd_horas_apontadas', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-        Column('valor_hora', css_class='form-control-sm col-sm-2 mb-0 p-2'),
-        Column('valor_total', css_class='form-control-sm col-sm-2 mb-0 p-2'),
+        Column('qtd_horas_projeto', css_class='col-sm-2 mb-0 p-2'),
+        Column('qtd_horas_apontadas', css_class='col-sm-2 mb-0 p-2'),
+        Column('valor_hora', css_class='col-sm-2 mb-0 p-2'),
+        Column('valor_total', css_class='col-sm-2 mb-0 p-2'),
         css_class='form-row d-flex',
       ),
       Div(
@@ -657,31 +687,31 @@ class NewProjetoForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
       Row(
-          Column('codigo', css_class='form-control-sm col-sm-2'),
-          Column('name', css_class='form-control-sm col-sm-6'),
-          Column('status', css_class='form-control-sm col-sm-3'),
+          Column('codigo', css_class='col-sm-2'),
+          Column('name', css_class='col-sm-6'),
+          Column('status', css_class='col-sm-3'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('cliente',css_class='form-control-sm col-sm-6'),
-        Column('responsavel',css_class='form-control-sm col-sm-3'),
+        Column('cliente',css_class='col-sm-6'),
+        Column('responsavel',css_class='col-sm-3'),
         css_class='form-row d-flex',
       ),
       Row(
-          Column('data_inicio', css_class='form-control-sm col-sm-3'),
-          Column('data_entrega', css_class='form-control-sm col-sm-3'),
-          Column('desenvolvedor', css_class='form-control-sm col-sm-3'),
-          Column('arquiteto', css_class='form-control-sm col-sm-3'),
+          Column('data_inicio', css_class='col-sm-3'),
+          Column('data_entrega', css_class='col-sm-3'),
+          Column('desenvolvedor', css_class='col-sm-3'),
+          Column('arquiteto', css_class='col-sm-3'),
           css_class='form-row d-flex',
       ),
       Row(
-        Column('qtd_horas_projeto', css_class='form-control-sm col-sm-2'),
-        Column('qtd_horas_apontadas', css_class='form-control-sm col-sm-2'),
-        Column('valor_hora', css_class='form-control-sm col-sm-2'),
-        Column('valor_total', css_class='form-control-sm col-sm-2'),
+        Column('qtd_horas_projeto', css_class='col-sm-2'),
+        Column('qtd_horas_apontadas', css_class='col-sm-2'),
+        Column('valor_hora', css_class='col-sm-2'),
+        Column('valor_total', css_class='col-sm-2'),
         css_class='form-row d-flex',
       ),
       Div(
@@ -696,13 +726,15 @@ class NewProjetoForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
 
   cnpj = forms.CharField(
-    label='CNPJ',
     required=True,
+    max_length=18,
+    label='CNPJ',
     widget = forms.TextInput(
       attrs={
-        "placeholder": "999999999999",
+        'data-mask': "00.000.000/0000-00",
+        'placeholder': "99.999.999/9999-99",
       })
-  )
+    )
 
   estado = forms.ChoiceField(
     choices=Empresa.getUF(),
@@ -728,71 +760,63 @@ class ClienteForm(forms.ModelForm):
   observacoes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
   contatos = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
 
-  valor_hora_atual = forms.DecimalField(
-    max_digits=4, 
-    decimal_places=2, 
-    required=False,
-    label="Valor Hora",
-  )
   
-  perc_desconto_atual = forms.DecimalField(
-    max_digits=4, 
-    decimal_places=2, 
-    required=False,
-    label="% Desconto",
-  )
-
   class Meta:
     model = Cliente
     fields = "__all__"
+    widgets = {
+      'valor_hora_atual': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'perc_desconto_atual': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '10.00'}),
+    }
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
-      Row(
-        Column('nome', css_class='form-control-sm col-sm-8'),
-        Column('cnpj', css_class='form-control-sm col-sm-4'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('ie', css_class='form-control-sm col-sm-2'),
-        Column('telefone', css_class='form-control-sm col-sm-2'),
-        Column('email', css_class='form-control-sm col-sm-4'),
-        Column('active', css_class='form-control-sm my-4'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('usa_email_cat', css_class='form-control-sm col-sm-2'),
-        Column('email_cat', css_class='form-control-sm col-sm-4'),
-        Column('bairro',css_class='form-control-sm col-sm-2'),
-        Column('cidade',css_class='form-control-sm col-sm-2'),
-        Column('estado', css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('endereco', css_class='form-control-sm col-sm-6'),
-        Column('complemento',css_class='form-control-sm col-sm-3'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('valor_hora_atual', css_class='form-control-sm col-sm-2'),
-        Column('perc_desconto_atual',css_class='form-control-sm col-sm-2'),
-        Column('dados_bancarios',css_class='form-control-sm col-sm-5'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('contatos', css_class='form-control-sm col-sm-5'),
-        Column('observacoes',css_class='form-control-sm col-sm-5'),
-        css_class='form-row d-flex',
-      ),
       Div(
+        Row(
+          Column('nome', css_class='col-sm-8'),
+          Column('cnpj', css_class='col-sm-4'),
+          css_class='form-row d-flex m-0',
+        ),
+        Row(
+          Column('ie', css_class='col-sm-2'),
+          Column('telefone', css_class='col-sm-2'),
+          Column('email', css_class='col-sm-4'),
+          Column('active', css_class='my-4'),
+          css_class='form-row d-flex m-0',
+        ),
+        Row(
+          Column('usa_email_cat', css_class='col-sm-2'),
+          Column('email_cat', css_class='col-sm-4'),
+          Column('bairro',css_class='col-sm-2'),
+          Column('cidade',css_class='col-sm-2'),
+          Column('estado', css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('endereco', css_class='col-sm-6'),
+          Column('complemento',css_class='col-sm-3'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('valor_hora_atual', css_class='col-sm-2'),
+          Column('perc_desconto_atual',css_class='col-sm-2'),
+          Column('dados_bancarios',css_class='col-sm-5'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('contatos', css_class='col-sm-5'),
+          Column('observacoes',css_class='col-sm-5'),
+          css_class='form-row d-flex',
+        ),
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
           HTML('<a class="btn btn-danger mt-2" href="{% url "clientes" %}">Cancelar</a>'),
           css_class='form-row d-flex',
-        )
+        ),
+        css_class="form-control"
       )
     )
 
@@ -853,47 +877,48 @@ class ColaboradorForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
-      Row(
-        Column('nome', css_class='form-control-sm col-sm-6'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('email', css_class='form-control-sm col-sm-4'),
-        Column('cpf', css_class='form-control-sm col-sm-3'),
-        Column('funcao', css_class='form-control-sm col-sm-3'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('endereco', css_class='form-control-sm col-sm-5'),
-        Column('telefone', css_class='form-control-sm col-sm-3'),
-        Column('active', css_class='form-control-sm my-4'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('bairro',css_class='form-control-sm col-sm-3'),
-        Column('cidade',css_class='form-control-sm col-sm-3'),
-        Column('estado', css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('periodo_lancamento',css_class='form-control-sm col-sm-3'),
-        Column('valor_hora', css_class='form-control-sm col-sm-2'),
-        Column('valor_fixo',css_class='form-control-sm col-sm-2'),
-        Column('comissao',css_class='form-control-sm col-sm-2'),
-        css_class='form-row d-flex',
-      ),
-      Row(
-        Column('dados_bancarios',css_class='form-control-sm col-sm-5'),
-        css_class='form-row d-flex',
-      ),
       Div(
+        Row(
+          Column('nome', css_class='col-sm-6'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('email', css_class='col-sm-4'),
+          Column('cpf', css_class='col-sm-3'),
+          Column('funcao', css_class='col-sm-3'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('endereco', css_class='col-sm-5'),
+          Column('telefone', css_class='col-sm-3'),
+          Column('active', css_class='my-4'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('bairro',css_class='col-sm-3'),
+          Column('cidade',css_class='col-sm-3'),
+          Column('estado', css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('periodo_lancamento',css_class='col-sm-3'),
+          Column('valor_hora', css_class='col-sm-2'),
+          Column('valor_fixo',css_class='col-sm-2'),
+          Column('comissao',css_class='col-sm-2'),
+          css_class='form-row d-flex',
+        ),
+        Row(
+          Column('dados_bancarios',css_class='col-sm-5'),
+          css_class='form-row d-flex',
+        ),
         Row(
           Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
           HTML('<a class="btn btn-danger mt-2" href="{% url "colaboradores" %}">Cancelar</a>'),
           css_class='form-row d-flex',
-        )
+        ),
+        css_class="form-control"
       )
     )
 
@@ -980,24 +1005,24 @@ class ValoresForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
-    self.helper.form_class = ''
+    self.helper.form_class = 'form-control'
     self.helper.layout = Layout(
       Row(
-        Column('tipo', css_class='form-control-sm col-sm-3'),
-        Column('data', css_class='form-control-sm col-sm-3'),
-        Column('active', css_class='form-control-sm col-sm-4 my-4'),
+        Column('tipo', css_class='col-sm-3'),
+        Column('data', css_class='col-sm-3'),
+        Column('active', css_class='col-sm-4 my-4'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('valor_hora', css_class='form-control-sm col-sm-2'), 
-        Column('valor_fixo',css_class='form-control-sm col-sm-2'),
-        Column('comissao',css_class='form-control-sm col-sm-2'),
-        Column('imposto',css_class='form-control-sm col-sm-2'),
-        Column('desconto',css_class='form-control-sm col-sm-2'),
+        Column('valor_hora', css_class='col-sm-2'), 
+        Column('valor_fixo',css_class='col-sm-2'),
+        Column('comissao',css_class='col-sm-2'),
+        Column('imposto',css_class='col-sm-2'),
+        Column('desconto',css_class='col-sm-2'),
         css_class='form-row d-flex',
       ),
       Row(
-        Column('observacao',css_class='form-control-sm col-sm-5'),
+        Column('observacao',css_class='col-sm-5'),
         css_class='form-row d-flex',
       ),
       Div(

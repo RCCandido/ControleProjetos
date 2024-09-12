@@ -3,19 +3,9 @@
 {% block page_title %} Usuários {% endblock page_title %}
 {% block title %} Redefinir Senha {% endblock title %}
 {% block content %}
-	<form method="POST" >{% csrf_token %}
-		
-		{{ form|crispy }}
-		
-		{% if erro %}
-			<div class="form-group">
-				<p class="text-danger">{{ erro }}</p>
-			</div>
-		{% endif %}
 
-		<input type="submit" class="btn btn-primary mt-4" value="Confirmar">
-		<a href="{% url 'home' %}" class="btn btn-danger mt-4">Cancelar</a>
-		
+	<form method="POST" >{% csrf_token %}
+		{% crispy form %}
 	</form>
 
 {% endblock content %}
