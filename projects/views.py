@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse 
+from django.shortcuts import get_object_or_404
 from datetime import datetime
 
 from .models import Usuario, Empresa, Servicos, Niveis, Projetos
@@ -27,6 +28,8 @@ from .forms import (
     ColaboradorForm,
     Valores,
     ValoresForm,
+    ItemServico,
+    ItemServicoForm,
 )
 from .decorators import nivel_access_required
 from .filters import UsuarioFilter, ProjetoFilter
@@ -356,25 +359,41 @@ def servicos(request, opc=False, pk=False):
           "projects/servicos.html",
           {"altera": True, "form": form, 'form_errors': form.errors},
         )
+
+    elif opc == "item_add":
+      form = ItemServicoForm(request.POST)
+      if form.is_valid():
+        form.save()
+        return render(request, "projects/partials/success.html")
+      return render(request, "projects/partials/failure.html")
+
+    form_item = ItemServicoForm()
+    context = {"form_item": form_item}
+    return render(request, "projects/servicos.html", context)
+
   else:
 
     if opc == "insert":
       
       form = ServicosForm(initial={'codigo' : Servicos.getNextCodigo()})
+      form_item = ItemServicoForm()
 
-      context = {"inclui": True, "form": form}
+      context = {"inclui": True, "form": form, "form_item": form_item}
       return render(request, "projects/servicos.html", context)
 
     elif opc == "edit":
       if pk:
+
         servico = Servicos.objects.filter(codigo=pk).first()
         form = ServicosForm(instance=servico)
-        form_valores = Valores.objects.filter(codigo=pk).order_by("-valor_id")
-
+        items = ItemServico.objects.filter(codigo=pk)
+        form_item = ItemServicoForm()
+        
         context = {
           "altera": True, 
           "form": form,
-          "valores": form_valores,
+          "items": items,
+          "form_item": form_item,
           }
         return render(request, "projects/servicos.html", context)
 
@@ -393,6 +412,17 @@ def servicos(request, opc=False, pk=False):
       servicos = Servicos.objects.all()
       context = {"servicos": servicos}
       return render(request, "projects/servicos.html", context)
+
+def adicionar_item_servico(request):
+  pk = request.GET.get('pk')
+  object = get_object_or_404(ItemServico, pk = pk)
+  form = ItemServicoForm(instance=object)
+  return render(request, 'servicos.html', {
+        'object': object,
+        'pk': pk,
+        'form_item': form,
+        })
+
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="empresas")

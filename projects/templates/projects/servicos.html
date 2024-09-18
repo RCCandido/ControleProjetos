@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block page_title %}Serviços{% endblock page_title %}
+
+{% block head %}
+{% endblock head %}
+
 {% block title %} Serviços {% endblock title %}
 {% block active_oportunidades %} active {% endblock active_oportunidades %}
 {% block content %}
 
 	{% if inclui or altera %}
-
+		
 		<form method="POST">
 			{% csrf_token %}
 			{% crispy form %}
-			<div id='form-errors'>{{ form_errors }}</div>
 		</form>
-		
+
 	{% else %}
 
 		<div class="table-responsive-sm">
@@ -46,42 +49,68 @@
 			</table>
 		</div>
 		
-		<a href="{% url "servicos" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
+		<a href="{% url 'servicos' opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
 	{% endif %}
 
-	{% if valores or altera %}
+	{% if altera %}
 		<hr>
-		<small class="text-muted">
-			Histórico de valores:
-		</small>
+		<button type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#itemModal">Adicionar Item</button>
+		
+		<div id="information" class="mt-8 fs-5"></div>
+
+		<!-- Modal -->
+		<form method="post" action="{% url 'servicos' opc='item_add' %}" >
+			{% csrf_token %}
+			<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="itemModalLabel">Adicionar Item</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							{% crispy form_item %}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
 		<div class="table-responsive-sm">
 			<table class="table table-sm table-striped table-bordered">
 				<thead>
 					<tr>
-						<th>Data</th>
+						<th>Item</th>
+						<th>Descrição</th>
+						<th>Sub Item</th>
+						<th>Descrição</th>
 						<th>Tipo</th>
-						<th>Codigo</th>
-						<th>Valor Hora</th>
-						<th>Valor Fixo</th>
-						<th>Comissao</th>
-						<th>Desconto</th>
+						<th>Horas</th>
+						<th>Save</th>
+						<th>Execução</th>
 					</tr>
 				</thead>
 				<tbody>
-					{% for valor in valores %}
+					{% for item in items %}
 					<tr>
-						<td>{{ valor.data|date:'d/m/Y' }}</td>
-						<td>{{ valor.tipo }}</td>
-						<td>{{ valor.codigo }}</td>
-						<td>{{ valor.valor_hora }}</td>
-						<td>{{ valor.valor_fixo }}</td>
-						<td>{{ valor.comissao }}</td>
-						<td>{{ valor.desconto }}</td>
+						<td>{{ item.item }}</td>
+						<td>{{ item.descricao_item }}</td>
+						<td>{{ item.sub_item }}</td>
+						<td>{{ item.descricao_sub_item }}</td>
+						<td>{{ item.tipo }}</td>
+						<td>{{ item.horas }}</td>
+						<td>{{ item.save }}</td>
+						<td>{{ item.execucao }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 		</div>
 	{% endif %}
-			
+	
 {% endblock content %}
+

@@ -5,9 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper 
 from crispy_forms.layout import Layout, Submit, Row
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
+from crispy_forms.layout import *
 
-from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador, Valores
+from .models import Usuario, Empresa, Servicos, Niveis, Projetos, Cliente, Colaborador, Valores, ItemServico
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(label="E-mail", disabled=True, required=False)
@@ -30,21 +30,22 @@ class RedefinirSenhaForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
           Column('email', css_class='col-sm-8'),
+          Div(
+            Submit('submit', 'Confirmar', css_class='mx-2'),
+            HTML('<a class="btn btn-danger" href="{% url "home" %}">Cancelar</a>'),
+            css_class='mybtns',
+          ),
           css_class='form-row d-flex',
         ),
         Row(
           Column('password', css_class='col-sm-4'),
           Column('password2', css_class='col-sm-4'),
           css_class='form-row d-flex',
-        ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2'),
-          HTML('<a class="btn btn-danger" href="{% url "home" %}">Cancelar</a>'),
-          css_class='form-row d-flex mt-4 mb-2',
         ),
         css_class="form-control"
       )
@@ -107,35 +108,37 @@ class UsuarioForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
-          Column('firstname', css_class='col-sm-4'),
-          Column('name', css_class='col-sm-8'),
+          Field('firstname', wrapper_class='col-sm-3'),
+          Field('name', wrapper_class='col-sm-6'),
+          Div(
+            Submit('submit', 'Confirmar', css_class='mx-2'),
+            HTML('<a class="btn btn-danger" href="{% url "usuarios" %}">Cancelar</a>'),
+            css_class='mybtns',
+          ),
           css_class='form-row d-flex',
         ),
         Row(
-          Column('email', css_class='col-sm-6'),
-          Column('tipo', css_class='col-sm-2'),
-          Column('perfil', css_class='col-sm-2'),
+          Field('email', wrapper_class='col-sm-6'),
+          Field('tipo', wrapper_class='col-sm-2'),
+          Field('perfil', wrapper_class='col-sm-2'),
           css_class='form-row d-flex',
         ),
         Row(
-          Column('password',css_class='col-sm-2'),
-          Column('password2',css_class='col-sm-2'),
+          Field('password',wrapper_class='col-sm-2'),
+          Field('password2',wrapper_class='col-sm-2'),
           css_class='form-row d-flex',
         ),
         Row(
-          Column('resetpsw', css_class='form-control-sm'),
-          Column('active', css_class='form-control-sm'),
-          Column('usefilter', css_class='form-control-sm'),
+          Field('resetpsw', wrapper_class='form-control-sm'),
+          Field('active', wrapper_class='form-control-sm'),
+          Field('usefilter', wrapper_class='form-control-sm'),
           css_class='form-row d-flex',
         ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2'),
-          HTML('<a class="btn btn-danger" href="{% url "usuarios" %}">Cancelar</a>'),
-          css_class='form-row d-flex',
-        ),
+       
         css_class="form-control"
       )
     )
@@ -198,11 +201,17 @@ class NivelForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
           Column('descricao', css_class='col-sm-4'),
           Column('rotina', css_class='col-sm-2'),
+          Div(
+            Submit('submit', 'Confirmar', css_class='mx-2'),
+            HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
+            css_class='mybtns',
+          ),
           css_class='form-row d-flex',
         ),
         Row(
@@ -218,11 +227,6 @@ class NivelForm(forms.ModelForm):
         ),
         Row(
           Column('active', css_class='form-control-sm'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2'),
-          HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
           css_class='form-row d-flex',
         ),
         css_class="form-control"
@@ -305,10 +309,16 @@ class EmpresaForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
             Column('nome', css_class='col-sm-8'),
+            Div(
+              Submit('submit', 'Confirmar', css_class='mx-2'),
+              HTML('<a class="btn btn-danger" href="{% url "empresas" %}">Cancelar</a>'),
+              css_class='mybtns',
+            ),
             css_class='form-row d-flex',
         ),
         Row(
@@ -327,12 +337,7 @@ class EmpresaForm(forms.ModelForm):
             Column('dados_bancarios', css_class='col-sm-8'),
             css_class='form-row d-flex',
         ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2'),
-          HTML('<a class="btn btn-danger" href="{% url "empresas" %}">Cancelar</a>'),
-          css_class='form-row d-flex',
-        ),
-        css_class="form-control"
+        css_class="form-control",
       )
     )
 
@@ -437,18 +442,23 @@ class ServicosForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
-          Column('codigo', css_class='col-sm-3'),
-          Column('tipo', css_class='col-sm-3'),
-          Column('versao', css_class='col-sm-2'),
-          Column('versao_valida', css_class='col-sm-2'),
+          Field('codigo', wrapper_class='col-sm-2'),
+          Field('tipo', wrapper_class='col-sm-2'),
+          Field('versao', wrapper_class='col-sm-1'),
+          Div(
+            Submit('submit', 'Confirmar', css_class='mx-2 d-inline'),
+            HTML('<a class="btn btn-danger d-inline" href="{% url "servicos" %}">Cancelar</a>'),
+            css_class='mybtns',
+          ),
           css_class='form-row d-flex',
         ),
         Row(
-          Column('descricao', css_class='col-sm-6'),
-          Column('cliente', css_class='col-sm-6'),
+          Field('descricao', wrapper_class='col-sm-6'),
+          Field('cliente', wrapper_class='col-sm-6'),
           css_class='form-row d-flex',
         ),
         Row(
@@ -490,13 +500,68 @@ class ServicosForm(forms.ModelForm):
           Column('anotacoes',css_class='col-sm-6'),
           css_class='form-row d-flex',
         ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2'),
-          HTML('<a class="btn btn-danger" href="{% url "servicos" %}">Cancelar</a>'),
-          css_class='form-row d-flex',
-        ),
         css_class="form-control"
       )
+    )
+
+class ItemServicoForm(forms.ModelForm):
+
+  item = forms.CharField(
+    label='Item',
+    disabled=False,
+    required=True,
+  )
+
+  tipo = forms.ChoiceField(
+    choices=Servicos.getTipos(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  class Meta:
+    model = ItemServico
+    fields = (
+      "item",
+      "descricao_item",
+      "sub_item",
+      "descricao_sub_item",
+      "tipo",
+      "horas",
+      "save",
+      "execucao",
+    )
+
+    widgets = {
+      'horas': forms.NumberInput(attrs={'step': '0.15', 'placeholder': '00'}),
+      'save': forms.NumberInput(attrs={'step': '0.15', 'placeholder': '00'}),
+      'execucao': forms.NumberInput(attrs={'step': '0.15', 'placeholder': '00'}),
+    }
+  
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = 'form-control'
+    self.helper.layout = Layout(
+      Row(
+        Column('item', css_class='col-sm-2'),
+        Column('descricao_item', css_class='col-sm-8'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('sub_item', css_class='col-sm-2'),
+        Column('descricao_sub_item', css_class='col-sm-8'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('tipo',css_class='col-sm-5'),
+        Column('horas',css_class='col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('save',css_class='col-sm-4'),
+        Column('execucao',css_class='col-sm-4'),
+        css_class='form-row d-flex',
+      ),
     )
 
 class ProjetoForm(forms.ModelForm):
@@ -773,11 +838,17 @@ class ClienteForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
-          Column('nome', css_class='col-sm-8'),
-          Column('cnpj', css_class='col-sm-4'),
+          Column('nome', css_class='col-sm-6'),
+          Column('cnpj', css_class='col-sm-3'),
+          Div(
+            Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
+            HTML('<a class="btn btn-danger mt-2" href="{% url "clientes" %}">Cancelar</a>'),
+            css_class='mybtns',
+          ),
           css_class='form-row d-flex m-0',
         ),
         Row(
@@ -811,12 +882,7 @@ class ClienteForm(forms.ModelForm):
           Column('observacoes',css_class='col-sm-5'),
           css_class='form-row d-flex',
         ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
-          HTML('<a class="btn btn-danger mt-2" href="{% url "clientes" %}">Cancelar</a>'),
-          css_class='form-row d-flex',
-        ),
-        css_class="form-control"
+        css_class="form-control",
       )
     )
 
@@ -878,10 +944,16 @@ class ColaboradorForm(forms.ModelForm):
     super().__init__(*args, **kwargs)
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
       Div(
         Row(
           Column('nome', css_class='col-sm-6'),
+          Div(
+            Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
+            HTML('<a class="btn btn-danger mt-2" href="{% url "colaboradores" %}">Cancelar</a>'),
+            css_class='mybtns',
+          ),
           css_class='form-row d-flex',
         ),
         Row(
@@ -911,11 +983,6 @@ class ColaboradorForm(forms.ModelForm):
         ),
         Row(
           Column('dados_bancarios',css_class='col-sm-5'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
-          HTML('<a class="btn btn-danger mt-2" href="{% url "colaboradores" %}">Cancelar</a>'),
           css_class='form-row d-flex',
         ),
         css_class="form-control"

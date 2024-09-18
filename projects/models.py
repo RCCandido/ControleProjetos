@@ -297,6 +297,43 @@ class Log(models.Model):
   class Meta:
       verbose_name_plural = "Logs"
 
+class ItemServico(models.Model):
+
+  def getTipos():
+    TIPOS = (
+      ('Protheus', 'Protheus'),
+      ('Processo', 'Processo'),
+      ('ADVPL', 'ADVPL'),
+      ('Qualidade', 'Qualidade'),
+      ('Outros', 'Outros'),
+    )
+    return TIPOS
+
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  codigo = models.ForeignKey(
+    Servicos,
+    on_delete=models.CASCADE,
+    null=False,
+    blank=False,
+  )
+  
+  item = models.CharField(verbose_name="Item", max_length=5)
+  descricao_item = models.CharField(verbose_name="Descrição", max_length=200)
+  sub_item = models.CharField(verbose_name="Sub-Item", max_length=5)
+  descricao_sub_item = models.CharField(verbose_name="Descrição", max_length=200)
+  tipo = models.CharField(verbose_name="Tipo", max_length=20,  choices=getTipos())
+  horas = models.DecimalField(verbose_name="Horas", max_digits=6, decimal_places=2)
+  save = models.DecimalField(verbose_name="Save", max_digits=6, decimal_places=2)
+  execucao = models.DecimalField(verbose_name="Execução", max_digits=6, decimal_places=2)
+
+  def __str__(self):
+      return self.item
+
+  class Meta:
+    verbose_name_plural = "Itens Serviços"
+
 class Projetos(models.Model):
 
   def getStatus():

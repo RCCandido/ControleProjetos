@@ -39,6 +39,7 @@ urlpatterns = [
     path("valores/<opc>", valores, name="valores"),
     path("valores/<opc>/<pk>", valores, name="valores"),
     path("relatorios", relatorios, name="relatorios"),
+    path("adicionar_item_servico", adicionar_item_servico, name="adicionar_item_servico"),
     path(
         "retorna_total_usuarios", retorna_total_usuarios, name="retorna_total_usuarios"
     ),
