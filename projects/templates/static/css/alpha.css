@@ -21,3 +21,19 @@
   color:red;
 }
 
+.filtro {
+  margin-bottom: 10px;
+  float: inline-end;
+}
+
+.filtro input {
+  border-radius: 5px;
+}
+
+.btnfiltro {
+  position: relative;
+}
+
+.btnfiltro:hover {
+  color:blue;
+}

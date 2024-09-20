@@ -16,11 +16,9 @@ class Niveis(models.Model):
     ROTINAS = (
         ("0", "Todas"),
         ("1", "Empresas"),
-        ("2", "Projetos"),
-        ("3", "Niveis"),
-        ("4", "Usuários"),
-        ("5", "Serviços"),
-        ("6", "Relatórios"),
+        ("2", "Niveis"),
+        ("3", "Usuários"),
+        ("4", "Serviços"),
     )
     return ROTINAS
   
@@ -333,67 +331,6 @@ class ItemServico(models.Model):
 
   class Meta:
     verbose_name_plural = "Itens Serviços"
-
-class Projetos(models.Model):
-
-  def getStatus():
-    STATUS = (
-      ('0', 'Orçamento'),
-      ('1', 'Aprovado'),
-      ('2', 'Iniciado'),
-      ('3', 'Em Desenvolvimento'),
-      ('4', 'Em Teste'),
-      ('5', 'Em Homologação'),
-      ('6', 'Homologado'),
-      ('7', 'Em Produção'),
-      ('8', 'Finalizado'),
-    )
-    return STATUS
-
-  created_at = models.DateTimeField(auto_now=True)
-  updated_at = models.DateTimeField(auto_now=True)
-  active = models.BooleanField(default=True, verbose_name="Projeto ativo ?")
-  codigo = models.CharField(primary_key=True, max_length=8)
-
-  name = models.CharField(
-      verbose_name="Descrição", null=False, blank=False, max_length=200
-  )
-  
-  cliente = models.ForeignKey(
-    Cliente,
-    on_delete=models.SET_NULL,
-    null=True,
-    blank=True,
-  )
-
-  responsavel = models.CharField(verbose_name="Responsável", max_length=50)
-  arquiteto = models.CharField(verbose_name="Arquiteto", max_length=50)
-  data_inicio = models.DateField(
-      verbose_name="Inicio", 
-      auto_now=False,
-      auto_now_add=False,
-      null=True, 
-      blank=True,
-  )
-  data_entrega = models.DateField(
-      verbose_name="Entrega", 
-      auto_now=False, 
-      auto_now_add=False,
-      null=True, 
-      blank=True,
-  )
-  desenvolvedor = models.CharField(verbose_name="Desenvolvedor", max_length=50)
-  status = models.CharField(verbose_name="Status", max_length=1, choices=getStatus())
-  qtd_horas_apontadas = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
-  qtd_horas_projeto = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
-  valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-  valor_total = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-
-  class Meta:
-      verbose_name_plural = "Projetos"
-
-  def __str__(self):
-      return self.name
 
 class Colaborador(models.Model):
 

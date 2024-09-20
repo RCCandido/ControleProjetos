@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 
-from .models import Usuario, Empresa, Servicos, Niveis, Projetos
+from .models import Usuario, Empresa, Servicos, Niveis
 from .forms import (
     UsuarioForm,
     NewUsuarioForm,
@@ -19,8 +19,6 @@ from .forms import (
     ServicosForm,
     NivelForm,
     RedefinirSenhaForm,
-    ProjetoForm,
-    NewProjetoForm,
     NewEmpresaForm,
     Cliente,
     ClienteForm,
@@ -32,7 +30,7 @@ from .forms import (
     ItemServicoForm,
 )
 from .decorators import nivel_access_required
-from .filters import UsuarioFilter, ProjetoFilter
+from .filters import UsuarioFilter
 
 ## LOGIN ##
 def logar_usuario(request):
@@ -979,95 +977,6 @@ def profile(request):
     }
     return render(request, "projects/em_construcao.html", context)
 
-@login_required(login_url="/index")
-def projetos(request, opc=False, pk=False):
-  if request.method == "POST":
-    if opc == "insert":
-
-      form = NewProjetoForm(request.POST)
-      if form.is_valid():
-
-        projeto = Projetos(
-          codigo = form.cleaned_data["codigo"],
-          name = form.cleaned_data["name"],
-          cliente = form.cleaned_data["cliente"],
-          responsavel = form.cleaned_data["responsavel"],
-          arquiteto = form.cleaned_data["arquiteto"],
-          data_inicio = form.cleaned_data["data_inicio"],
-          data_entrega = form.cleaned_data["data_entrega"],
-          desenvolvedor = form.cleaned_data["desenvolvedor"],
-          status = form.cleaned_data["status"],
-          qtd_horas_apontadas = form.cleaned_data["qtd_horas_apontadas"],
-          qtd_horas_projeto = form.cleaned_data["qtd_horas_projeto"],
-          valor_hora = form.cleaned_data["valor_hora"],
-          valor_total = form.cleaned_data["valor_total"],
-        )
-        projeto.save()
-
-        return redirect("projetos")
-      else:
-          return render(
-              request,
-              "projects/projetos.html",
-              {"inclui": True, "form": form},
-          )
-    else:
-        form = ProjetoForm(request.POST)
-        if form.is_valid():
-
-          projeto = Projetos.objects.filter(codigo=pk).first()
-
-          projeto.name          = form.cleaned_data["name"]
-          projeto.cliente       = form.cleaned_data["cliente"]
-          projeto.responsavel   = form.cleaned_data["responsavel"]
-          projeto.arquiteto     = form.cleaned_data["arquiteto"]
-          projeto.data_inicio   = form.cleaned_data["data_inicio"]
-          projeto.data_entrega  = form.cleaned_data["data_entrega"]
-          projeto.desenvolvedor = form.cleaned_data["desenvolvedor"]
-          projeto.status        = form.cleaned_data["status"]
-
-          projeto.save()
-
-          return redirect("projetos")
-        else:
-          return render(
-              request,
-              "projects/projetos.html",
-              {"altera": True, "form": form},
-          )
-  else:
-    if opc == "insert":
-      form = NewProjetoForm()
-      context = {"inclui": True, "form": form}
-      return render(request, "projects/projetos.html", context)
-
-    elif opc == "edit":
-      if pk:
-          projeto = Projetos.objects.filter(codigo=pk).first()
-          form = ProjetoForm(instance=projeto)
-          context = {"altera": True, "form": form}
-          return render(request, "projects/projetos.html", context)
-
-    elif opc == "delete":
-      if pk:
-          projeto = Projetos.objects.filter(codigo=pk).first()
-          
-          if projeto:
-            projeto.delete()
-
-          projetos = Projetos.objects.all()
-          filter = ProjetoFilter(request.GET, queryset=projetos)
-
-          context = {"projetos": filter, "filter": filter}
-          return render(request, "projects/projetos.html", context)
-
-    else:
-      projetos = Projetos.objects.all()
-
-      filter = ProjetoFilter(request.GET, queryset=projetos)
-
-      context = {"projetos": filter, "filter": filter}
-      return render(request, "projects/projetos.html", context)
 
 @login_required(login_url="/index")
 def logs(request):
@@ -1086,7 +995,7 @@ def retorna_total_usuarios(request):
   return JsonResponse({'total_usuarios': total})
 
 def retorna_total_projetos(request):
-  x = Projetos.objects.all()
+  x = Usuario.objects.all()
 
   data = []
   labels = []

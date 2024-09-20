@@ -26,16 +26,17 @@
 	{% else %}
 		
 		{% if user.usefilter %}	
-			<div class="filtro col mb-4 fs-6 mx-5">
-				<form method="GET">
-					<label>Nome: </label>
+			<div class="filtro ">
+				<form method="GET" id="form_filtro">
 					{{ filter.form.name }}
 					
-					<label>Email: </label>
-					{{ filter.form.email }}
-					
-					<input class="filter_buttons" type="submit" value="Filtrar" />
-					<input class="filter_buttons" type="button" value="Limpar" onclick="limparCampos()" />
+					<a class="btnfiltro" onclick="document.getElementById('form_filtro').submit();">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+						</svg>
+					</a>
+
+					<!--<input class="filter_buttons" type="button" value="Limpar" onclick="limparCampos()" />-->
 				</form>
 			</div>
 		{% endif %}
@@ -47,7 +48,7 @@
 						<th>Name</th>
 						<th>E-mail</th>
 						<th>Tipo</th>
-						<th>Ações</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -83,6 +84,7 @@
 	function limparCampos(){
 		document.getElementById('id_name').value='';
 		document.getElementById('id_email').value='';
+		document.getElementById('form_filtro').submit();
 	}
 </script>
 
