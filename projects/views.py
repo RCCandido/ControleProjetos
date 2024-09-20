@@ -30,7 +30,7 @@ from .forms import (
     ItemServicoForm,
 )
 from .decorators import nivel_access_required
-from .filters import UsuarioFilter
+from .filters import UsuarioFilter, ClienteFilter
 
 ## LOGIN ##
 def logar_usuario(request):
@@ -741,11 +741,21 @@ def clientes(request, opc=False, pk=False):
           cliente.delete()
 
         clientes = Cliente.objects.all()
-        context = {"cliente": clientes}
+        filter = ClienteFilter(request.GET, queryset=clientes)
+        
+        context = {
+            "cliente": clientes,
+            "filter": filter,
+          }
         return render(request, "projects/clientes.html", context)
 
     clientes = Cliente.objects.all()
-    context = {"clientes": clientes}
+    filter = ClienteFilter(request.GET, queryset=clientes)
+
+    context = {
+        "clientes": filter,
+        "filter": filter,
+      }
     return render(request, "projects/clientes.html", context)
 
 @login_required(login_url="/index")

@@ -24,6 +24,20 @@
 		
 	{% else %}
 
+		{% if user.usefilter %}	
+			<div class="filtro ">
+				<form method="GET" id="form_filtro">
+					{{ filter.form.nome }}
+					
+					<a class="btnfiltro" onclick="document.getElementById('form_filtro').submit();">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+						</svg>
+					</a>
+				</form>
+			</div>
+		{% endif %}
+
 		<table class="table table-sm-responsive">
 			<thead class="table-dark" >
 				<tr>
@@ -35,17 +49,17 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for c in clientes %}
+				{% for cliente in filter.qs %}
 				<tr>
-					<td>{{ c.codigo }}</td>
-					<td>{{ c.nome }}</td>
-					<td>{{ c.cnpj }}</td>
-					<td>{{ c.active }}</td>
+					<td>{{ cliente.codigo }}</td>
+					<td>{{ cliente.nome }}</td>
+					<td>{{ cliente.cnpj }}</td>
+					<td>{{ cliente.active }}</td>
 					<td>
-						<a href="{% url "clientes" opc='edit' pk=c.codigo %}" class="mx-2">
+						<a href="{% url "clientes" opc='edit' pk=cliente.codigo %}" class="mx-2">
 							<i class="fa fa-edit align-middle text-primary"></i>
 						</a>
-						<a href="{% url "clientes" opc='delete' pk=c.codigo	 %}">
+						<a href="{% url "clientes" opc='delete' pk=cliente.codigo	 %}">
 							<i class="fa fa-times fs-5 align-middle text-danger"></i>
 						</a>
 					</td>
@@ -84,5 +98,9 @@
 			</table>
 		</div>
 	{% endif %}
+
+	<script>
+		document.getElementById ("id_nome").placeholder = "Nome ou CNPJ";
+	</script>
 
 {% endblock content %}
