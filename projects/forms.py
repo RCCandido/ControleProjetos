@@ -553,7 +553,7 @@ class ClienteForm(forms.ModelForm):
     label='CNPJ',
     widget = forms.TextInput(
       attrs={
-        'data-mask': "00.000.000/0000-00",
+        'data-mask': "99.999.999/9999-99",
         'placeholder': "99.999.999/9999-99",
       })
     )

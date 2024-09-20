@@ -180,7 +180,7 @@ class Cliente(models.Model):
   codigo = models.AutoField(primary_key=True)
 
   nome = models.CharField(verbose_name="Nome", null=False, blank=False, max_length=200)
-  cnpj = models.CharField(verbose_name="CNPJ", max_length=14)
+  cnpj = models.CharField(verbose_name="CNPJ", max_length=18)
   ie = models.CharField(verbose_name="IE", max_length=14, blank=True)
   endereco = models.CharField(verbose_name="Endereco", max_length=150, blank=True)
   complemento = models.CharField(verbose_name="Complemento", max_length=50, blank=True)
