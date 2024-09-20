@@ -1,11 +1,23 @@
-.mybtns {
-  right: 45px;
-  position: fixed;
-  display: flex;
-  align-content: start;
-  padding: 2px;
-  margin: 2px;
-  height: 50px;
-  text-align: center;
-  vertical-align: middle;
+.mysubmit {
+  position: absolute;
+  top: 80px;
+  right: 13px;
+  margin-top: 20px;
 }
+
+.mysubmit:hover {
+  color:green;
+}
+
+.mycancel {
+  position: absolute;
+  right: 13px;
+  top: 110px;
+  margin-top: 20px;
+  color: red;
+}
+
+.mycancel:hover {
+  color:red;
+}
+

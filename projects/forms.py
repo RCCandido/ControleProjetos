@@ -106,6 +106,7 @@ class UsuarioForm(forms.ModelForm):
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    self.fields['name'].widget.attrs['class'] = 'my_class'
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
@@ -114,11 +115,6 @@ class UsuarioForm(forms.ModelForm):
         Row(
           Field('firstname', wrapper_class='col-sm-3'),
           Field('name', wrapper_class='col-sm-6'),
-          Div(
-            Submit('submit', 'Confirmar', css_class='mx-2'),
-            HTML('<a class="btn btn-danger" href="{% url "usuarios" %}">Cancelar</a>'),
-            css_class='mybtns',
-          ),
           css_class='form-row d-flex',
         ),
         Row(
@@ -207,11 +203,6 @@ class NivelForm(forms.ModelForm):
         Row(
           Column('descricao', css_class='col-sm-4'),
           Column('rotina', css_class='col-sm-2'),
-          Div(
-            Submit('submit', 'Confirmar', css_class='mx-2'),
-            HTML('<a class="btn btn-danger" href="{% url "niveis" %}">Cancelar</a>'),
-            css_class='mybtns',
-          ),
           css_class='form-row d-flex',
         ),
         Row(
@@ -314,11 +305,6 @@ class EmpresaForm(forms.ModelForm):
       Div(
         Row(
             Column('nome', css_class='col-sm-8'),
-            Div(
-              Submit('submit', 'Confirmar', css_class='mx-2'),
-              HTML('<a class="btn btn-danger" href="{% url "empresas" %}">Cancelar</a>'),
-              css_class='mybtns',
-            ),
             css_class='form-row d-flex',
         ),
         Row(
@@ -449,11 +435,6 @@ class ServicosForm(forms.ModelForm):
           Field('codigo', wrapper_class='col-sm-2'),
           Field('tipo', wrapper_class='col-sm-2'),
           Field('versao', wrapper_class='col-sm-1'),
-          Div(
-            Submit('submit', 'Confirmar', css_class='mx-2 d-inline'),
-            HTML('<a class="btn btn-danger d-inline" href="{% url "servicos" %}">Cancelar</a>'),
-            css_class='mybtns',
-          ),
           css_class='form-row d-flex',
         ),
         Row(
@@ -844,11 +825,6 @@ class ClienteForm(forms.ModelForm):
         Row(
           Column('nome', css_class='col-sm-6'),
           Column('cnpj', css_class='col-sm-3'),
-          Div(
-            Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
-            HTML('<a class="btn btn-danger mt-2" href="{% url "clientes" %}">Cancelar</a>'),
-            css_class='mybtns',
-          ),
           css_class='form-row d-flex m-0',
         ),
         Row(
@@ -949,11 +925,6 @@ class ColaboradorForm(forms.ModelForm):
       Div(
         Row(
           Column('nome', css_class='col-sm-6'),
-          Div(
-            Submit('submit', 'Confirmar', css_class='mx-2 mt-2'),
-            HTML('<a class="btn btn-danger mt-2" href="{% url "colaboradores" %}">Cancelar</a>'),
-            css_class='mybtns',
-          ),
           css_class='form-row d-flex',
         ),
         Row(

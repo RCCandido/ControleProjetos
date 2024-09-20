@@ -35,9 +35,9 @@
     </script>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "css/plugins.min.css"   %}" />
-    <link rel="stylesheet" href="{% static "css/kaiadmin.min.css"  %}" />
+    <link rel="stylesheet" href="{% static "css/kaiadmin.css"  %}" />
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "css/alpha.css" %}" />
 
     {% block head %}{% endblock head %}
@@ -196,7 +196,7 @@
           </div>
           <!-- Navbar Header -->
           <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
-            style="background-color: #0042d2; color: white"
+            style="background-color: #1A2035; color: white"
           >
             <div class="fw-bold mt-2 w-50">
               <h3>{% block title %} {% endblock title %}</h3>
@@ -552,7 +552,7 @@
         </div>
 
         <div class="container">
-          <div class="page-inner">
+          <div class="page-inner" style="margin-right: 10px;">
             
             {% block filter %} {% endblock filter %}
             {% block content %} {% endblock content %}
