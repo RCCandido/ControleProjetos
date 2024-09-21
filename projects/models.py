@@ -152,8 +152,11 @@ class Empresa(models.Model):
 
   cnpj = models.CharField(verbose_name="CNPJ", max_length=18, default="")
   endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
-  cidade = models.CharField(verbose_name="Cidade", max_length=80, default="")
-  estado = models.CharField(verbose_name="Estado", max_length=2, choices=getUF())
+  complemento = models.CharField(verbose_name="Complemento", blank=True, max_length=100, default="")
+  cep = models.CharField(verbose_name="CEP", blank=True, max_length=10, default="")
+  bairro = models.CharField(verbose_name="Bairro", max_length=80, blank=True, null=True)
+  cidade = models.CharField(verbose_name="Cidade", max_length=50, blank=True, null=True)
+  estado = models.CharField(verbose_name="Estado", max_length=2, choices=getUF(), blank=True, null=True)
   telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
   imposto = models.DecimalField(verbose_name="% Imposto", max_digits=6, decimal_places=2,null=True, blank=True)
@@ -178,12 +181,12 @@ class Cliente(models.Model):
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Cliente ativo ?")
   codigo = models.AutoField(primary_key=True)
-
   nome = models.CharField(verbose_name="Nome", null=False, blank=False, max_length=200)
   cnpj = models.CharField(verbose_name="CNPJ", max_length=18)
   ie = models.CharField(verbose_name="IE", max_length=14, blank=True)
   endereco = models.CharField(verbose_name="Endereco", max_length=150, blank=True)
   complemento = models.CharField(verbose_name="Complemento", max_length=50, blank=True)
+  cep = models.CharField(verbose_name="CEP", max_length=10, blank=True)
   bairro = models.CharField(verbose_name="Bairro", max_length=50, blank=True)
   cidade = models.CharField(verbose_name="Cidade", max_length=50, blank=True)
   estado = models.CharField(verbose_name="Estado", max_length=2, choices=Empresa.getUF(), default="")
@@ -360,10 +363,12 @@ class Colaborador(models.Model):
   )
 
   endereco = models.CharField(verbose_name="Endereço", blank=True, max_length=250, default="")
+  complemento = models.CharField(verbose_name="Complemento", blank=True, max_length=100, default="")
+  cep = models.CharField(verbose_name="CEP", blank=True, max_length=10, default="")
   cidade = models.CharField(verbose_name="Cidade", max_length=80, default="")
   bairro = models.CharField(verbose_name="Bairro", max_length=50, blank=True)
   estado = models.CharField(verbose_name="Estado", max_length=2, choices=Empresa.getUF())
-  telefone = models.CharField(verbose_name="Telefone", max_length=20, default="")
+  telefone = models.CharField(verbose_name="Telefone", max_length=14, default="")
   email = models.EmailField(verbose_name='E-mail')
   dados_bancarios = models.TextField(verbose_name="Informações Bancarias", null=True, blank=True, default="")
   valor_hora = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, default=0.00)
@@ -376,6 +381,7 @@ class Colaborador(models.Model):
       auto_now_add=False,
       null=True, 
       blank=True,
+      max_length=10,
   )
   
   class Meta:

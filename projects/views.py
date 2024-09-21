@@ -211,7 +211,6 @@ def usuarios(request, opc=False, pk=False):
       usuario = Usuario.objects.filter(email=pk).first()
       form = UsuarioForm(request.POST, instance=usuario)
       if form.is_valid():
-
         usuario = form.save(commit=False)
         usuario.firstname = form.cleaned_data["firstname"]
         usuario.name      = form.cleaned_data["name"]
@@ -463,6 +462,7 @@ def empresas(request, pk=False, opc=False):
             "projects/empresas.html",
             {"inclui": True, "form": form},
         )
+
     elif opc == "edit":
         
       empresa = Empresa.objects.filter(codigo=pk).first()

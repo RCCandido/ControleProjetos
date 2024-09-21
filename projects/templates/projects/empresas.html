@@ -83,4 +83,10 @@
 		</div>
 	{% endif %}
 
+	<script>
+		document.getElementById("id_cnpj").addEventListener("keyup", formatarCNPJ);
+		document.getElementById("id_cep").addEventListener("keyup", formatarCep);
+		document.getElementById("id_telefone").addEventListener("keyup", formatarTelefone);
+	</script>
+
 {% endblock content %}

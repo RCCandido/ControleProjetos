@@ -304,22 +304,24 @@ class EmpresaForm(forms.ModelForm):
     self.helper.layout = Layout(
       Div(
         Row(
-            Column('nome', css_class='col-sm-8'),
+            Column('nome', css_class='col-sm-6'),
+            Column('cnpj', css_class='col-lg-6'),
             css_class='form-row d-flex',
         ),
         Row(
-          Column('cnpj', css_class='col-lg-6'),
-          Column('cidade',css_class='col-sm-4'),
-          Column('estado',css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-            Column('telefone', css_class='col-sm-4'),
             Column('endereco', css_class='col-sm-6'),
-            Column('imposto', css_class='col-sm-2'),
+            Column('complemento',css_class='col-sm-4'),
+           css_class='form-row d-flex',
+        ),
+        Row(
+            Column('cep',css_class='col-sm-3'),
+            Column('cidade',css_class='col-sm-3'),
+            Column('estado',css_class='col-sm-2'),
+            Column('telefone', css_class='col-sm-3'),
             css_class='form-row d-flex',
         ),
         Row(
+            Column('imposto', css_class='col-sm-2'),
             Column('dados_bancarios', css_class='col-sm-8'),
             css_class='form-row d-flex',
         ),
@@ -611,16 +613,17 @@ class ClienteForm(forms.ModelForm):
           css_class='form-row d-flex m-0',
         ),
         Row(
-          Column('usa_email_cat', css_class='col-sm-2'),
-          Column('email_cat', css_class='col-sm-4'),
-          Column('bairro',css_class='col-sm-2'),
-          Column('cidade',css_class='col-sm-2'),
-          Column('estado', css_class='col-sm-2'),
+          Column('endereco', css_class='col-sm-5'),
+          Column('complemento',css_class='col-sm-3'),
+          Column('cep',css_class='col-sm-2'),
           css_class='form-row d-flex',
         ),
         Row(
-          Column('endereco', css_class='col-sm-6'),
-          Column('complemento',css_class='col-sm-3'),
+          Column('bairro',css_class='col-sm-2'),
+          Column('cidade',css_class='col-sm-2'),
+          Column('estado', css_class='col-sm-2'),
+          Column('usa_email_cat', css_class='col-sm-2'),
+          Column('email_cat', css_class='col-sm-4'),
           css_class='form-row d-flex',
         ),
         Row(
@@ -651,7 +654,6 @@ class ColaboradorForm(forms.ModelForm):
     widget = forms.TextInput(
       attrs={
         "placeholder": "999.999.999-99",
-        "data-mask": "999.999.999-99",
       })
   )
 
@@ -688,7 +690,6 @@ class ColaboradorForm(forms.ModelForm):
         attrs={
           'format': "dd/mm/yyyy",
           'placeholder': "dd/mm/yyyy",
-          "data-mask": "00/00/0000",
           }),
     }
 
@@ -701,6 +702,7 @@ class ColaboradorForm(forms.ModelForm):
       Div(
         Row(
           Column('nome', css_class='col-sm-6'),
+          Column('active', css_class='my-4'),
           css_class='form-row d-flex',
         ),
         Row(
@@ -710,15 +712,16 @@ class ColaboradorForm(forms.ModelForm):
           css_class='form-row d-flex',
         ),
         Row(
-          Column('endereco', css_class='col-sm-5'),
-          Column('telefone', css_class='col-sm-3'),
-          Column('active', css_class='my-4'),
+          Column('endereco', css_class='col-sm-4'),
+          Column('complemento', css_class='col-sm-4'),
+          Column('cep', css_class='col-sm-3'),
           css_class='form-row d-flex',
         ),
         Row(
           Column('bairro',css_class='col-sm-3'),
           Column('cidade',css_class='col-sm-3'),
           Column('estado', css_class='col-sm-2'),
+          Column('telefone', css_class='col-sm-3'),
           css_class='form-row d-flex',
         ),
         Row(
