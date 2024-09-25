@@ -219,7 +219,6 @@ def usuarios(request, opc=False, pk=False):
         usuario.perfil    = form.cleaned_data["perfil"]
         usuario.usefilter = form.cleaned_data["usefilter"]
         usuario.save()
-
         return redirect("usuarios")
       else:
         return render(request,"projects/usuarios.html",{"altera": True, "form": form})
@@ -663,17 +662,18 @@ def clientes(request, opc=False, pk=False):
         return render(request, "projects/clientes.html", {"inclui": True, "form": form})
 
     elif opc == "edit":
-        
+      
       cliente = Cliente.objects.filter(codigo=pk).first()
       valorHoraAnterior = cliente.valor_hora_atual
       descontoAnterior = cliente.perc_desconto_atual
       registraValor = False
       
-      form = ClienteForm(request.POST, instance=cliente)
-      if form.is_valid():
+      form = ClienteForm(request.POST, instance=cliente, prefix="form")
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+      if form.is_valid() and form_valores.is_valid():
         
         registraValor = True if valorHoraAnterior != form.cleaned_data["valor_hora_atual"] or descontoAnterior != form.cleaned_data["perc_desconto_atual"] else False
-
+        
         cliente = form.save(commit=False)
         cliente.nome                = form.cleaned_data["nome"]
         cliente.cnpj                = form.cleaned_data["cnpj"]
@@ -698,38 +698,43 @@ def clientes(request, opc=False, pk=False):
         if registraValor:
           # insere o registro na tabela de valores
           valor = Valores(
-            data = datetime.today,
+            data = form_valores.cleaned_data["data"],
             codigo = cliente.codigo,
             tipo = 'Cliente',
             valor_hora = form.cleaned_data["valor_hora_atual"],
             desconto = form.cleaned_data["perc_desconto_atual"],
-            #observacao = form.cleaned_data["observacao"],
+            observacao = form_valores.cleaned_data["observacao"],
           )
           valor.save()
 
         return redirect("clientes")
       else:
-        return render(request, "projects/clientes.html", {"altera": True, "form": form})
+        return render(request, "projects/clientes.html", {"altera": True, "form": form, "form_valores": form_valores})
   else:
 
     if opc == "insert":
       form = ClienteForm()
+      form_valores = ValoresForm()
+
       context = {
         "inclui": True, 
         "form": form,
+        "form_valores": form_valores,
         }
       return render(request, "projects/clientes.html", context)
 
     elif opc == "edit":
       if pk:
         cliente = Cliente.objects.filter(codigo=pk).first()
-        form = ClienteForm(instance=cliente)
-        form_valores = Valores.objects.filter(codigo=pk, tipo="Cliente").order_by("-valor_id")
+        form = ClienteForm(instance=cliente, prefix="form")
+        form_valores = ValoresForm(prefix="form_valores")
+        historico = Valores.objects.filter(codigo=pk, tipo="Cliente").order_by("-valor_id")
 
         context = {
           "altera": True, 
           "form": form,
-          "valores": form_valores,
+          "form_valores": form_valores,
+          "historico": historico,
         }
         return render(request, "projects/clientes.html", context)
 

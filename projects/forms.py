@@ -35,11 +35,6 @@ class RedefinirSenhaForm(forms.ModelForm):
       Div(
         Row(
           Column('email', css_class='col-sm-8'),
-          Div(
-            Submit('submit', 'Confirmar', css_class='mx-2'),
-            HTML('<a class="btn btn-danger" href="{% url "home" %}">Cancelar</a>'),
-            css_class='mybtns',
-          ),
           css_class='form-row d-flex',
         ),
         Row(
@@ -95,8 +90,6 @@ class UsuarioForm(forms.ModelForm):
         "firstname",
         "name",
         "email",
-        "password",
-        "password2",
         "active",
         "tipo",
         "perfil",
@@ -121,11 +114,6 @@ class UsuarioForm(forms.ModelForm):
           Field('email', wrapper_class='col-sm-6'),
           Field('tipo', wrapper_class='col-sm-2'),
           Field('perfil', wrapper_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Field('password',wrapper_class='col-sm-2'),
-          Field('password2',wrapper_class='col-sm-2'),
           css_class='form-row d-flex',
         ),
         Row(
@@ -741,69 +729,15 @@ class ColaboradorForm(forms.ModelForm):
 
 class ValoresForm(forms.ModelForm):
 
+  codigo = forms.CharField(
+    required=False,
+  )
+
   tipo = forms.ChoiceField(
     choices=Valores.getTipos(),
-    required=True,
+    required=False,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
-
-  data = forms.DateField(
-     widget=forms.DateInput(
-      attrs={
-        'type': 'date',
-      }
-    )
-  )
-
-  valor_hora = forms.CharField(
-    required=False,
-    label="Valor Hora",
-    widget=forms.TextInput(
-      attrs={
-        'placeholder':"R$ 000,00",
-      }
-    )
-  )
-  
-  valor_fixo = forms.CharField(
-    required=False,
-    label="Valor Fixo",
-    widget=forms.TextInput(
-      attrs={
-        'placeholder':"R$ 000,00",
-      }
-    )
-  )
-  
-  comissao = forms.CharField(
-    required=False,
-    label="Comissão",
-    widget=forms.TextInput(
-      attrs={
-        'placeholder':"% 2,00",
-      }
-    )
-  )
-  
-  imposto = forms.CharField(
-    required=False,
-    label="% Imposto",
-    widget=forms.NumberInput(
-      attrs={
-        'placeholder':"% 2,50",
-      }
-    )
-  )
-  
-  desconto = forms.CharField(
-    required=False,
-    label="Desconto",
-    widget=forms.TextInput(
-      attrs={
-        'placeholder':"% 10,00",
-        }
-      )
-    )
 
   observacao = forms.CharField(
     label="Observações", 
@@ -815,9 +749,26 @@ class ValoresForm(forms.ModelForm):
       )
     )
   
+  data = forms.DateField(
+    required=False, 
+    widget=forms.DateInput(
+      attrs={
+        'type': 'date',
+      }
+    )
+  )
+  
   class Meta:
     model = Valores
     fields = "__all__"
+    widgets = {
+      'valor_hora': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'valor_fixo': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'desconto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'R$ 120.00'}),
+      'imposto': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '% 2.50'}),
+      'comissao': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '% 2.50'}),
+     
+    }
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)

@@ -407,12 +407,10 @@ class Valores(models.Model):
   valor_id = models.AutoField(primary_key=True)
   
   tipo = models.CharField(verbose_name="Tipo", max_length=20, choices=getTipos())
-  codigo = models.CharField(verbose_name="Codigo", max_length=6, null=False, blank=False)
+  codigo = models.CharField(verbose_name="Codigo", max_length=6 )
 
   data = models.DateField(
     verbose_name="Data", 
-    auto_now=True,
-    auto_now_add=False,
     null=False, 
     blank=False,
   )

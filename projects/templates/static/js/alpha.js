@@ -1,5 +1,4 @@
 
-
 function addNewItem(e) {
     var addNewItem = $("#add_new_product_form");
     $.ajax({

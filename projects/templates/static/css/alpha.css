@@ -10,7 +10,7 @@
 }
 
 .mycancel {
-  position: absolute;
+  position: fixed;
   right: 13px;
   top: 110px;
   margin-top: 20px;
@@ -18,7 +18,7 @@
 }
 
 .mycancel:hover {
-  color:red;
+  color:rgb(65, 61, 61);
 }
 
 .filtro {
