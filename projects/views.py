@@ -84,44 +84,48 @@ def recuperar_senha(request):
         # verifica se o destinatario tem o email cadastrado
         user = Usuario.objects.filter(email=destinatario).first()
         if user:
+          
+          # verifica se nao está bloqueado
+          if user.active:
 
-          # cria nova senha aleatoria
-          nova_senha = SenhaAleatoria()
+            # cria nova senha aleatoria
+            nova_senha = SenhaAleatoria()
 
-          senha_criptografada = make_password(
-            password=nova_senha, salt=None, hasher="pbkdf2_sha256"
-          )
+            senha_criptografada = make_password(
+              password=nova_senha, salt=None, hasher="pbkdf2_sha256"
+            )
 
-          user.password = senha_criptografada
-          user.active   = True
-          user.resetpsw = True
-          user.save()
+            user.password = senha_criptografada
+            user.resetpsw = True
+            user.save()
 
-          mensagem = "Olá " + user.name + " Sua nova senha é: " + nova_senha
+            mensagem = "Olá " + user.name + " Sua nova senha é: " + nova_senha
 
-          # envia email de recuperação de senha
-          send_mail(
-            "Recuperação de Senha",
-            mensagem,
-            "rodrigo.candido@alphaerp.com.br",
-            [destinatario],
-            fail_silently=False,
-          )
-          sucess = True
-          message = "E-mail de recuperação enviado com Sucesso!"
-          return render(
-            request,
-            "projects/recuperar_senha.html",
-            {"sucess": sucess, "message": message},
-          )
+            # envia email de recuperação de senha
+            send_mail(
+              "Recuperação de Senha",
+              mensagem,
+              "rodrigo.candido@alphaerp.com.br",
+              [destinatario],
+              fail_silently=False,
+            )
+
+            sucess = True
+            message = "E-mail de recuperação enviado com Sucesso!"
+
+          else:
+            sucess = False
+            message = "Usuário bloqueado, solicite ativação de seu usuário ao administrador."
+
         else:
           sucess = False
           message = "E-mail inválido, não consta na base de dados."
-          return render(
-            request,
-            "projects/recuperar_senha.html",
-            {"sucess": sucess, "message": message},
-          )
+          
+        return render(
+          request,
+          "projects/recuperar_senha.html",
+          {"sucess": sucess, "message": message},
+        )
 
     else:
       sucess = False
@@ -141,8 +145,8 @@ def recuperar_senha(request):
 
 @login_required(login_url="/index")
 def deslogar_usuario(request):
-    logout(request)
-    return redirect("home")
+  logout(request)
+  return redirect("home")
 
 @login_required(login_url="/index")
 def redefinir_senha(request):
@@ -221,7 +225,13 @@ def usuarios(request, opc=False, pk=False):
         usuario.perfil    = form.cleaned_data["perfil"]
         usuario.usefilter = form.cleaned_data["usefilter"]
         usuario.save()
+
+        # se for o proprio usuario se desativando
+        if not usuario.active and usuario.email == request.user.email:
+          deslogar_usuario(request)
+
         return redirect("usuarios")
+
       else:
         return render(request,"projects/usuarios.html",{"altera": True, "form": form})
   else:
@@ -1177,7 +1187,7 @@ def cargainicial(request):
             active=True,
             tipo="2",
             perfil=nivel,
-            resetpsw=0,
+            resetpsw=False,
         )
         user.save()
 
