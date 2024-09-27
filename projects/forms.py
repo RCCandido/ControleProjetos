@@ -752,10 +752,11 @@ class ValoresForm(forms.ModelForm):
   data = forms.DateField(
     required=False, 
     widget=forms.DateInput(
+      format='%Y-%m-%d',
       attrs={
         'type': 'date',
-      }
-    )
+      }),
+      input_formats=('%Y-%m-%d',),
   )
   
   class Meta:

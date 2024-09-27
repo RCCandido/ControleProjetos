@@ -20,6 +20,7 @@
 		
 		<form method="post" id="my_form">
 			{% csrf_token %}
+			
 			<!-- Modal -->
 			<input type="hidden" id="md" data-bs-toggle="modal" data-bs-target="#myModal">
 			<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
@@ -30,6 +31,7 @@
 							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
+							<p class="text-info">Informe a vigência e justificativa para os novos valores.</p>
 							{{ form_valores.data|as_crispy_field }}
 							{{ form_valores.observacao|as_crispy_field }}
 						</div>
@@ -41,9 +43,10 @@
 				</div>
 			</div>
 			
-			
+			<!--campos hidden para comparação de alteração de valores-->
 			{% crispy form %}
-			<input type="hidden" id="valor_hora_bkp" value='121'>
+			<input type="hidden" id="valor_hora_bkp" value='0'>
+			<input type="hidden" id="desconto_bkp" value='0'>
 		</form>
 		
 	{% else %}
@@ -123,13 +126,11 @@
 		</div>
 	{% endif %}
 
-	
-	
 	<script>
-		const cnpj = document.getElementById("id_cnpj");
-		const cep = document.getElementById("id_cep");
-		const telefone = document.getElementById("id_telefone");
-		const filtro = document.getElementById("id_nome");
+		const cnpj = document.getElementById("id_form-cnpj");
+		const cep = document.getElementById("id_form-cep");
+		const telefone = document.getElementById("id_form-telefone");
+		const filtro = document.getElementById("id_form-nome");
 		
 		if (filtro != null){
 			filtro.placeholder = "Nome ou CNPJ";
@@ -142,23 +143,27 @@
 		}
 		
 		window.onload = function(){
-			document.getElementById("valor_hora_bkp").value = document.getElementById("id_form-valor_hora_atual").value
+			if (document.getElementById("id_form-valor_hora_atual") !== null){
+				document.getElementById("valor_hora_bkp").value = document.getElementById("id_form-valor_hora_atual").value
+				document.getElementById("desconto_bkp").value = document.getElementById("id_form-perc_desconto_atual").value
+			}
 		}
 
 		function openModal(){
 			
-			vlr_hora_ant = document.getElementById("valor_hora_bkp").value
-			vlr_hora = document.getElementById("id_form-valor_hora_atual").value
+			vlr_hora_ant = document.getElementById("valor_hora_bkp")
+			vlr_hora = document.getElementById("id_form-valor_hora_atual")
 			
-			if (vlr_hora_ant != vlr_hora){
+			desconto_ant = document.getElementById("desconto_bkp")
+			desconto = document.getElementById("id_form-perc_desconto_atual")
+			
+			if ((vlr_hora_ant.value != vlr_hora.value) || (desconto_ant.value != desconto.value)) {
 				$("#md").click(); 
 			} else {
 				document.getElementById('my_form').submit();
 			}
-			
-		}
 		
-
+		}
 	</script>
 
 {% endblock content %}

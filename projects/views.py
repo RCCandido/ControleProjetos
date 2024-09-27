@@ -428,8 +428,9 @@ def empresas(request, pk=False, opc=False):
     
     if opc == "insert":
     
-      form = EmpresaForm(request.POST)
-      if form.is_valid():
+      form = EmpresaForm(request.POST, prefix="form")
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+      if form.is_valid() and form_valores.is_valid():
 
         empresa = Empresa(
           nome            = form.cleaned_data["nome"],
@@ -443,15 +444,17 @@ def empresas(request, pk=False, opc=False):
         )
         empresa.save()
         
-        # insere o registro na tabela de valores
-        valor = Valores(
-          data = datetime.today,
-          codigo = empresa.codigo,
-          tipo = 'Empresa',
-          imposto = form.cleaned_data["imposto"],
-          observacao = form.cleaned_data["observacao"],
-        )
-        valor.save()
+        if form.cleaned_data["imposto"] > 0:
+            
+          # insere o registro na tabela de valores
+          valor = Valores(
+            data = form_valores.cleaned_data["data"],
+            codigo = empresa.codigo,
+            tipo = 'Empresa',
+            imposto = form.cleaned_data["imposto"],
+            observacao = form_valores.cleaned_data["observacao"],
+          )
+          valor.save()
 
         return redirect("empresas")
 
@@ -459,7 +462,7 @@ def empresas(request, pk=False, opc=False):
         return render(
             request,
             "projects/empresas.html",
-            {"inclui": True, "form": form},
+            {"inclui": True, "form": form, "form_valores": form_valores},
         )
 
     elif opc == "edit":
@@ -467,8 +470,9 @@ def empresas(request, pk=False, opc=False):
       empresa = Empresa.objects.filter(codigo=pk).first()
       impostoAnterior = empresa.imposto
 
-      form = EmpresaForm(request.POST, instance=empresa)
-      if form.is_valid():
+      form = EmpresaForm(request.POST, instance=empresa, prefix="form")
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+      if form.is_valid() and form_valores.is_valid():
 
         registraValor = True if form.cleaned_data["imposto"] != impostoAnterior else False
 
@@ -484,40 +488,51 @@ def empresas(request, pk=False, opc=False):
         empresa.save()
 
         if registraValor:
+
           # insere o registro na tabela de valores
           valor = Valores(
-            data = datetime.today,
+            data = form_valores.cleaned_data["data"],
             codigo = empresa.codigo,
             tipo = 'Empresa',
             imposto = form.cleaned_data["imposto"],
-            #observacao = form.cleaned_data["observacao"],
+            observacao = form_valores.cleaned_data["observacao"],
           )
           valor.save()
 
         return redirect("empresas")
+
       else:
-        return render(
-            request,
-            "projects/empresas.html",
-            {"altera": True, "form": form},
-        )
+        context = {
+          "altera": True,
+          "form": form,
+          "form_valores": form_valores
+          }
+        return render(request, "projects/empresas.html", context)
   else:
 
     if opc == "insert":
-      form = NewEmpresaForm()
-      context = {"inclui": True, "form": form}
+      form = NewEmpresaForm(prefix="form")
+      form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
+
+      context = {
+        "inclui": True,
+        "form": form,
+        "form_valores": form_valores
+        }
       return render(request, "projects/empresas.html", context)
 
     elif opc == "edit":
       if pk:
         empresa = Empresa.objects.filter(codigo=pk).first()
-        form = EmpresaForm(instance=empresa)
-        form_valores = Valores.objects.filter(codigo=pk, tipo="Empresa").order_by("-valor_id")
+        form = EmpresaForm(instance=empresa, prefix="form")
+        form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
+        historico = Valores.objects.filter(codigo=pk, tipo="Empresa").order_by("-valor_id")
 
         context = {
           "altera": True, 
           "form": form,
-          "valores": form_valores,
+          "form_valores": form_valores,
+          "historico": historico,
           }
         return render(request, "projects/empresas.html", context)
 
@@ -622,8 +637,9 @@ def clientes(request, opc=False, pk=False):
     
     if opc == "insert":
 
-      form = ClienteForm(request.POST)
-      if form.is_valid():
+      form = ClienteForm(request.POST, prefix="form")
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+      if form.is_valid() and form_valores.is_valid():
 
         cliente = Cliente(
           nome               = form.cleaned_data["nome"],
@@ -647,19 +663,29 @@ def clientes(request, opc=False, pk=False):
         )
         cliente.save()
 
-        # insere o registro na tabela de valores
-        valor = Valores(
-          data = datetime.today,
-          codigo = cliente.codigo,
-          tipo = 'Cliente',
-          valor_hora = form.cleaned_data["valor_hora"],
-          desconto = form.cleaned_data["desconto"],
-        )
-        valor.save()
+        if form.cleaned_data["perc_desconto_atual"] > 0 or form.cleaned_data["valor_hora_atual"] > 0:
+
+          # insere o registro na tabela de valores
+          valor = Valores(
+            data = form_valores.cleaned_data["data"],
+            codigo = cliente.codigo,
+            tipo = 'Cliente',
+            valor_hora = form.cleaned_data["valor_hora_atual"],
+            desconto = form.cleaned_data["perc_desconto_atual"],
+            observacao = form_valores.cleaned_data["observacao"],
+          )
+          valor.save()
 
         return redirect("clientes")
+
       else:
-        return render(request, "projects/clientes.html", {"inclui": True, "form": form})
+        context = {
+          "inclui": True,
+          "form": form, 
+          "form_valores": form_valores,
+          }
+
+        return render(request, "projects/clientes.html", context)
 
     elif opc == "edit":
       
@@ -696,6 +722,7 @@ def clientes(request, opc=False, pk=False):
         cliente.save()
 
         if registraValor:
+
           # insere o registro na tabela de valores
           valor = Valores(
             data = form_valores.cleaned_data["data"],
@@ -708,13 +735,19 @@ def clientes(request, opc=False, pk=False):
           valor.save()
 
         return redirect("clientes")
+
       else:
-        return render(request, "projects/clientes.html", {"altera": True, "form": form, "form_valores": form_valores})
+        context = {
+          "altera": True,
+          "form": form,
+          "form_valores": form_valores,
+          }
+        return render(request, "projects/clientes.html", context)
   else:
 
     if opc == "insert":
-      form = ClienteForm()
-      form_valores = ValoresForm()
+      form = ClienteForm(prefix="form")
+      form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
 
       context = {
         "inclui": True, 
@@ -727,7 +760,7 @@ def clientes(request, opc=False, pk=False):
       if pk:
         cliente = Cliente.objects.filter(codigo=pk).first()
         form = ClienteForm(instance=cliente, prefix="form")
-        form_valores = ValoresForm(prefix="form_valores")
+        form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
         historico = Valores.objects.filter(codigo=pk, tipo="Cliente").order_by("-valor_id")
 
         context = {
@@ -770,8 +803,9 @@ def colaboradores(request, opc=False, pk=False):
    
     if opc == "insert":
 
-      form = ColaboradorForm(request.POST)
-      if form.is_valid():
+      form = ColaboradorForm(request.POST, prefix="form")
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+      if form.is_valid() and form_valores.is_valid():
 
         colaborador = Colaborador(
           nome               = form.cleaned_data["nome"],
@@ -790,23 +824,29 @@ def colaboradores(request, opc=False, pk=False):
           active             = form.cleaned_data["active"],
           periodo_lancamento = form.cleaned_data["periodo_lancamento"],
         )
-
         colaborador.save()
 
         # insere o registro na tabela de valores
         valor = Valores(
-          data = datetime.today,
+          data = form_valores.cleaned_data["data"],
           codigo = colaborador.codigo,
           tipo = 'Colaborador',
           valor_fixo = form.cleaned_data["valor_fixo"],
           valor_hora = form.cleaned_data["valor_hora"],
           comissao = form.cleaned_data["comissao"],
+          observacao = form_valores.cleaned_data["observacao"],
         )
         valor.save()
 
         return redirect("colaboradores")
+
       else:
-        return render(request,"projects/colaboradores.html",{"inclui": True, "form": form})
+        context = {
+          "inclui": True,
+          "form": form,
+          "form_valores": form_valores,
+          }
+        return render(request,"projects/colaboradores.html", context)
 
     elif opc == "edit":
         
@@ -816,8 +856,9 @@ def colaboradores(request, opc=False, pk=False):
       comissaoAnterior = colaborador.comissao
       registraValor = False
 
-      form = ColaboradorForm(request.POST, instance=colaborador)
-      if form.is_valid():
+      form = ColaboradorForm(request.POST, instance=colaborador, prefix="form")
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+      if form.is_valid() and form_valores.is_valid():
 
         if valorHoraAnterior != form.cleaned_data["valor_hora"] or valorFixoAnterior != form.cleaned_data["valor_fixo"] or comissaoAnterior != form.cleaned_data["comissao"]:
           registraValor = True
@@ -840,36 +881,54 @@ def colaboradores(request, opc=False, pk=False):
         colaborador.save()
 
         if registraValor:
+
           # insere o registro na tabela de valores
           valor = Valores(
-            data = datetime.today,
+            data = form_valores.cleaned_data["data"],
             codigo = colaborador.codigo,
             tipo = 'Colaborador',
             valor_hora = form.cleaned_data["valor_hora"],
             valor_fixo = form.cleaned_data["valor_fixo"],
             comissao = form.cleaned_data["comissao"],
-            #observacao = form.cleaned_data["observacao"],
+            observacao = form_valores.cleaned_data["observacao"],
           )
           valor.save()
 
         return redirect("colaboradores")
       else:
-        return render(request,"projects/colaboradores.html",{"altera": True, "form": form})
+        context = {
+          "altera": True,
+          "form": form,
+          "form_valores": form_valores,
+          }
+        return render(request,"projects/colaboradores.html", context)
 
   else:
 
     if opc == "insert":
-      form = ColaboradorForm()
-      context = {"inclui": True, "form": form}
+      form = ColaboradorForm(prefix="form")
+      form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
+
+      context = {
+        "inclui": True,
+        "form": form,
+        "form_valores": form_valores,
+        }
       return render(request, "projects/colaboradores.html", context)
 
     elif opc == "edit":
       if pk:
         colaborador = Colaborador.objects.filter(codigo=pk).first()
-        form = ColaboradorForm(instance=colaborador)
-        form_valores = Valores.objects.filter(codigo=pk, tipo="Colaborador").order_by("-valor_id")
+        form = ColaboradorForm(instance=colaborador, prefix="form")
+        form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
+        historico = Valores.objects.filter(codigo=pk, tipo="Colaborador").order_by("-valor_id")
 
-        context = {"altera": True, "form": form, "valores": form_valores}
+        context = {
+          "altera": True,
+          "form": form,
+          "form_valores": form_valores,
+          "historico": historico,
+          }
         return render(request, "projects/colaboradores.html", context)
 
     elif opc == "delete":
