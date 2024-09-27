@@ -93,6 +93,8 @@ def recuperar_senha(request):
           )
 
           user.password = senha_criptografada
+          user.active   = True
+          user.resetpsw = True
           user.save()
 
           mensagem = "Olá " + user.name + " Sua nova senha é: " + nova_senha
