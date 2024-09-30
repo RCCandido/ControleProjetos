@@ -70,7 +70,7 @@ def nivel_access_required(view_name):
         return _wrapped_view
       return decorator
 
-    case "niveis":
+    case "grupos":
       def decorator(view):
         @wraps(view)
         def _wrapped_view(request, *args, **kwargs):

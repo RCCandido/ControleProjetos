@@ -277,10 +277,8 @@ def servicos(request, opc=False, pk=False):
       form = ServicosForm(request.POST)
       if form.is_valid():
         
-        codigo = Servicos.getNextCodigo()
-
         servico = Servicos(
-          codigo      = codigo,
+          codigo      = form.cleaned_data["codigo"],
           descricao   = form.cleaned_data["descricao"],
           versao      = form.cleaned_data["versao"],
           cliente     = form.cleaned_data["cliente"],
@@ -305,15 +303,14 @@ def servicos(request, opc=False, pk=False):
           etapa_tecnica   = form.cleaned_data["etapa_tecnica"],
           justificativa   = form.cleaned_data["justificativa"],
           anotacoes       = form.cleaned_data["anotacoes"],
-          versao_valida   = form.cleaned_data["versao_valida"],
-          parcelamento    = form.cleaned_data["parcelamento"],
+          parcelas        = form.cleaned_data["parcelas"],
         )
         servico.save()
 
         # insere o registro na tabela de valores
         valor = Valores(
-          data = datetime.today,
-          codigo = codigo,
+          data = datetime.now(),
+          codigo = servico.codigo,
           tipo = 'Servico',
           valor_hora = form.cleaned_data["valor_hora"],
           comissao = form.cleaned_data["comissao"],
@@ -565,8 +562,8 @@ def empresas(request, pk=False, opc=False):
     return render(request, "projects/empresas.html", context)
           
 @login_required(login_url="/index")
-@nivel_access_required(view_name="niveis")
-def niveis(request, pk=False, opc=False):
+@nivel_access_required(view_name="grupos")
+def grupos(request, pk=False, opc=False):
 
   if request.method == "POST":
     if opc == "insert":
@@ -586,11 +583,11 @@ def niveis(request, pk=False, opc=False):
         )
         nivel.save()
 
-        return redirect("niveis")
+        return redirect("grupos")
 
       else:
         context = {"inclui": True, "form": form}
-        return render(request, "projects/niveis.html", context,)
+        return render(request, "projects/grupos.html", context,)
         
     elif opc == "edit":
 
@@ -609,23 +606,23 @@ def niveis(request, pk=False, opc=False):
         nivel.active    = form.cleaned_data["active"]
         nivel.save()
 
-        return redirect("niveis")
+        return redirect("grupos")
       else:
         context = {"inclui": True, "form": form}
-        return render(request, "projects/niveis.html", context)
+        return render(request, "projects/grupos.html", context)
   else:
 
     if opc == "insert":
       nivel_form = NivelForm()
       context = {"inclui": True, "form": nivel_form}
-      return render(request, "projects/niveis.html", context)
+      return render(request, "projects/grupos.html", context)
 
     elif opc == "edit":
       if pk:
         nivel = Niveis.objects.filter(nivel_id=pk).first()
         form = NivelForm(instance=nivel)
         context = {"altera": True, "form": form}
-        return render(request, "projects/niveis.html", context)
+        return render(request, "projects/grupos.html", context)
 
     elif opc == "delete":
       if pk:
@@ -636,11 +633,11 @@ def niveis(request, pk=False, opc=False):
 
         niveis = Niveis.objects.all()
         context = {"niveis": niveis}
-        return render(request, "projects/niveis.html", context)
+        return render(request, "projects/grupos.html", context)
 
     niveis = Niveis.objects.all()
     context = {"niveis": niveis}
-    return render(request, "projects/niveis.html", context)
+    return render(request, "projects/grupos.html", context)
 
 @login_required(login_url="/index")
 def clientes(request, opc=False, pk=False):
@@ -818,6 +815,19 @@ def colaboradores(request, opc=False, pk=False):
       form = ColaboradorForm(request.POST, prefix="form")
       form_valores = ValoresForm(request.POST, prefix="form_valores")
       if form.is_valid() and form_valores.is_valid():
+        
+        #valida o cpf
+        if Colaborador.objects.filter(cpf = form.cleaned_data["cpf"]).first():
+          
+          msgerro = "Já existe um Colaborador com este CPF cadastrado."
+
+          context = {
+          "inclui": True,
+          "form": form,
+          "form_valores": form_valores,
+          "msgerro": msgerro,
+          }
+          return render(request,"projects/colaboradores.html", context)
 
         colaborador = Colaborador(
           nome               = form.cleaned_data["nome"],

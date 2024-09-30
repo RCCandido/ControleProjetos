@@ -325,8 +325,8 @@ class ServicosForm(forms.ModelForm):
 
   codigo = forms.CharField(
     label='Codigo',
-    disabled=True,
-    required=False,
+    disabled=False,
+    required=True,
   )
 
   cliente = forms.ModelChoiceField(
@@ -385,7 +385,7 @@ class ServicosForm(forms.ModelForm):
   versao_valida = forms.CharField(
     initial="001",
     label='Versão Válida',
-    required=True,
+    required=False,
     widget = forms.TextInput(
       attrs={
         'data-mask':"000"
@@ -449,7 +449,7 @@ class ServicosForm(forms.ModelForm):
           Column('valor_imposto',css_class='col-sm-2'),
           Column('desconto',css_class='col-sm-2'),
           Column('valor_desconto',css_class='col-sm-2'),
-          Column('parcelamento',css_class='col-sm-2'),
+          Column('parcelas',css_class='col-sm-1'),
           css_class='form-row d-flex',
         ),
         Row(
@@ -464,11 +464,6 @@ class ServicosForm(forms.ModelForm):
           Column('valor_bruto',css_class='col-sm-4'),
           Column('liquido',css_class='col-sm-4'),
           Column('valor_recebido',css_class='col-sm-4'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('justificativa',css_class='col-sm-6'),
-          Column('anotacoes',css_class='col-sm-6'),
           css_class='form-row d-flex',
         ),
         css_class="form-control"
@@ -617,12 +612,6 @@ class ClienteForm(forms.ModelForm):
         Row(
           Column('valor_hora_atual', css_class='col-sm-2'),
           Column('perc_desconto_atual',css_class='col-sm-2'),
-          Column('dados_bancarios',css_class='col-sm-5'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('contatos', css_class='col-sm-5'),
-          Column('observacoes',css_class='col-sm-5'),
           css_class='form-row d-flex',
         ),
         css_class="form-control",

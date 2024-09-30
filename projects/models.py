@@ -280,8 +280,8 @@ class Servicos(models.Model):
   etapa_tecnica = models.CharField(verbose_name="Etapa Técnica", max_length=30,  choices=getEtapasTecnicas())
   justificativa = models.TextField(verbose_name="Justificativa")
   anotacoes = models.TextField(verbose_name="Anotações")
-  versao_valida = models.CharField(verbose_name="Versão Valida", max_length=3)
-  parcelamento = models.CharField(verbose_name="Parcelamento", max_length=50, blank=True, null=True)
+  versao_valida = models.CharField(verbose_name="Versão Valida", max_length=3, blank=True, null=True)
+  parcelas = models.IntegerField(verbose_name="Parcelas", blank=True, null=True)
   
   class Meta:
     verbose_name_plural = "Serviços"
