@@ -298,7 +298,7 @@ class Servicos(models.Model):
   justificativa = models.TextField(verbose_name="Justificativa")
   anotacoes = models.TextField(verbose_name="Anotações")
   versao_valida = models.CharField(verbose_name="Versão Valida", max_length=3, blank=True, null=True)
-  parcelas = models.IntegerField(verbose_name="Parcelas", blank=True, null=True)
+  parcelas = models.IntegerField(verbose_name="Qtd Parcelas", blank=True, null=True)
   
   class Meta:
     verbose_name_plural = "Serviços"
