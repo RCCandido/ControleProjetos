@@ -1197,7 +1197,6 @@ def cargainicial(request):
           password2=make_password("123"),
           active=True,
           tipo="2",
-          perfil=nivel,
           resetpsw=False,
       )
       user.save()
