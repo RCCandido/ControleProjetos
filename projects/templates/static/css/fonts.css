@@ -5663,44 +5663,44 @@ readers do not read off random characters that represent icons */
 }
 
 @font-face {
-  font-family: 'Font Awesome 5 Brands';
+  font-family: 'Calibri';
   font-style: normal;
   font-weight: normal;
   src: url("../fonts/fontawesome/fa-brands-400.eot");
   src: url("../fonts/fontawesome/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../fonts/fontawesome/fa-brands-400.woff2") format("woff2"), url("../fonts/fontawesome/fa-brands-400.woff") format("woff"), url("../fonts/fontawesome/fa-brands-400.ttf") format("truetype"), url("../fonts/fontawesome/fa-brands-400.svg#fontawesome") format("svg");
 }
 .fab {
-  font-family: 'Font Awesome 5 Brands';
+  font-family: 'Calibri';
 }
 
 @font-face {
-  font-family: 'Font Awesome 5 Regular';
+  font-family:  'Calibri';
   font-style: normal;
   font-weight: 400;
   src: url("../fonts/fontawesome/fa-regular-400.eot");
   src: url("../fonts/fontawesome/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../fonts/fontawesome/fa-regular-400.woff2") format("woff2"), url("../fonts/fontawesome/fa-regular-400.woff") format("woff"), url("../fonts/fontawesome/fa-regular-400.ttf") format("truetype"), url("../fonts/fontawesome/fa-regular-400.svg#fontawesome") format("svg");
 }
 .far {
-  font-family: 'Font Awesome 5 Regular';
+  font-family:  'Calibri';
   font-weight: 400;
 }
 
 @font-face {
-  font-family: 'Font Awesome 5 Solid';
+  font-family:  'Calibri';
   font-style: normal;
   font-weight: 900;
   src: url("../fonts/fontawesome/fa-solid-900.eot");
   src: url("../fonts/fontawesome/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../fonts/fontawesome/fa-solid-900.woff2") format("woff2"), url("../fonts/fontawesome/fa-solid-900.woff") format("woff"), url("../fonts/fontawesome/fa-solid-900.ttf") format("truetype"), url("../fonts/fontawesome/fa-solid-900.svg#fontawesome") format("svg");
 }
 .fa, .fas {
-  font-family: 'Font Awesome 5 Solid';
+  font-family:  'Calibri';
   font-weight: 900;
 }
 
 /* Simple Line Icons */
 
 @font-face {
-  font-family: 'simple-line-icons';
+  font-family:  'Calibri';
   src: url('../fonts/simple-line-icons/Simple-Line-Icons.eot?v=2.4.0');
   src: url('../fonts/simple-line-icons/Simple-Line-Icons.eot?v=2.4.0#iefix') format('embedded-opentype'), url('../fonts/simple-line-icons/Simple-Line-Icons.woff2?v=2.4.0') format('woff2'), url('../fonts/simple-line-icons/Simple-Line-Icons.ttf?v=2.4.0') format('truetype'), url('../fonts/simple-line-icons/Simple-Line-Icons.woff?v=2.4.0') format('woff'), url('../fonts/simple-line-icons/Simple-Line-Icons.svg?v=2.4.0#simple-line-icons') format('svg');
   font-weight: normal;
@@ -5899,7 +5899,7 @@ readers do not read off random characters that represent icons */
 .icon-social-dropbox,
 .icon-social-vkontakte,
 .icon-social-steam {
-  font-family: 'simple-line-icons';
+  font-family: 'Calibri';
   speak: none;
   font-style: normal;
   font-weight: normal;

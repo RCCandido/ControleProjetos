@@ -22,39 +22,65 @@
 		<form method="post" id="my_form">
 			{% csrf_token %}
 			{% crispy form %}
-    </form>
+		</form>
+		
+		<form method="post" id="form_item">
+			<hr>
+			<button type="button" class="btn btn-primary btn-sm mb-2" id="md" data-bs-toggle="modal" data-bs-target="#myModal">
+				Adicionar Acesso Rotina
+			</button>
+			
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5">Adicionar Acesso</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							{% crispy form_item %}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary btn-sm" onclick="document.getElementById('form_item').submit()" >Confirmar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		
 
 	{% else %}
 
-	<table class="table table-sm-responsive">
-		<thead class="table-dark" >
-			<tr>
-				<th>Código</th>
-				<th>Descrição</th>
-				<th>Rotina</th>
-				<th>Ativo</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for n in niveis %}
-			<tr>
-				<td>{{ n.nivel_id }}</td>
-				<td>{{ n.descricao }}</td>
-				<td>{{ n.get_rotina_display }}</td>
-				<td>{{ n.active }}</td>
-				<td>
-					<a href="{% url "grupos" opc='edit' pk=n.nivel_id %}" class="mx-2">
-						<i class="fa fa-edit align-middle text-primary"></i>
-					</a>
-					<a href="{% url "grupos" opc='delete' pk=n.nivel_id	 %}">
-						<i class="fa fa-times fs-5 align-middle text-danger"></i>
-					</a>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+		<table class="table table-sm-responsive">
+			<thead class="table-dark" >
+				<tr>
+					<th>Código</th>
+					<th>Descrição</th>
+					<th>Ativo</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for grupo in grupos %}
+				<tr>
+					<td>{{ grupo.grupo_id }}</td>
+					<td>{{ grupo.descricao }}</td>
+					<td>{{ grupo.active }}</td>
+					<td>
+						<a href="{% url "grupos" opc='edit' pk=n.grupo_id %}" class="mx-2">
+							<i class="fa fa-edit align-middle text-primary"></i>
+						</a>
+						<a href="{% url "grupos" opc='delete' pk=n.grupo_id	 %}">
+							<i class="fa fa-times fs-5 align-middle text-danger"></i>
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 		
 		<a href="{% url "grupos" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Grupo</a>
 	{% endif %}

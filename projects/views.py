@@ -11,13 +11,12 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 
-from .models import Usuario, Empresa, Servicos, Niveis
+from .models import Usuario, Empresa, Servicos, Grupos
 from .forms import (
     UsuarioForm,
     NewUsuarioForm,
     EmpresaForm,
     ServicosForm,
-    NivelForm,
     RedefinirSenhaForm,
     NewEmpresaForm,
     Cliente,
@@ -28,6 +27,8 @@ from .forms import (
     ValoresForm,
     ItemServico,
     ItemServicoForm,
+    GruposForm,
+    ItemGrupoForm,
 )
 from .decorators import nivel_access_required
 from .filters import UsuarioFilter, ClienteFilter
@@ -346,16 +347,16 @@ def servicos(request, opc=False, pk=False):
         #servico.save()
 
         # insere o registro na tabela de valores
-        valor = Valores(
-          data = datetime.today,
-          codigo = form.cleaned_data["codigo"],
-          tipo = 'Servico',
-          valor_hora = form.cleaned_data["valor_hora"],
-          comissao = form.cleaned_data["comissao"],
-          imposto = form.cleaned_data["imposto"],
-          desconto = form.cleaned_data["desconto"],
-        )
-        valor.save()
+        #valor = Valores(
+        #  data = datetime.today,
+        #  codigo = form.cleaned_data["codigo"],
+        #  tipo = 'Servico',
+        #  valor_hora = form.cleaned_data["valor_hora"],
+        #  comissao = form.cleaned_data["comissao"],
+        #  imposto = form.cleaned_data["imposto"],
+        #  desconto = form.cleaned_data["desconto"],
+        #)
+        #valor.save()
 
         return redirect("servicos")
       else:
@@ -427,7 +428,6 @@ def adicionar_item_servico(request):
         'pk': pk,
         'form_item': form,
         })
-
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="empresas")
@@ -568,75 +568,90 @@ def grupos(request, pk=False, opc=False):
   if request.method == "POST":
     if opc == "insert":
 
-      form = NivelForm(request.POST)
-      if form.is_valid():
+      form = GruposForm(request.POST, prefix="form")
+      form_item = ItemGrupoForm(request.POST, prefix="form_item")
+      
+      if form.is_valid() and form_item.is_valid():
 
-        nivel = Niveis(
+        grupo = Grupos(
             descricao = form.cleaned_data["descricao"],
-            rotina    = form.cleaned_data["rotina"],
-            inclusao  = form.cleaned_data["inclusao"],
-            edicao    = form.cleaned_data["edicao"],
-            exclusao  = form.cleaned_data["exclusao"],
-            logs      = form.cleaned_data["logs"],
-            filtro    = form.cleaned_data["filtro"],
             active    = form.cleaned_data["active"],
         )
-        nivel.save()
+        grupo.save()
 
         return redirect("grupos")
 
       else:
-        context = {"inclui": True, "form": form}
+        context = {
+          "inclui": True, 
+          "form": form,
+          "form_item": form_item,
+          }
         return render(request, "projects/grupos.html", context,)
         
     elif opc == "edit":
 
-      nivel = Niveis.objects.filter(nivel_id=pk).first()
-      form = NivelForm(request.POST, instance=nivel)
-      if form.is_valid():
+      grupo = Grupos.objects.filter(grupo_id=pk).first()
+      form = GruposForm(request.POST, instance=grupo, prefix="form")
+      form_item = ItemGrupoForm(request.POST, prefix="form_item")
+
+      if form.is_valid() and form_item.is_valid():
         
-        nivel = form.save(commit=False)
-        nivel.descricao = form.cleaned_data["descricao"]
-        nivel.rotina    = form.cleaned_data["rotina"]
-        nivel.inclusao  = form.cleaned_data["inclusao"]
-        nivel.edicao    = form.cleaned_data["edicao"]
-        nivel.exclusao  = form.cleaned_data["exclusao"]
-        nivel.logs      = form.cleaned_data["logs"]
-        nivel.filtro    = form.cleaned_data["filtro"]
-        nivel.active    = form.cleaned_data["active"]
-        nivel.save()
+        grupo = form.save(commit=False)
+        grupo.descricao = form.cleaned_data["descricao"]
+        grupo.active    = form.cleaned_data["active"]
+        grupo.save()
 
         return redirect("grupos")
+
       else:
-        context = {"inclui": True, "form": form}
+        context = {
+          "inclui": True, 
+          "form": form,
+          "form_item": form_item,
+          }
         return render(request, "projects/grupos.html", context)
   else:
 
     if opc == "insert":
-      nivel_form = NivelForm()
-      context = {"inclui": True, "form": nivel_form}
+      form = GruposForm(prefix="form")
+      form_item = ItemGrupoForm(prefix="form_item")
+
+      context = {
+        "inclui": True, 
+        "form": form, 
+        "form_item": form_item,
+        }
       return render(request, "projects/grupos.html", context)
 
     elif opc == "edit":
       if pk:
-        nivel = Niveis.objects.filter(nivel_id=pk).first()
-        form = NivelForm(instance=nivel)
-        context = {"altera": True, "form": form}
+        grupo = Grupos.objects.filter(grupo_id=pk).first()
+        form = GruposForm(instance=grupo, prefix="form")
+        form_item = ItemGrupoForm(prefix="form_item")
+        grid = ItemGrupoForm.objects.filter(item_grupo_id=pk)
+
+        context = {
+          "altera": True, 
+          "form": form,
+          "form_item": form_item,
+          "grid": grid,
+          }
         return render(request, "projects/grupos.html", context)
 
     elif opc == "delete":
       if pk:
-        nivel = Niveis.objects.filter(nivel_id=pk).first()
+        grupo = Grupos.objects.filter(grupo_id=pk).first()
         
-        if nivel:
-          nivel.delete()
+        if grupo:
+          grupo.delete()
 
-        niveis = Niveis.objects.all()
-        context = {"niveis": niveis}
+        grupos = Grupos.objects.all()
+        context = {"grupos": grupos}
         return render(request, "projects/grupos.html", context)
 
-    niveis = Niveis.objects.all()
-    context = {"niveis": niveis}
+    grupos = Grupos.objects.all()
+    context = {"grupos": grupos}
     return render(request, "projects/grupos.html", context)
 
 @login_required(login_url="/index")
@@ -1172,7 +1187,7 @@ def cargainicial(request):
     {"codigo": "EMP002", "nome": "Administradora", "cnpj": "0732312456", "cidade": "Curitiba", "estado": "RJ", "telefone": "41998044063", "imposto": 10},
   ]
 
-  if Niveis.objects.all().count() == 0:
+  if Grupos.objects.all().count() == 0:
     for i in niveis:
       nivel = Niveis(
               descricao=i['descricao'],

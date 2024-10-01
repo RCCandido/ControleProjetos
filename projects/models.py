@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils.translation import gettext as _
 
-class Niveis(models.Model):
+class Grupos(models.Model):
   
   def getSimNao():
     SN = (
@@ -12,16 +12,6 @@ class Niveis(models.Model):
     )
     return SN
 
-  def getRotinas():
-    ROTINAS = (
-        ("0", "Todas"),
-        ("1", "Empresas"),
-        ("2", "Niveis"),
-        ("3", "Usuários"),
-        ("4", "Serviços"),
-    )
-    return ROTINAS
-  
   def __str__(self):
       return self.descricao
 
@@ -30,36 +20,63 @@ class Niveis(models.Model):
 
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
-  active = models.BooleanField(default=True, verbose_name="Nível ativo ?")
+  active = models.BooleanField(default=True, verbose_name="Ativo ?")
 
-  nivel_id = models.AutoField(primary_key=True)
+  grupo_id = models.AutoField(primary_key=True)
   descricao = models.CharField(
     verbose_name="Descrição", max_length=200, null=False, blank=False
   )
-  rotina = models.CharField(verbose_name="Rotina", max_length=80, choices=getRotinas())
+  
+  class Meta:
+    verbose_name_plural = "Grupos de Acesso"
+    ordering = ('grupo_id','descricao',)
 
+class ItemGrupo(models.Model):
+  
+  def getRotinas():
+    ROTINAS = (
+        ("1", "Empresas"),
+        ("2", "Grupos"),
+        ("3", "Usuários"),
+        ("4", "Serviços"),
+    )
+    return ROTINAS
+  
+  def __str__(self):
+      return self.rotina
+
+  def __unicode__(self):
+      return self.rotina
+
+  created_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  
+  item_grupo_id = models.ForeignKey(
+    Grupos,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True,
+  )
+  rotina = models.CharField(verbose_name="Rotina", max_length=80, choices=getRotinas())
   inclusao = models.CharField(
-    verbose_name="Incluir", max_length=1, null=False, blank=False, choices=getSimNao()
+    verbose_name="Incluir", max_length=1, null=False, blank=False, choices=Grupos.getSimNao()
   )
   edicao = models.CharField(
-    verbose_name="Editar", max_length=1, null=False, blank=False, choices=getSimNao()
+    verbose_name="Editar", max_length=1, null=False, blank=False, choices=Grupos.getSimNao()
   )
   exclusao = models.CharField(
-    verbose_name="Excluir", max_length=1, null=False, blank=False, choices=getSimNao()
+    verbose_name="Excluir", max_length=1, null=False, blank=False, choices=Grupos.getSimNao()
   )
   logs = models.CharField(
-    verbose_name="Logs", max_length=1, null=False, blank=False, choices=getSimNao()
+    verbose_name="Logs", max_length=1, null=False, blank=False, choices=Grupos.getSimNao()
   )
   filtro = models.CharField(
-    verbose_name="Filtro", max_length=1, null=False, blank=False, choices=getSimNao()
+    verbose_name="Filtro", max_length=1, null=False, blank=False, choices=Grupos.getSimNao()
   )
   
   class Meta:
-    verbose_name_plural = "Niveis"
-    ordering = ('nivel_id','descricao',)
-
-  def __str__(self):
-    return self.descricao
+    verbose_name_plural = "Item do Grupo"
+    ordering = ('created_at',)
 
 class Usuario(AbstractUser):
 
@@ -99,7 +116,7 @@ class Usuario(AbstractUser):
   password2 = models.CharField(verbose_name="Confirmação da Senha", max_length=30, null=False, blank=False)
   tipo = models.CharField(verbose_name="Tipo", max_length=1, null=False, blank=False, choices=getTipos())
   perfil = models.ForeignKey(
-    Niveis,
+    Grupos,
     on_delete=models.SET_NULL,
     null=True,
     blank=True,
@@ -192,7 +209,7 @@ class Cliente(models.Model):
   estado = models.CharField(verbose_name="Estado", max_length=2, choices=Empresa.getUF(), default="")
   email = models.CharField(verbose_name="E-mail", max_length=100, blank=False, default="")
   email_cat = models.CharField(verbose_name="E-mail Cat", max_length=100, default="")
-  usa_email_cat = models.CharField(verbose_name="Recebe E-mail Cat?", max_length=1, choices=Niveis.getSimNao(), default="")
+  usa_email_cat = models.CharField(verbose_name="Recebe E-mail Cat?", max_length=1, choices=Grupos.getSimNao(), default="")
   telefone = models.CharField(verbose_name="Telefone", max_length=20, blank=False,default="")
   contatos = models.TextField(verbose_name="Contatos", null=True, blank=True, default="")
   dados_bancarios = models.TextField(verbose_name="Informações Bancárias", null=True, blank=True, default="")

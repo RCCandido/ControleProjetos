@@ -7,7 +7,7 @@ from crispy_forms.layout import Layout, Submit, Row
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 
-from .models import Usuario, Empresa, Servicos, Niveis, Cliente, Colaborador, Valores, ItemServico
+from .models import Usuario, Empresa, Servicos, Grupos, ItemGrupo, Cliente, Colaborador, Valores, ItemServico
 
 class RedefinirSenhaForm(forms.ModelForm):
   email = forms.CharField(label="E-mail", disabled=True, required=False)
@@ -78,8 +78,8 @@ class UsuarioForm(forms.ModelForm):
   )
   
   perfil = forms.ModelChoiceField(
-    queryset=Niveis.objects.all().order_by("descricao"),
-    to_field_name='nivel_id',
+    queryset=Grupos.objects.all().order_by("descricao"),
+    to_field_name='grupo_id',
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
@@ -139,46 +139,10 @@ class NewUsuarioForm(UsuarioForm):
       widget=forms.PasswordInput(), required=True, label="Repita a Senha"
   )
  
-class NivelForm(forms.ModelForm):
-
-  rotina = forms.ChoiceField(
-    choices=Niveis.getRotinas(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-  
-  inclusao = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-  
-  edicao = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-  
-  exclusao = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-  
-  logs = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
-  
-  filtro = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
-    required=True,
-    widget=forms.Select(attrs={'class': 'form-control'})
-  )
+class GruposForm(forms.ModelForm):
 
   class Meta:
-      model = Niveis
+      model = Grupos
       fields = "__all__"
 
   def __init__(self, *args, **kwargs):
@@ -189,19 +153,7 @@ class NivelForm(forms.ModelForm):
     self.helper.layout = Layout(
       Div(
         Row(
-          Column('descricao', css_class='col-sm-4'),
-          Column('rotina', css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('inclusao', css_class='col-sm-2'),
-          Column('edicao', css_class='col-sm-2'),
-          Column('exclusao', css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('logs',css_class='col-sm-4'),
-          Column('filtro',css_class='col-sm-4'),
+          Column('descricao', css_class='col-sm-6'),
           css_class='form-row d-flex',
         ),
         Row(
@@ -210,6 +162,71 @@ class NivelForm(forms.ModelForm):
         ),
         css_class="form-control"
       )
+    )
+
+class ItemGrupoForm(forms.ModelForm):
+
+  rotina = forms.ChoiceField(
+    choices=ItemGrupo.getRotinas(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  inclusao = forms.ChoiceField(
+    choices=Grupos.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  edicao = forms.ChoiceField(
+    choices=Grupos.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  exclusao = forms.ChoiceField(
+    choices=Grupos.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  logs = forms.ChoiceField(
+    choices=Grupos.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+  
+  filtro = forms.ChoiceField(
+    choices=Grupos.getSimNao(),
+    required=True,
+    widget=forms.Select(attrs={'class': 'form-control'})
+  )
+
+  class Meta:
+      model = Grupos
+      fields = "__all__"
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.helper = FormHelper()
+    self.helper.form_class = 'form-control'
+    self.helper.label_class = 'm-0 p-0'
+    self.helper.layout = Layout(
+      Row(
+        Column('rotina', css_class='col-sm-6'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('inclusao', css_class='col-sm-3'),
+        Column('edicao', css_class='col-sm-3'),
+        Column('exclusao', css_class='col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('logs',css_class='col-sm-4'),
+        Column('filtro',css_class='col-sm-4'),
+        css_class='form-row d-flex',
+      ),
     )
 
 class EmpresaForm(forms.ModelForm):
@@ -420,54 +437,51 @@ class ServicosForm(forms.ModelForm):
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
-      Div(
-        Row(
-          Field('codigo', wrapper_class='col-sm-2'),
-          Field('tipo', wrapper_class='col-sm-2'),
-          Field('versao', wrapper_class='col-sm-1'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Field('descricao', wrapper_class='col-sm-6'),
-          Field('cliente', wrapper_class='col-sm-6'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('etapa_comercial',css_class='col-sm-4'),
-          Column('etapa_tecnica',css_class='col-sm-4'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('valor_hora',css_class='col-sm-2'),
-          Column('valor_comissao',css_class='col-sm-2'),
-          Column('comissao',css_class='col-sm-2'),
-          Column('base_comissao',css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('imposto',css_class='col-sm-2'),
-          Column('valor_imposto',css_class='col-sm-2'),
-          Column('desconto',css_class='col-sm-2'),
-          Column('valor_desconto',css_class='col-sm-2'),
-          Column('parcelas',css_class='col-sm-1'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('custo_operacional',css_class='col-sm-3'),
-          Column('horas_save',css_class='col-sm-2'),
-          Column('horas_execucao',css_class='col-sm-2'),
-          Column('horas_especificacao',css_class='col-sm-2'),
-          Column('horas_tecnicas',css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('valor_bruto',css_class='col-sm-4'),
-          Column('liquido',css_class='col-sm-4'),
-          Column('valor_recebido',css_class='col-sm-4'),
-          css_class='form-row d-flex',
-        ),
-        css_class="form-control"
-      )
+      Row(
+        Field('codigo', wrapper_class='col-sm-2'),
+        Field('tipo', wrapper_class='col-sm-2'),
+        Field('versao', wrapper_class='col-sm-1'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Field('descricao', wrapper_class='col-sm-6'),
+        Field('cliente', wrapper_class='col-sm-6'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('etapa_comercial',css_class='col-sm-4'),
+        Column('etapa_tecnica',css_class='col-sm-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('valor_hora',css_class='col-sm-2'),
+        Column('valor_comissao',css_class='col-sm-2'),
+        Column('comissao',css_class='col-sm-2'),
+        Column('base_comissao',css_class='col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('imposto',css_class='col-sm-2'),
+        Column('valor_imposto',css_class='col-sm-2'),
+        Column('desconto',css_class='col-sm-2'),
+        Column('valor_desconto',css_class='col-sm-2'),
+        Column('parcelas',css_class='col-sm-1'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('custo_operacional',css_class='col-sm-3'),
+        Column('horas_save',css_class='col-sm-2'),
+        Column('horas_execucao',css_class='col-sm-2'),
+        Column('horas_especificacao',css_class='col-sm-2'),
+        Column('horas_tecnicas',css_class='col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('valor_bruto',css_class='col-sm-4'),
+        Column('liquido',css_class='col-sm-4'),
+        Column('valor_recebido',css_class='col-sm-4'),
+        css_class='form-row d-flex',
+      ),
     )
 
 class ItemServicoForm(forms.ModelForm):
@@ -550,14 +564,14 @@ class ClienteForm(forms.ModelForm):
   )
  
   usa_email_cat = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
+    choices=Grupos.getSimNao(),
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
 
   email_cat = forms.CharField(label='E-mail CAT', required=False)
   usa_email_cat = forms.ChoiceField(
-    choices=Niveis.getSimNao(),
+    choices=Grupos.getSimNao(),
     required=True,
     label='CAT por e-mail?',
     widget=forms.Select(attrs={'class': 'form-control'})
@@ -582,40 +596,40 @@ class ClienteForm(forms.ModelForm):
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
-      Div(
-        Row(
-          Column('nome', css_class='col-sm-6'),
-          Column('cnpj', css_class='col-sm-3'),
-          css_class='form-row d-flex m-0',
-        ),
-        Row(
-          Column('ie', css_class='col-sm-2'),
-          Column('telefone', css_class='col-sm-2'),
-          Column('email', css_class='col-sm-4'),
-          Column('active', css_class='my-4'),
-          css_class='form-row d-flex m-0',
-        ),
-        Row(
-          Column('endereco', css_class='col-sm-5'),
-          Column('complemento',css_class='col-sm-3'),
-          Column('cep',css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('bairro',css_class='col-sm-2'),
-          Column('cidade',css_class='col-sm-2'),
-          Column('estado', css_class='col-sm-2'),
-          Column('usa_email_cat', css_class='col-sm-2'),
-          Column('email_cat', css_class='col-sm-4'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('valor_hora_atual', css_class='col-sm-2'),
-          Column('perc_desconto_atual',css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        css_class="form-control",
-      )
+      Row(
+        Column('nome', css_class='col-sm-6'),
+        Column('cnpj', css_class='col-sm-3'),
+        css_class='form-row d-flex m-0',
+      ),
+      Row(
+        Column('ie', css_class='col-sm-2'),
+        Column('telefone', css_class='col-sm-2'),
+        Column('email', css_class='col-sm-4'),
+        css_class='form-row d-flex m-0',
+      ),
+      Row(
+        Column('endereco', css_class='col-sm-5'),
+        Column('complemento',css_class='col-sm-3'),
+        Column('cep',css_class='col-sm-2'),
+        css_class='form-row d-flex m-0',
+      ),
+      Row(
+        Column('bairro',css_class='col-sm-2'),
+        Column('cidade',css_class='col-sm-2'),
+        Column('estado', css_class='col-sm-2'),
+        Column('usa_email_cat', css_class='col-sm-2'),
+        Column('email_cat', css_class='col-sm-4'),
+        css_class='form-row d-flex m-0',
+      ),
+      Row(
+        Column('valor_hora_atual', css_class='col-sm-2'),
+        Column('perc_desconto_atual',css_class='col-sm-2'),
+        css_class='form-row d-flex m-0',
+      ),
+      Row(
+        Column('active', css_class='m-0 p-0'),
+        css_class='form-row d-flex m-0',
+      ),
     )
 
 class ColaboradorForm(forms.ModelForm):
