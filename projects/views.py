@@ -1187,34 +1187,20 @@ def cargainicial(request):
     {"codigo": "EMP002", "nome": "Administradora", "cnpj": "0732312456", "cidade": "Curitiba", "estado": "RJ", "telefone": "41998044063", "imposto": 10},
   ]
 
-  if Grupos.objects.all().count() == 0:
-    for i in niveis:
-      nivel = Niveis(
-              descricao=i['descricao'],
-              rotina="0",
-              inclusao="S",
-              edicao="S",
-              exclusao="S",
-              logs="S",
-              filtro="S",
-              active=True
-          )
-      nivel.save()
-
-    if not Usuario.objects.all().count():
-      for i in users:
-        user = Usuario(
-            firstname=i['nome'].capitalize(),
-            name=i['nome'].capitalize(),
-            email=i['email'],
-            password=make_password("123"),
-            password2=make_password("123"),
-            active=True,
-            tipo="2",
-            perfil=nivel,
-            resetpsw=False,
-        )
-        user.save()
+  if not Usuario.objects.all().count():
+    for i in users:
+      user = Usuario(
+          firstname=i['nome'].capitalize(),
+          name=i['nome'].capitalize(),
+          email=i['email'],
+          password=make_password("123"),
+          password2=make_password("123"),
+          active=True,
+          tipo="2",
+          perfil=nivel,
+          resetpsw=False,
+      )
+      user.save()
 
   if not Cliente.objects.all().count():
     for i in clientes:
