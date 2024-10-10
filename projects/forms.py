@@ -203,8 +203,8 @@ class ItemGrupoForm(forms.ModelForm):
   )
 
   class Meta:
-      model = Grupos
-      fields = "__all__"
+    model = ItemGrupo
+    fields = "__all__"
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)

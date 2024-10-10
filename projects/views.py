@@ -7,11 +7,11 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
-from django.http import JsonResponse 
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 
-from .models import Usuario, Empresa, Servicos, Grupos
+from .models import Usuario, Empresa, Servicos, Grupos, ItemGrupo
 from .forms import (
     UsuarioForm,
     NewUsuarioForm,
@@ -563,39 +563,35 @@ def empresas(request, pk=False, opc=False):
           
 @login_required(login_url="/index")
 @nivel_access_required(view_name="grupos")
-def grupos(request, pk=False, opc=False):
-
+def grupos(request, pk=False, opc=False, grupo=False):
+  
   if request.method == "POST":
-    if opc == "insert":
 
+    if opc == "insert":
       form = GruposForm(request.POST, prefix="form")
-      form_item = ItemGrupoForm(request.POST, prefix="form_item")
       
-      if form.is_valid() and form_item.is_valid():
+      if form.is_valid():
 
         grupo = Grupos(
             descricao = form.cleaned_data["descricao"],
             active    = form.cleaned_data["active"],
         )
         grupo.save()
-
+       
         return redirect("grupos")
 
       else:
         context = {
           "inclui": True, 
           "form": form,
-          "form_item": form_item,
           }
-        return render(request, "projects/grupos.html", context,)
+        return render(request, "projects/grupos.html", context)
         
     elif opc == "edit":
 
       grupo = Grupos.objects.filter(grupo_id=pk).first()
       form = GruposForm(request.POST, instance=grupo, prefix="form")
-      form_item = ItemGrupoForm(request.POST, prefix="form_item")
-
-      if form.is_valid() and form_item.is_valid():
+      if form.is_valid():
         
         grupo = form.save(commit=False)
         grupo.descricao = form.cleaned_data["descricao"]
@@ -603,24 +599,24 @@ def grupos(request, pk=False, opc=False):
         grupo.save()
 
         return redirect("grupos")
-
+    
       else:
         context = {
-          "inclui": True, 
+          "altera": True, 
           "form": form,
           "form_item": form_item,
+          "msgerro": form_item.errors,
           }
         return render(request, "projects/grupos.html", context)
+        
   else:
 
     if opc == "insert":
       form = GruposForm(prefix="form")
-      form_item = ItemGrupoForm(prefix="form_item")
 
       context = {
         "inclui": True, 
         "form": form, 
-        "form_item": form_item,
         }
       return render(request, "projects/grupos.html", context)
 
@@ -629,7 +625,7 @@ def grupos(request, pk=False, opc=False):
         grupo = Grupos.objects.filter(grupo_id=pk).first()
         form = GruposForm(instance=grupo, prefix="form")
         form_item = ItemGrupoForm(prefix="form_item")
-        grid = ItemGrupoForm.objects.filter(item_grupo_id=pk)
+        grid = ItemGrupo.objects.filter(item_grupo_id=pk)
 
         context = {
           "altera": True, 
@@ -650,9 +646,44 @@ def grupos(request, pk=False, opc=False):
         context = {"grupos": grupos}
         return render(request, "projects/grupos.html", context)
 
+    elif opc == "itemDelete":
+      url = "/grupos/edit/"+grupo
+    
+      if pk:
+        item = ItemGrupo.objects.filter(id=pk).first()
+        
+        if item:
+          item.delete()
+
+      return redirect(url)
+
     grupos = Grupos.objects.all()
     context = {"grupos": grupos}
     return render(request, "projects/grupos.html", context)
+
+
+def itemGrupo(request, pk=False, opc=False):
+  
+  if request.method == "POST":
+
+    pk = request.POST.get('pk')
+    grupo = Grupos.objects.filter(grupo_id=pk).first()
+
+    form = ItemGrupoForm(request.POST, prefix="form_item")
+    if form.is_valid():
+      
+      item = form.save(commit=False)
+      item.item_grupo_id  = grupo
+      item.rotina         = form.cleaned_data["rotina"]
+      item.inclusao       = form.cleaned_data["inclusao"]
+      item.edicao         = form.cleaned_data["edicao"]
+      item.exclusao       = form.cleaned_data["exclusao"]
+      item.logs           = form.cleaned_data["logs"]
+      item.filtro         = form.cleaned_data["filtro"]
+      item.save()
+
+  return redirect("/grupos/edit/"+pk)
+  
 
 @login_required(login_url="/index")
 def clientes(request, opc=False, pk=False):
