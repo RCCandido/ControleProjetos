@@ -567,11 +567,16 @@ def grupos(request, pk=False, opc=False, grupo=False):
   
   if request.method == "POST":
 
+    # se operação de insert vindo de um submit POST
     if opc == "insert":
+
+      # instancia o formulario
       form = GruposForm(request.POST, prefix="form")
       
+      # se válido
       if form.is_valid():
-
+        
+        # instancia um grupo com os dados passdos
         grupo = Grupos(
           descricao = form.cleaned_data["descricao"],
           active    = form.cleaned_data["active"],
@@ -586,21 +591,31 @@ def grupos(request, pk=False, opc=False, grupo=False):
           "form": form,
           }
         return render(request, "projects/grupos.html", context)
-        
-    elif opc == "edit":
 
+    # se operação de edição de um grupo  
+    elif opc == "edit":
+      
+      # filtra o grupo passado pelo id
       grupo = Grupos.objects.filter(codigo=pk).first()
+
+      # instancia o forulario do grupo
       form = GruposForm(request.POST, instance=grupo, prefix="form")
+
+      # se valido
       if form.is_valid():
         
+        # commita o formulario salvando o grupo no banco
         grupo = form.save(commit=False)
         grupo.descricao = form.cleaned_data["descricao"]
         grupo.active    = form.cleaned_data["active"]
         grupo.save()
 
         return redirect("grupos")
-    
+
+      # se nao valido
       else:
+
+        # monta o contexto para renderizar no template
         context = {
           "altera": True, 
           "form": form,
@@ -608,9 +623,11 @@ def grupos(request, pk=False, opc=False, grupo=False):
           "msgerro": form_item.errors,
           }
         return render(request, "projects/grupos.html", context)
-        
+  
+  # se nao for submit de formulario, mas para abrir a tela
   else:
 
+    # se operacao de insert 
     if opc == "insert":
       form = GruposForm(prefix="form")
 
@@ -620,11 +637,22 @@ def grupos(request, pk=False, opc=False, grupo=False):
         }
       return render(request, "projects/grupos.html", context)
 
+    # se operacao de edição
     elif opc == "edit":
+
+      # se passado o id
       if pk:
+
+        # filtra o id passado
         grupo = Grupos.objects.filter(codigo=pk).first()
+
+        # instancia o formulario para edição
         form = GruposForm(instance=grupo, prefix="form")
+
+        # instancia o formulario de item 
         form_item = ItemGrupoForm(prefix="form_item")
+
+        # instancia o grid de itens já cadastrados pelo grupo passado no id da url
         grid = ItemGrupo.objects.filter(grupo=pk)
 
         context = {
@@ -635,28 +663,40 @@ def grupos(request, pk=False, opc=False, grupo=False):
           }
         return render(request, "projects/grupos.html", context)
 
+    # se clicado em deletar o grupo
     elif opc == "delete":
+
+      # se passado o id
       if pk:
+
+        # filtra (posiciona)
         grupo = Grupos.objects.filter(codigo=pk).first()
         
+        # se encontrado o grupo
         if grupo:
+
+          # apaga
           grupo.delete()
 
-        grupos = Grupos.objects.all()
-        context = {"grupos": grupos}
-        return render(request, "projects/grupos.html", context)
-
+    # se clicado na operção de deletar um item dentro da edição de um grupo
     elif opc == "itemDelete":
+
+      # monta a url para retornar depois da deleção
       url = "/grupos/edit/"+grupo
-    
+
+      # se passado um id de item para deleção
       if pk:
+
+        # posiciona
         item = ItemGrupo.objects.filter(id=pk).first()
         
+        # se encontrado o item
         if item:
           item.delete()
 
       return redirect(url)
 
+    # caso nao seja passado nenhuma opção, busca a lista de grupos para exibição na tela principal
     grupos = Grupos.objects.all()
     context = {"grupos": grupos}
     return render(request, "projects/grupos.html", context)
@@ -666,21 +706,31 @@ def itemGrupo(request, pk=False, opc=False):
   
   if request.method == "POST":
 
-    pk = request.POST.get('pk')
-    pk = re.sub('[^0-9]', '', pk)
+    #obtem o id do grupo no campo hidden do form
+    pk = request.POST.get('pk') 
 
+    #remove caracteres especais
+    pk = re.sub('[^0-9]', '', pk) 
+
+    # filtra o grupo
     grupo = Grupos.objects.filter(codigo=pk).first()
+
+    # monta url de redirecionamento para a mesma pagina
     url = "/grupos/edit/"+pk
 
+    # obtem o formulario do item (modal)
     form = ItemGrupoForm(request.POST, prefix="form_item")
+
+    # se válido
     if form.is_valid() and grupo:
       
       # obtem o item para validar repetido
       itemGrupo = ItemGrupo.objects.filter(rotina=form.cleaned_data["rotina"], grupo_id=pk).first()
       if itemGrupo != None:
-        messages.error(request, "Já existe o a rotina cadastrada.")
+        messages.error(request, "Já existe a rotina cadastrada.")
         return redirect(url)
 
+      # se o item válido, salva
       item = form.save(commit=False)
       item.grupo    = grupo
       item.rotina   = form.cleaned_data["rotina"]

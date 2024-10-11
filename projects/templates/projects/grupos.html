@@ -31,8 +31,7 @@
 		</form>
 
 		{% if altera %}
-			<br/>
-			<button type="button" class="btn btn-primary btn-sm mb-2" id="md" data-bs-toggle="modal" data-bs-target="#myModal">
+			<button type="button" class="btn btn-primary btn-sm mb-4 mt-4" id="md" data-bs-toggle="modal" data-bs-target="#myModal">
 				Adicionar Rotina
 			</button>
 
@@ -62,6 +61,7 @@
 
 		{% if grid %}
 		<div class="table-responsive-sm">
+			
 			{% if messages %}
 				<div class="alert alert-danger" role="alert">
 					<ul class="m-0 p-0" style="list-style: none;">
@@ -71,7 +71,8 @@
 					</ul>
 				</div>
 			{% endif %}
-				<table class="table table-sm table-striped table-bordered">
+
+				<table class="table table-sm table-striped">
 					<thead>
 						<tr>
 							<th>Rotina</th>
@@ -80,7 +81,7 @@
 							<th>Exclusão</th>
 							<th>Logs</th>
 							<th>Filtro</th>
-							<th></th>
+							<th>Ação</th>
 						</tr>
 					</thead>
 					<tbody>
