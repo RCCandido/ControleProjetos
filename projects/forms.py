@@ -79,7 +79,7 @@ class UsuarioForm(forms.ModelForm):
   
   perfil = forms.ModelChoiceField(
     queryset=Grupos.objects.all().order_by("descricao"),
-    to_field_name='grupo_id',
+    to_field_name='codigo',
     required=True,
     widget=forms.Select(attrs={'class': 'form-control'})
   )
