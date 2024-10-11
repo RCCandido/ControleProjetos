@@ -1,16 +1,16 @@
 import random
-import decimal 
+import re
 
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from datetime import datetime
-
 from .models import Usuario, Empresa, Servicos, Grupos, ItemGrupo
 from .forms import (
     UsuarioForm,
@@ -573,8 +573,8 @@ def grupos(request, pk=False, opc=False, grupo=False):
       if form.is_valid():
 
         grupo = Grupos(
-            descricao = form.cleaned_data["descricao"],
-            active    = form.cleaned_data["active"],
+          descricao = form.cleaned_data["descricao"],
+          active    = form.cleaned_data["active"],
         )
         grupo.save()
        
@@ -589,7 +589,7 @@ def grupos(request, pk=False, opc=False, grupo=False):
         
     elif opc == "edit":
 
-      grupo = Grupos.objects.filter(grupo_id=pk).first()
+      grupo = Grupos.objects.filter(codigo=pk).first()
       form = GruposForm(request.POST, instance=grupo, prefix="form")
       if form.is_valid():
         
@@ -622,10 +622,10 @@ def grupos(request, pk=False, opc=False, grupo=False):
 
     elif opc == "edit":
       if pk:
-        grupo = Grupos.objects.filter(grupo_id=pk).first()
+        grupo = Grupos.objects.filter(codigo=pk).first()
         form = GruposForm(instance=grupo, prefix="form")
         form_item = ItemGrupoForm(prefix="form_item")
-        grid = ItemGrupo.objects.filter(item_grupo_id=pk)
+        grid = ItemGrupo.objects.filter(grupo=pk)
 
         context = {
           "altera": True, 
@@ -637,7 +637,7 @@ def grupos(request, pk=False, opc=False, grupo=False):
 
     elif opc == "delete":
       if pk:
-        grupo = Grupos.objects.filter(grupo_id=pk).first()
+        grupo = Grupos.objects.filter(codigo=pk).first()
         
         if grupo:
           grupo.delete()
@@ -667,22 +667,31 @@ def itemGrupo(request, pk=False, opc=False):
   if request.method == "POST":
 
     pk = request.POST.get('pk')
-    grupo = Grupos.objects.filter(grupo_id=pk).first()
+    pk = re.sub('[^0-9]', '', pk)
+
+    grupo = Grupos.objects.filter(codigo=pk).first()
+    url = "/grupos/edit/"+pk
 
     form = ItemGrupoForm(request.POST, prefix="form_item")
-    if form.is_valid():
+    if form.is_valid() and grupo:
       
-      item = form.save(commit=False)
-      item.item_grupo_id  = grupo
-      item.rotina         = form.cleaned_data["rotina"]
-      item.inclusao       = form.cleaned_data["inclusao"]
-      item.edicao         = form.cleaned_data["edicao"]
-      item.exclusao       = form.cleaned_data["exclusao"]
-      item.logs           = form.cleaned_data["logs"]
-      item.filtro         = form.cleaned_data["filtro"]
-      item.save()
+      # obtem o item para validar repetido
+      itemGrupo = ItemGrupo.objects.filter(rotina=form.cleaned_data["rotina"], grupo_id=pk).first()
+      if itemGrupo != None:
+        messages.error(request, "Já existe o a rotina cadastrada.")
+        return redirect(url)
 
-  return redirect("/grupos/edit/"+pk)
+      item = form.save(commit=False)
+      item.grupo    = grupo
+      item.rotina   = form.cleaned_data["rotina"]
+      item.inclusao = form.cleaned_data["inclusao"]
+      item.edicao   = form.cleaned_data["edicao"]
+      item.exclusao = form.cleaned_data["exclusao"]
+      item.logs     = form.cleaned_data["logs"]
+      item.filtro   = form.cleaned_data["filtro"]
+      item.save()
+      
+  return redirect(url)
   
 
 @login_required(login_url="/index")

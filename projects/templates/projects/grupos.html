@@ -61,7 +61,16 @@
 		{% endif %}
 
 		{% if grid %}
-			<div class="table-responsive-sm">
+		<div class="table-responsive-sm">
+			{% if messages %}
+				<div class="alert alert-danger" role="alert">
+					<ul class="m-0 p-0" style="list-style: none;">
+						{% for message in messages %}
+							<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
 				<table class="table table-sm table-striped table-bordered">
 					<thead>
 						<tr>
@@ -84,7 +93,7 @@
 							<td>{{ item.get_logs_display }}</td>
 							<td>{{ item.get_filtro_display }}</td>
 							<td>
-								<a href="{% url "grupos" opc='itemDelete' pk=item.id grupo=item.item_grupo_id_id  %}">
+								<a href="{% url "grupos" opc='itemDelete' pk=item.id grupo=item.grupo_id  %}">
 									<i class="fa fa-times fs-5 align-middle text-danger"></i>
 								</a>
 							</td>
@@ -109,14 +118,14 @@
 			<tbody>
 				{% for grupo in grupos %}
 				<tr>
-					<td>{{ grupo.grupo_id }}</td>
+					<td>{{ grupo.codigo }}</td>
 					<td>{{ grupo.descricao }}</td>
 					<td>{{ grupo.active }}</td>
 					<td>
-						<a href="{% url "grupos" opc='edit' pk=grupo.grupo_id %}" class="mx-2">
+						<a href="{% url "grupos" opc='edit' pk=grupo.codigo %}" class="mx-2">
 							<i class="fa fa-edit align-middle text-primary"></i>
 						</a>
-						<a href="{% url "grupos" opc='delete' pk=grupo.grupo_id	 %}">
+						<a href="{% url "grupos" opc='delete' pk=grupo.codigo	 %}">
 							<i class="fa fa-times fs-5 align-middle text-danger"></i>
 						</a>
 					</td>

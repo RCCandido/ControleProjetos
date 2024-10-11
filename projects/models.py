@@ -22,14 +22,14 @@ class Grupos(models.Model):
   updated_at = models.DateTimeField(auto_now=True)
   active = models.BooleanField(default=True, verbose_name="Ativo ?")
 
-  grupo_id = models.AutoField(primary_key=True)
+  codigo = models.AutoField(primary_key=True)
   descricao = models.CharField(
     verbose_name="Descrição", max_length=200, null=False, blank=False
   )
   
   class Meta:
     verbose_name_plural = "Grupos de Acesso"
-    ordering = ('grupo_id','descricao',)
+    ordering = ('codigo','descricao',)
 
 class ItemGrupo(models.Model):
   
@@ -51,12 +51,13 @@ class ItemGrupo(models.Model):
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now=True)
   
-  item_grupo_id = models.ForeignKey(
+  grupo = models.ForeignKey(
     Grupos,
     on_delete=models.CASCADE,
     null=True,
     blank=True,
   )
+  
   rotina = models.CharField(verbose_name="Rotina", max_length=80, choices=getRotinas())
   inclusao = models.CharField(
     verbose_name="Incluir", max_length=1, null=False, blank=False, choices=Grupos.getSimNao()
