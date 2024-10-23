@@ -104,26 +104,27 @@ class UsuarioForm(forms.ModelForm):
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
-      Div(
-        Row(
-          Field('firstname', wrapper_class='col-sm-3'),
-          Field('name', wrapper_class='col-sm-6'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Field('email', wrapper_class='col-sm-6'),
-          Field('tipo', wrapper_class='col-sm-2'),
-          Field('perfil', wrapper_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Field('resetpsw', wrapper_class='form-control-sm'),
-          Field('active', wrapper_class='form-control-sm'),
-          Field('usefilter', wrapper_class='form-control-sm'),
-          css_class='form-row d-flex',
-        ),
-       
-        css_class="form-control"
+      Row(
+        Field('firstname', wrapper_class='col-sm-3'),
+        Field('name', wrapper_class='col-sm-6'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Field('email', wrapper_class='col-sm-6'),
+        Field('tipo', wrapper_class='col-sm-2'),
+        Field('perfil', wrapper_class='col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Field('password', wrapper_class='col-sm-2'),
+        Field('password2', wrapper_class='col-sm-2'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Field('resetpsw', wrapper_class='form-control-sm'),
+        Field('active', wrapper_class='form-control-sm'),
+        Field('usefilter', wrapper_class='form-control-sm'),
+        css_class='form-row d-flex',
       )
     )
 
@@ -307,31 +308,24 @@ class EmpresaForm(forms.ModelForm):
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
-      Div(
-        Row(
-            Column('nome', css_class='col-sm-6'),
-            Column('cnpj', css_class='col-lg-6'),
-            css_class='form-row d-flex',
-        ),
-        Row(
-            Column('endereco', css_class='col-sm-6'),
-            Column('complemento',css_class='col-sm-4'),
-           css_class='form-row d-flex',
-        ),
-        Row(
-            Column('cep',css_class='col-sm-3'),
-            Column('cidade',css_class='col-sm-3'),
-            Column('estado',css_class='col-sm-2'),
-            Column('telefone', css_class='col-sm-3'),
-            css_class='form-row d-flex',
-        ),
-        Row(
-            Column('imposto', css_class='col-sm-2'),
-            Column('dados_bancarios', css_class='col-sm-8'),
-            css_class='form-row d-flex',
-        ),
-        css_class="form-control",
-      )
+      Row(
+          Column('nome', css_class='col-sm-6'),
+          Column('cnpj', css_class='col-lg-6'),
+          css_class='form-row d-flex',
+      ),
+      Row(
+          Column('endereco', css_class='col-sm-6'),
+          Column('complemento',css_class='col-sm-4'),
+          css_class='form-row d-flex',
+      ),
+      Row(
+          Column('cep',css_class='col-sm-3'),
+          Column('cidade',css_class='col-sm-3'),
+          Column('estado',css_class='col-sm-2'),
+          Column('telefone', css_class='col-sm-3'),
+          css_class='form-row d-flex',
+      ),
+     
     )
 
 class NewEmpresaForm(EmpresaForm):
@@ -477,9 +471,9 @@ class ServicosForm(forms.ModelForm):
         css_class='form-row d-flex',
       ),
       Row(
-        Column('valor_bruto',css_class='col-sm-4'),
-        Column('liquido',css_class='col-sm-4'),
-        Column('valor_recebido',css_class='col-sm-4'),
+        Column('valor_bruto',css_class='col-sm-3'),
+        Column('liquido',css_class='col-sm-3'),
+        Column('valor_recebido',css_class='col-sm-3'),
         css_class='form-row d-flex',
       ),
     )
@@ -690,44 +684,37 @@ class ColaboradorForm(forms.ModelForm):
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
     self.helper.layout = Layout(
-      Div(
-        Row(
-          Column('nome', css_class='col-sm-6'),
-          Column('active', css_class='my-4'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('email', css_class='col-sm-4'),
-          Column('cpf', css_class='col-sm-3'),
-          Column('funcao', css_class='col-sm-3'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('endereco', css_class='col-sm-4'),
-          Column('complemento', css_class='col-sm-4'),
-          Column('cep', css_class='col-sm-3'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('bairro',css_class='col-sm-3'),
-          Column('cidade',css_class='col-sm-3'),
-          Column('estado', css_class='col-sm-2'),
-          Column('telefone', css_class='col-sm-3'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('periodo_lancamento',css_class='col-sm-3'),
-          Column('valor_hora', css_class='col-sm-2'),
-          Column('valor_fixo',css_class='col-sm-2'),
-          Column('comissao',css_class='col-sm-2'),
-          css_class='form-row d-flex',
-        ),
-        Row(
-          Column('dados_bancarios',css_class='col-sm-5'),
-          css_class='form-row d-flex',
-        ),
-        css_class="form-control"
-      )
+      Row(
+        Column('nome', css_class='col-sm-6'),
+        Column('active', css_class='my-4'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('email', css_class='col-sm-4'),
+        Column('cpf', css_class='col-sm-3'),
+        Column('funcao', css_class='col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('endereco', css_class='col-sm-4'),
+        Column('complemento', css_class='col-sm-4'),
+        Column('cep', css_class='col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('bairro',css_class='col-sm-3'),
+        Column('cidade',css_class='col-sm-3'),
+        Column('estado', css_class='col-sm-2'),
+        Column('telefone', css_class='col-sm-3'),
+        css_class='form-row d-flex',
+      ),
+      Row(
+        Column('periodo_lancamento',css_class='col-sm-3'),
+        Column('valor_hora', css_class='col-sm-2'),
+        Column('valor_fixo',css_class='col-sm-2'),
+        Column('comissao',css_class='col-sm-2'),
+        css_class='form-row d-flex',
+      ),
     )
 
 class ValoresForm(forms.ModelForm):

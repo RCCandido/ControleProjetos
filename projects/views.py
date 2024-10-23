@@ -31,7 +31,7 @@ from .forms import (
     ItemGrupoForm,
 )
 from .decorators import nivel_access_required
-from .filters import UsuarioFilter, ClienteFilter
+from .filters import UsuarioFilter, ClienteFilter, GruposFilter, EmpresaFilter, ColaboradorFilter, ServicosFilter
 
 ## LOGIN ##
 def logar_usuario(request):
@@ -184,13 +184,19 @@ def home(request):
 @nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
   
+  # envio submit POST
   if request.method == "POST":
     
+    # se operação de criação
     if opc == "insert":
-
+      
+      # instancio o formulario enviado
       form = NewUsuarioForm(request.POST)
-      if form.is_valid():
 
+      # se válido
+      if form.is_valid():
+        
+        # cria um novo usuario
         usuario = Usuario(
           firstname = form.cleaned_data["firstname"],
           name      = form.cleaned_data["name"],
@@ -213,11 +219,19 @@ def usuarios(request, opc=False, pk=False):
           {"inclui": True, "form": form},
         )
 
+    # se operação de edição de um usuario
     elif opc == "edit":
       
+      # instancia o id do usuario (email)
       usuario = Usuario.objects.filter(email=pk).first()
+
+      # instancia o formulario do usuario passado
       form = UsuarioForm(request.POST, instance=usuario)
+
+      # se válido
       if form.is_valid():
+
+        # salva as alterações no usuario posicionado
         usuario = form.save(commit=False)
         usuario.firstname = form.cleaned_data["firstname"]
         usuario.name      = form.cleaned_data["name"]
@@ -227,7 +241,7 @@ def usuarios(request, opc=False, pk=False):
         usuario.usefilter = form.cleaned_data["usefilter"]
         usuario.save()
 
-        # se for o proprio usuario se desativando
+        # se for o proprio usuario se desativando, desloga o mesmo
         if not usuario.active and usuario.email == request.user.email:
           deslogar_usuario(request)
 
@@ -235,37 +249,59 @@ def usuarios(request, opc=False, pk=False):
 
       else:
         return render(request,"projects/usuarios.html",{"altera": True, "form": form})
+  
+  # se não for um SUBMIT de um form
   else:
+
+    # e opção é de inserção de um novo usuario
     if opc == "insert":
+
+      # cria um formulario para um novo usuario
       form = NewUsuarioForm()
+
+      # monta o contexto para renderizar no template
       context = {"inclui": True, "form": form}
       return render(request,"projects/usuarios.html", context)
 
+    # se for para edição de um usuario existente
     elif opc == "edit":
+
+      # valida se foi enviado o id
       if pk:
+
+        # recupera o usuario do id passado via parametro
         usuario = Usuario.objects.filter(email=pk).first()
+
+        # cria um formulario instaciado como usuario
         form = UsuarioForm(instance=usuario)
+
+        # monta o contexto para o template
         context = {"altera": True, "form": form}
         return render(request, "projects/usuarios.html", context)
 
+    # se for operação de exclusão do usuario
     elif opc == "delete":
+
+      # valida se foi enviado o ID a ser excluido
       if pk:
+
+        # instancia o usuario pelo id
         usuario = Usuario.objects.filter(email=pk).first()
 
+        # se usuario válido, exclui
         if usuario:
           usuario.delete()
 
-        users = Usuario.objects.all()
-        filter = UsuarioFilter(request.GET, queryset=users)
 
-        context = {"usuarios": filter, "filter": filter}
-        return render(request, "projects/usuarios.html", context)
+  # carrega a lista de usuarios existentes
+  users = Usuario.objects.all().order_by("user_id")
 
-    users = Usuario.objects.all().order_by("user_id")
-    filter = UsuarioFilter(request.GET, queryset=users)
+  # monta o filtro
+  filter = UsuarioFilter(request.GET, queryset=users)
 
-    context = {"usuarios": filter, "filter": filter}
-    return render(request, "projects/usuarios.html", context)
+  # monta o contexto para o template
+  context = {"usuarios": filter, "filter": filter}
+  return render(request, "projects/usuarios.html", context)
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="servicos")
@@ -410,14 +446,17 @@ def servicos(request, opc=False, pk=False):
         if servico:
           servico.delete()
         
-        servicos = Servicos.objects.all()
-        context = {"servicos": servicos}
-        return render(request, "projects/servicos.html", context)
+        
 
-    else:
-      servicos = Servicos.objects.all()
-      context = {"servicos": servicos}
-      return render(request, "projects/servicos.html", context)
+    # busca toda a lista de servicos cadastrados
+    servicos = Servicos.objects.all()
+    
+    # monta o filtro
+    filter = ServicosFilter(request.GET, queryset=servicos)
+
+    # contexto para o template
+    context = {"servicos": filter, "filter": filter}
+    return render(request, "projects/servicos.html", context)
 
 def adicionar_item_servico(request):
   pk = request.GET.get('pk')
@@ -433,14 +472,22 @@ def adicionar_item_servico(request):
 @nivel_access_required(view_name="empresas")
 def empresas(request, pk=False, opc=False):
   
+  # se vindo de um submit
   if request.method == "POST":
     
+    # se opção de inserção
     if opc == "insert":
-    
+      
+      # obtem o formulario do POST
       form = EmpresaForm(request.POST, prefix="form")
-      form_valores = ValoresForm(request.POST, prefix="form_valores")
-      if form.is_valid() and form_valores.is_valid():
 
+      # obtem o form de valores do segundo POST
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+
+      # valida se estao validos
+      if form.is_valid() and form_valores.is_valid():
+        
+        # instancia uma empresa nova
         empresa = Empresa(
           nome            = form.cleaned_data["nome"],
           cnpj            = form.cleaned_data["cnpj"],
@@ -451,8 +498,11 @@ def empresas(request, pk=False, opc=False):
           dados_bancarios = form.cleaned_data["dados_bancarios"],
           imposto         = form.cleaned_data["imposto"],
         )
+
+        # salva
         empresa.save()
         
+        # se foi informado o imposto
         if form.cleaned_data["imposto"] > 0:
             
           # insere o registro na tabela de valores
@@ -467,6 +517,7 @@ def empresas(request, pk=False, opc=False):
 
         return redirect("empresas")
 
+      # formularios nao validos
       else:
         return render(
             request,
@@ -474,17 +525,28 @@ def empresas(request, pk=False, opc=False):
             {"inclui": True, "form": form, "form_valores": form_valores},
         )
 
+    # se operação de alteração
     elif opc == "edit":
-        
+      
+      # instancia a empresa com o ID passado
       empresa = Empresa.objects.filter(codigo=pk).first()
+
+      # salva o imposto existente
       impostoAnterior = empresa.imposto
 
+      # instancia a empresa do formulario postado
       form = EmpresaForm(request.POST, instance=empresa, prefix="form")
-      form_valores = ValoresForm(request.POST, prefix="form_valores")
-      if form.is_valid() and form_valores.is_valid():
 
+      # instancia o formulario de valores postado
+      form_valores = ValoresForm(request.POST, prefix="form_valores")
+
+      # se formularios validos
+      if form.is_valid() and form_valores.is_valid():
+        
+        # verifica se os impostos sao diferentes
         registraValor = True if form.cleaned_data["imposto"] != impostoAnterior else False
 
+        # instancia a empresa para alteração
         empresa = form.save(commit=False)
         empresa.nome            = form.cleaned_data["nome"]
         empresa.cnpj            = form.cleaned_data["cnpj"]
@@ -496,6 +558,7 @@ def empresas(request, pk=False, opc=False):
         empresa.imposto         = form.cleaned_data["imposto"]
         empresa.save()
 
+        # se registra a alteração de valores
         if registraValor:
 
           # insere o registro na tabela de valores
@@ -510,6 +573,7 @@ def empresas(request, pk=False, opc=False):
 
         return redirect("empresas")
 
+      # se formularios nao validos
       else:
         context = {
           "altera": True,
@@ -517,10 +581,17 @@ def empresas(request, pk=False, opc=False):
           "form_valores": form_valores
           }
         return render(request, "projects/empresas.html", context)
+
+  # se nao foi um post de formulario
   else:
 
+    # solicitada operação de criação de nova empresa
     if opc == "insert":
+
+      # insntancia um formulario de nova empresa
       form = NewEmpresaForm(prefix="form")
+
+      # formulario para valores
       form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
 
       context = {
@@ -530,11 +601,22 @@ def empresas(request, pk=False, opc=False):
         }
       return render(request, "projects/empresas.html", context)
 
+    # solicitada tela de edição de empresa
     elif opc == "edit":
+
+      # se enviado um ID para alteração
       if pk:
+
+        # insntancia a empresa com o ID
         empresa = Empresa.objects.filter(codigo=pk).first()
+
+        # insntancia um formuçario para alteração dessa empresa
         form = EmpresaForm(instance=empresa, prefix="form")
+
+        # instancia um formulario para alteração de valores
         form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
+
+        # busca os valores pre-cadastrados para a empresa ordenando pelo id
         historico = Valores.objects.filter(codigo=pk, tipo="Empresa").order_by("-valor_id")
 
         context = {
@@ -545,22 +627,31 @@ def empresas(request, pk=False, opc=False):
           }
         return render(request, "projects/empresas.html", context)
 
+    # se solicitada opção de exclusao de empresa
     elif opc == "delete":
+
+      # se enviado o id para exclusao
       if pk:
+
+        # busca a empresa do id passado
         empresa = Empresa.objects.filter(codigo=pk).first()
         
+        # se encontrou a empresa
         if empresa:
+
+          # apaga
           empresa.delete()
 
-        empresas = Empresa.objects.all()
-        
-        context = {"empresa": empresas}
-        return render(request, "projects/empresas.html", context)
-
+    # busca todas as empresas cadastradas para listagem no browse
     empresas = Empresa.objects.all()
-    context = {"empresa": empresas}
+    
+    # monta o filtro
+    filter = EmpresaFilter(request.GET, queryset=empresas)
+
+    # monta o contexto para o template
+    context = {"empresa": filter, "filter": filter}
     return render(request, "projects/empresas.html", context)
-          
+
 @login_required(login_url="/index")
 @nivel_access_required(view_name="grupos")
 def grupos(request, pk=False, opc=False, grupo=False):
@@ -698,12 +789,18 @@ def grupos(request, pk=False, opc=False, grupo=False):
 
     # caso nao seja passado nenhuma opção, busca a lista de grupos para exibição na tela principal
     grupos = Grupos.objects.all()
-    context = {"grupos": grupos}
+
+    # monta o filtro
+    filter = GruposFilter(request.GET, queryset=grupos)
+
+    # monta o contexto para o template
+    context = {"grupos": filter, "filter": filter}
     return render(request, "projects/grupos.html", context)
 
 
 def itemGrupo(request, pk=False, opc=False):
   
+  # se vindo de submit do MODAL da pagina de grupos
   if request.method == "POST":
 
     #obtem o id do grupo no campo hidden do form
@@ -1065,12 +1162,15 @@ def colaboradores(request, opc=False, pk=False):
         if colaborador:
           colaborador.delete()
 
-        colaboradores = Colaborador.objects.all()
-        context = {"colaborador": colaboradores}
-        return render(request, "projects/colaboradores.html", context)
 
+    # busca toda a lista de colaboradores cadastrados
     colaboradores = Colaborador.objects.all()
-    context = {"colaboradores": colaboradores}
+    
+    # monta o filtro
+    filter = ColaboradorFilter(request.GET, queryset=colaboradores)
+
+    # contexto para o template
+    context = {"colaboradores": filter, "filter": filter}
     return render(request, "projects/colaboradores.html", context)
 
 @login_required(login_url="/index")

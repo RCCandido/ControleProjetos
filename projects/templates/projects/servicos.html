@@ -55,6 +55,22 @@
 		</form>
 			
 	{% else %}
+		
+		{% if user.usefilter %}	
+			<div class="filtro ">
+				<form method="GET" id="form_filtro">
+					{{ filter.form.filtro }}
+					
+					<a class="btnfiltro" onclick="document.getElementById('form_filtro').submit();">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+						</svg>
+					</a>
+
+				</form>
+			</div>
+		{% endif %}
+
 
 		<table class="table table-sm-responsive">
 			<thead class="table-dark" >
@@ -68,20 +84,22 @@
 			</tr>
 			</thead>
 			<tbody>
-				{% for s in servicos %}
-				<tr>
-					<td>{{ s.codigo }}</td>
-					<td>{{ s.descricao }}</td>
-					<td>{{ s.versao }}</td>
-					<td>{{ s.cliente }}</td>
-					<td>{{ s.tipo }}</td>
-					<td>
-						<a href="{% url "servicos" opc='edit' pk=s.codigo %}" class="mx-2">
-							<i class="fa fa-edit align-middle text-primary"></i>
-						</a>
-					</td>
-				</tr>
+
+				{% for servico in filter.qs %}
+					<tr>
+						<td>{{ servico.codigo }}</td>
+						<td>{{ servico.descricao }}</td>
+						<td>{{ servico.versao }}</td>
+						<td>{{ servico.cliente }}</td>
+						<td>{{ servico.tipo }}</td>
+						<td>
+							<a href="{% url "servicos" opc='edit' pk=servico.codigo %}" class="mx-2">
+								<i class="fa fa-edit align-middle text-primary"></i>
+							</a>
+						</td>
+					</tr>
 				{% endfor %}
+
 			</tbody>
 		</table>
 		

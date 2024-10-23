@@ -44,13 +44,56 @@
 				</div>
 			</div>
 
-			{% crispy form %}
 			<input type="hidden" id="imposto_bkp" value='0'>
-				
+			
+			<div class="accordion" id="mainAccordion">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingOne">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							<strong>Cadastro</strong>
+						</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#mainAccordion">
+						<div class="accordion-body">
+							{% crispy form %}
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingThree">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+							<strong>Financeiro</strong>
+						</button>
+					</h2>
+					<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#mainAccordion">
+						<div class="accordion-body">
+							{{ form.dados_bancarios|as_crispy_field }}
+							{{ form.imposto|as_crispy_field }}
+						</div>
+					</div>
+				</div>
+			</div>
+
     </form>
 
 	{% else %}
 		
+		{% if user.usefilter %}	
+			<div class="filtro ">
+				<form method="GET" id="form_filtro">
+					{{ filter.form.filtro }}
+					
+					<a class="btnfiltro" onclick="document.getElementById('form_filtro').submit();">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+						</svg>
+					</a>
+
+					<!--<input class="filter_buttons" type="button" value="Limpar" onclick="limparCampos()" />-->
+				</form>
+			</div>
+		{% endif %}
+
 		<table class="table table-sm-responsive">
 			<thead class="table-dark" >
 				<tr>
@@ -61,21 +104,23 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for e in empresa %}
-				<tr>
-					<td>{{ e.codigo }}</td>
-					<td>{{ e.nome }}</td>
-					<td>{{ e.cnpj }}</td>
-					<td>
-						<a href="{% url 'empresas' opc='edit' pk=e.codigo %}" class="mx-2">
-							<i class="fa fa-edit align-middle text-primary"></i>
-						</a>
-						<a href="{% url 'empresas' opc='delete' pk=e.codigo %}">
-							<i class="fa fa-times fs-5 align-middle text-danger"></i>
-						</a>
-					</td>
-				</tr>
+
+				{% for empresa in filter.qs %}
+					<tr>
+						<td>{{ empresa.codigo }}</td>
+						<td>{{ empresa.nome }}</td>
+						<td>{{ empresa.cnpj }}</td>
+						<td>
+							<a href="{% url 'empresas' opc='edit' pk=empresa.codigo %}" class="mx-2">
+								<i class="fa fa-edit align-middle text-primary"></i>
+							</a>
+							<a href="{% url 'empresas' opc='delete' pk=empresa.codigo %}">
+								<i class="fa fa-times fs-5 align-middle text-danger"></i>
+							</a>
+						</td>
+					</tr>
 				{% endfor %}
+
 			</tbody>
 		</table>
 	
