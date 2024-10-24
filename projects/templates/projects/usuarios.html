@@ -67,6 +67,22 @@
 			</div>
 		{% endif %}
 			
+			{% if messages %}
+				<div class="alert alert-danger" role="alert">
+					<ul class="m-0 p-0" style="list-style: none;">
+						{% for message in messages %}
+							<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+			
+			<div class="mb-2 mt-0 p-0">
+				<a href="{% url 'usuarios' opc='insert' %}" >
+					<i class="fa fa-plus-square fa-2x"  aria-hidden="true"></i>
+				</a>
+			</div>
+
 			<table class="table table-sm-responsive">
 				<thead class="table-dark" >
 					<tr>
@@ -75,6 +91,7 @@
 						<th>Nome</th>
 						<th>E-mail</th>
 						<th>Tipo</th>
+						<th>Perfil</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -91,7 +108,11 @@
 							<td>{{ user.name }}</td>
 							<td>{{ user.email }}</td>
 							<td>{{ user.get_tipo_display }}</td>
+							<td>{{ user.perfil }}</td>
 							<td>
+								<a href="{% url "usuarios" opc='view' pk=user.email %}" class="mx-2">
+									<i class="fa fa-eye align-middle text-dark"></i>
+								</a>
 								<a href="{% url "usuarios" opc='edit' pk=user.email %}" class="mx-2">
 									<i class="fa fa-edit align-middle text-primary"></i>
 								</a>
@@ -104,7 +125,6 @@
 					
 				</tbody>
 			</table>
-		<a href="{% url "usuarios" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Usuário</a>
 		
 	{% endif %}
 	

@@ -38,7 +38,9 @@ class ItemGrupo(models.Model):
         ("1", "Empresas"),
         ("2", "Grupos"),
         ("3", "Usuários"),
-        ("4", "Serviços"),
+        ("4", "Clientes"),
+        ("5", "Serviços"),
+        ("6", "Colaboradores"),
     )
     return ROTINAS
   

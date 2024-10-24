@@ -253,8 +253,29 @@ def usuarios(request, opc=False, pk=False):
   # se não for um SUBMIT de um form
   else:
 
+    # e opção é de visualização
+    if opc == "view":
+      
+      # recupera o usuario do id passado via parametro
+      usuario = Usuario.objects.filter(email=pk).first()
+
+      # cria um formulario instaciado como usuario
+      form = UsuarioForm(instance=usuario, disable_fields=True)
+
+      # monta o contexto para o template
+      context = {"altera": True, "form": form}
+      return render(request, "projects/usuarios.html", context)
+
     # e opção é de inserção de um novo usuario
-    if opc == "insert":
+    elif opc == "insert":
+      
+      # verifica permissao do grupo
+      itemGrupo = ItemGrupo.objects.filter(grupo_id=request.user.perfil_id, rotina="3").first()
+
+      # se nao tem um perfil ou nao permite
+      if not itemGrupo or itemGrupo.inclusao == "N":
+        messages.error(request, "Usuário sem acesso para Inclusão.")
+        return redirect("usuarios")
 
       # cria um formulario para um novo usuario
       form = NewUsuarioForm()
@@ -265,6 +286,14 @@ def usuarios(request, opc=False, pk=False):
 
     # se for para edição de um usuario existente
     elif opc == "edit":
+      
+      # verifica permissao do grupo
+      itemGrupo = ItemGrupo.objects.filter(grupo_id=request.user.perfil_id, rotina="3").first()
+
+      # se nao tem um perfil ou nao permite
+      if not itemGrupo or itemGrupo.edicao == "N":
+        messages.error(request, "Usuário sem acesso para Edição.")
+        return redirect("usuarios")
 
       # valida se foi enviado o id
       if pk:
@@ -281,6 +310,14 @@ def usuarios(request, opc=False, pk=False):
 
     # se for operação de exclusão do usuario
     elif opc == "delete":
+      
+      # verifica permissao do grupo
+      itemGrupo = ItemGrupo.objects.filter(grupo_id=request.user.perfil_id, rotina="3").first()
+
+      # se nao tem um perfil ou nao permite
+      if not itemGrupo or itemGrupo.exclusao == "N":
+        messages.error(request, "Usuário sem acesso para Exclusão.")
+        return redirect("usuarios")
 
       # valida se foi enviado o ID a ser excluido
       if pk:
@@ -369,7 +406,7 @@ def servicos(request, opc=False, pk=False):
         )
 
     elif opc == "edit":
-
+      
       servico = Servicos.objects.filter(codigo=pk).first()
       form = ServicosForm(request.POST, instance=servico)
       if form.is_valid():
@@ -415,8 +452,34 @@ def servicos(request, opc=False, pk=False):
 
   else:
 
-    if opc == "insert":
+    if opc == "view":
       
+      if pk:
+
+        servico = Servicos.objects.filter(codigo=pk).first()
+        form = ServicosForm(instance=servico, disable_fields=True)
+        items = ItemServico.objects.filter(codigo=pk)
+        form_item = ItemServicoForm()
+        
+        context = {
+          "visualiza": True, 
+          "form": form,
+          "items": items,
+          "form_item": form_item,
+          }
+        return render(request, "projects/servicos.html", context)
+
+
+    elif opc == "insert":
+      
+      # verifica permissao do grupo
+      itemGrupo = ItemGrupo.objects.filter(grupo_id=request.user.perfil_id, rotina="5").first()
+
+      # se nao tem um perfil ou nao permite
+      if not itemGrupo or itemGrupo.inclusao == "N":
+        messages.error(request, "Usuário sem acesso para Inclusão.")
+        return redirect("servicos")
+
       form = ServicosForm(initial={'codigo' : Servicos.getNextCodigo()})
       form_item = ItemServicoForm()
 
@@ -424,6 +487,15 @@ def servicos(request, opc=False, pk=False):
       return render(request, "projects/servicos.html", context)
 
     elif opc == "edit":
+      
+      # verifica permissao do grupo
+      itemGrupo = ItemGrupo.objects.filter(grupo_id=request.user.perfil_id, rotina="5").first()
+
+      # se tem um perfil mas nao permite
+      if itemGrupo and itemGrupo.edicao == "N":
+        messages.error(request, "Usuário sem acesso para Edição.")
+        return redirect("servicos")
+
       if pk:
 
         servico = Servicos.objects.filter(codigo=pk).first()
@@ -445,8 +517,6 @@ def servicos(request, opc=False, pk=False):
         
         if servico:
           servico.delete()
-        
-        
 
     # busca toda a lista de servicos cadastrados
     servicos = Servicos.objects.all()
@@ -842,6 +912,7 @@ def itemGrupo(request, pk=False, opc=False):
   
 
 @login_required(login_url="/index")
+@nivel_access_required(view_name="clientes")
 def clientes(request, opc=False, pk=False):
   
   if request.method == "POST":
@@ -1008,6 +1079,7 @@ def clientes(request, opc=False, pk=False):
     return render(request, "projects/clientes.html", context)
 
 @login_required(login_url="/index")
+@nivel_access_required(view_name="colaboradores")
 def colaboradores(request, opc=False, pk=False):
   
   if request.method == "POST":

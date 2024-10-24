@@ -22,7 +22,8 @@
 }
 
 .filtro {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
+  display: inline;
   float: inline-end;
 }
 

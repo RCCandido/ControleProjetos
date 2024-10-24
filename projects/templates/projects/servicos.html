@@ -9,7 +9,7 @@
 {% block active_oportunidades %} active {% endblock active_oportunidades %}
 {% block content %}
 
-	{% if inclui or altera %}
+	{% if inclui or altera or visualiza %}
 		
 		<a class="mysubmit"  onclick="document.getElementById('my_form').submit();">
 			<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
@@ -57,7 +57,8 @@
 	{% else %}
 		
 		{% if user.usefilter %}	
-			<div class="filtro ">
+		
+			<div class="filtro">
 				<form method="GET" id="form_filtro">
 					{{ filter.form.filtro }}
 					
@@ -70,7 +71,22 @@
 				</form>
 			</div>
 		{% endif %}
-
+		
+		{% if messages %}
+			<div class="alert alert-danger" role="alert">
+				<ul class="m-0 p-0" style="list-style: none;">
+					{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endif %}
+		
+		<div class="mb-2 mt-0 p-0">
+			<a href="{% url 'servicos' opc='insert' %}" >
+				<i class="fa fa-plus-square fa-2x"  aria-hidden="true"></i>
+			</a>
+		</div>
 
 		<table class="table table-sm-responsive">
 			<thead class="table-dark" >
@@ -93,8 +109,11 @@
 						<td>{{ servico.cliente }}</td>
 						<td>{{ servico.tipo }}</td>
 						<td>
+							<a href="{% url "servicos" opc='view' pk=servico.codigo %}" class="mx-2">
+								<i class="fa fa-eye align-middle text-dark"></i>
+							</a>
 							<a href="{% url "servicos" opc='edit' pk=servico.codigo %}" class="mx-2">
-								<i class="fa fa-edit align-middle text-primary"></i>
+								<i class="fa fa-edit align-middle "></i>
 							</a>
 						</td>
 					</tr>
@@ -103,36 +122,42 @@
 			</tbody>
 		</table>
 		
-		<a href="{% url 'servicos' opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Serviço</a>
 	{% endif %}
+	
+	<hr>
+	<br/>
 
 	{% if altera %}
-		<hr>
+
 		<button type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#itemModal">Adicionar Item</button>
 		
 		<div id="information" class="mt-8 fs-5"></div>
-
+		
 		<!-- Modal -->
 		<form method="post" action="{% url 'servicos' opc='item_add' %}" >
-			{% csrf_token %}
-			<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="itemModalLabel">Adicionar Item</h1>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							{% crispy form_item %}
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Cancelar</button>
-							<button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+				{% csrf_token %}
+				<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="itemModalLabel">Adicionar Item</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								{% crispy form_item %}
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Cancelar</button>
+								<button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
+			</form>
+		
+	{% endif %}
+
+	{% if altera or visualiza %}
 
 		<div class="table-responsive-sm">
 			<table class="table table-sm table-striped table-bordered">
@@ -164,6 +189,7 @@
 				</tbody>
 			</table>
 		</div>
+
 	{% endif %}
 	
 {% endblock content %}

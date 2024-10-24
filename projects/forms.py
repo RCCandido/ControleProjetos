@@ -97,8 +97,20 @@ class UsuarioForm(forms.ModelForm):
         "resetpsw",
     )
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, disable_fields=False, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    if disable_fields:
+      self.fields['firstname'].disabled = True
+      self.fields['name'].disabled = True
+      self.fields['email'].disabled = True
+      self.fields['tipo'].disabled = True
+      self.fields['perfil'].disabled = True
+      self.fields['password'].disabled = True
+      self.fields['password2'].disabled = True
+      self.fields['resetpsw'].disabled = True
+      self.fields['active'].disabled = True
+      self.fields['usefilter'].disabled = True
+
     self.fields['name'].widget.attrs['class'] = 'my_class'
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
@@ -425,8 +437,37 @@ class ServicosForm(forms.ModelForm):
       'horas_execucao': forms.NumberInput(attrs={'step': '0.15', 'placeholder': '00'}),
     }
   
-  def __init__(self, *args, **kwargs):
+  def __init__(self, disable_fields=False, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    if disable_fields:
+      self.fields['codigo'].disabled = True
+      self.fields['tipo'].disabled = True
+      self.fields['versao'].widget.attrs['readonly'] = True
+      self.fields['descricao'].disabled = True
+      self.fields['cliente'].disabled = True
+      self.fields['etapa_comercial'].disabled = True
+      self.fields['etapa_tecnica'].disabled = True
+      self.fields['valor_hora'].disabled = True
+      self.fields['valor_comissao'].disabled = True
+      self.fields['comissao'].disabled = True
+      self.fields['base_comissao'].disabled = True
+      self.fields['imposto'].disabled = True
+      self.fields['valor_imposto'].disabled = True
+      self.fields['desconto'].disabled = True
+      self.fields['valor_desconto'].disabled = True
+      self.fields['parcelas'].disabled = True
+      self.fields['custo_operacional'].disabled = True
+      self.fields['horas_save'].disabled = True
+      self.fields['horas_execucao'].disabled = True
+      self.fields['horas_especificacao'].disabled = True
+      self.fields['horas_tecnicas'].disabled = True
+      self.fields['valor_bruto'].disabled = True
+      self.fields['liquido'].disabled = True
+      self.fields['valor_recebido'].disabled = True
+      self.fields['justificativa'].disabled = True
+      self.fields['anotacoes'].disabled = True
+      self.fields['versao'].disabled = True
+
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
