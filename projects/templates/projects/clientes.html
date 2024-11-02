@@ -4,13 +4,15 @@
 {% block title %} Clientes {% endblock title %}
 {% block content %}
 
-	{% if inclui or altera %}
-
-	<a class="mysubmit"  onclick="openModal()">
+	{% if inclui or altera or visualiza %}
+	
+	{% if not visualiza %}
+		<a class="mysubmit"  onclick="openModal()">
 			<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
 				<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
 			</svg>
 		</a>
+	{% endif %}
 			
 		<a class="mycancel" href="{% url "clientes" %}">
 			<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
@@ -103,7 +105,15 @@
 				</form>
 			</div>
 		{% endif %}
-
+		
+		<!-- botão inserir -->
+		<div class="mb-2 mt-0 p-0">
+			<a href="{% url 'clientes' opc='insert' %}" >
+				<i class="fa fa-plus-square fa-2x"  aria-hidden="true"></i>
+			</a>
+		</div>
+			
+		<!-- lista -->
 		<table class="table table-sm-responsive">
 			<thead class="table-dark" >
 				<tr>
@@ -122,6 +132,9 @@
 					<td>{{ cliente.cnpj }}</td>
 					<td>{{ cliente.active }}</td>
 					<td>
+						<a href="{% url "clientes" opc='view' pk=cliente.codigo %}" class="mx-2">
+							<i class="fa fa-eye align-middle text-dark"></i>
+						</a>
 						<a href="{% url "clientes" opc='edit' pk=cliente.codigo %}" class="mx-2">
 							<i class="fa fa-edit align-middle text-primary"></i>
 						</a>
@@ -133,7 +146,6 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		<a href="{% url "clientes" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Cliente</a>
 	{% endif %}
 	
 	{% if historico %}

@@ -101,7 +101,15 @@
 				</form>
 			</div>
 		{% endif %}
-
+		
+		<!-- botão inserir -->
+		<div class="mb-2 mt-0 p-0">
+			<a href="{% url 'colaboradores' opc='insert' %}" >
+				<i class="fa fa-plus-square fa-2x"  aria-hidden="true"></i>
+			</a>
+		</div>
+			
+		<!-- lista -->
 		<table class="table table-sm-responsive">
 			<thead class="table-dark" >
 				<tr>
@@ -133,7 +141,6 @@
 			</tbody>
 		</table>
 		
-		<a href="{% url "colaboradores" opc='insert' %}" class="btn btn-primary mt-4">Cadastrar Colaborador</a>
 	{% endif %}
 
 	{% if historico %}

@@ -158,8 +158,12 @@ class GruposForm(forms.ModelForm):
       model = Grupos
       fields = "__all__"
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, disable_fields=False, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    if disable_fields:
+      self.fields['descricao'].disabled = True
+      self.fields['active'].disabled = True
+
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
@@ -612,7 +616,7 @@ class ClienteForm(forms.ModelForm):
     widget=forms.Select(attrs={'class': 'form-control'})
   )
   
-  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5", "placeholder":"Dados para movimentações financeiras.."}))
+  dados_bancarios = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
   observacoes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
   contatos = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows":"5"}))
 
@@ -625,8 +629,29 @@ class ClienteForm(forms.ModelForm):
       'perc_desconto_atual': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '10.00'}),
     }
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, disable_fields=False, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    if disable_fields:
+      self.fields['nome'].disabled = True
+      self.fields['cnpj'].disabled = True
+      self.fields['ie'].disabled = True
+      self.fields['telefone'].disabled = True
+      self.fields['email'].disabled = True
+      self.fields['endereco'].disabled = True
+      self.fields['complemento'].disabled = True
+      self.fields['cep'].disabled = True
+      self.fields['bairro'].disabled = True
+      self.fields['cidade'].disabled = True
+      self.fields['estado'].disabled = True
+      self.fields['usa_email_cat'].disabled = True
+      self.fields['email_cat'].disabled = True
+      self.fields['valor_hora_atual'].disabled = True
+      self.fields['perc_desconto_atual'].disabled = True
+      self.fields['active'].disabled = True
+      self.fields['observacoes'].disabled = True
+      self.fields['dados_bancarios'].disabled = True
+      self.fields['contatos'].disabled = True
+
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'

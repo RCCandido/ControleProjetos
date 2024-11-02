@@ -39,7 +39,7 @@
   color:blue;
 }
 
-.table {
+table, td {
   font-family: 'Calibri';
 }
 

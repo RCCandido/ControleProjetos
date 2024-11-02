@@ -263,7 +263,7 @@ def usuarios(request, opc=False, pk=False):
       form = UsuarioForm(instance=usuario, disable_fields=True)
 
       # monta o contexto para o template
-      context = {"altera": True, "form": form}
+      context = {"visualiza": True, "form": form}
       return render(request, "projects/usuarios.html", context)
 
     # e opção é de inserção de um novo usuario
@@ -788,8 +788,35 @@ def grupos(request, pk=False, opc=False, grupo=False):
   # se nao for submit de formulario, mas para abrir a tela
   else:
 
+    # e opção é de visualização
+    if opc == "view":
+
+      # se passado o id
+      if pk:
+      
+        # filtra o id passado
+        grupo = Grupos.objects.filter(codigo=pk).first()
+
+        # instancia o formulario
+        form = GruposForm(instance=grupo, prefix="form", disable_fields=True)
+
+        # instancia o formulario de item 
+        form_item = ItemGrupoForm(prefix="form_item")
+
+        # instancia o grid de itens já cadastrados pelo grupo passado no id da url
+        grid = ItemGrupo.objects.filter(grupo=pk)
+
+        # monta o contexto para o template
+        context = {
+          "visualiza": True, 
+          "form": form,
+          "form_item": form_item,
+          "grid": grid,
+          }
+        return render(request, "projects/grupos.html", context)
+
     # se operacao de insert 
-    if opc == "insert":
+    elif opc == "insert":
       form = GruposForm(prefix="form")
 
       context = {
@@ -1027,7 +1054,34 @@ def clientes(request, opc=False, pk=False):
         return render(request, "projects/clientes.html", context)
   else:
 
-    if opc == "insert":
+    # e opção é de visualização
+    if opc == "view":
+
+      # se passado o id
+      if pk:
+      
+        # filtra o id passado
+        cliente = Cliente.objects.filter(codigo=pk).first()
+
+        # instancia o formulario
+        form = ClienteForm(instance=cliente, prefix="form", disable_fields=True) 
+
+        # instancia o formulario de item 
+        form_valores = ValoresForm(prefix="form_valores")
+
+        # instancia o grid de itens já cadastrados 
+        historico = Valores.objects.filter(codigo=pk, tipo="Cliente").order_by("-valor_id")
+
+        # monta o contexto para o template
+        context = {
+          "visualiza": True, 
+          "form": form,
+          "form_valores": form_valores,
+          "historico": historico,
+        }
+        return render(request, "projects/clientes.html", context)
+
+    elif opc == "insert":
       form = ClienteForm(prefix="form")
       form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
 
@@ -1039,7 +1093,9 @@ def clientes(request, opc=False, pk=False):
       return render(request, "projects/clientes.html", context)
 
     elif opc == "edit":
+
       if pk:
+      
         cliente = Cliente.objects.filter(codigo=pk).first()
         form = ClienteForm(instance=cliente, prefix="form")
         form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
