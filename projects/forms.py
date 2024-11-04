@@ -318,8 +318,20 @@ class EmpresaForm(forms.ModelForm):
     fields = "__all__"
     
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, disable_fields=False, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    if disable_fields:
+      self.fields['nome'].disabled = True
+      self.fields['cnpj'].disabled = True
+      self.fields['endereco'].disabled = True
+      self.fields['complemento'].disabled = True
+      self.fields['cep'].disabled = True
+      self.fields['cidade'].disabled = True
+      self.fields['estado'].disabled = True
+      self.fields['telefone'].disabled = True
+      self.fields['dados_bancarios'].disabled = True
+      self.fields['imposto'].disabled = True
+
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'
@@ -744,8 +756,27 @@ class ColaboradorForm(forms.ModelForm):
           }),
     }
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, disable_fields=False, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    if disable_fields:
+      self.fields['nome'].disabled = True
+      self.fields['active'].disabled = True
+      self.fields['email'].disabled = True
+      self.fields['cpf'].disabled = True
+      self.fields['funcao'].disabled = True
+      self.fields['endereco'].disabled = True
+      self.fields['complemento'].disabled = True
+      self.fields['cep'].disabled = True
+      self.fields['bairro'].disabled = True
+      self.fields['cidade'].disabled = True
+      self.fields['estado'].disabled = True
+      self.fields['telefone'].disabled = True
+      self.fields['periodo_lancamento'].disabled = True
+      self.fields['valor_hora'].disabled = True
+      self.fields['valor_fixo'].disabled = True
+      self.fields['comissao'].disabled = True
+      self.fields['dados_bancarios'].disabled = True
+
     self.helper = FormHelper()
     self.helper.form_class = 'form-control'
     self.helper.label_class = 'm-0 p-0'

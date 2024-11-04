@@ -6,19 +6,21 @@
 {% block active_cadastros %} active {% endblock active_cadastros %}
 {% block content %}
 
-	{% if inclui or altera %}
+	{% if inclui or altera or visualiza %}
 	
 		{% if msgerro %}
-		<div class="alert alert-danger" role="alert">
-			{{ msgerro }}
-		</div>
+			<div class="alert alert-danger" role="alert">
+				{{ msgerro }}
+			</div>
 		{% endif %}
 		
-		<a class="mysubmit"  onclick="openModal()">
-			<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
-				<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-			</svg>
-		</a>
+		{% if not visualiza %}
+			<a class="mysubmit"  onclick="openModal()">
+				<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
+					<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+				</svg>
+			</a>
+		{% endif %}
 			
 		<a class="mycancel" href="{% url "colaboradores" %}">
 			<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
@@ -129,6 +131,9 @@
 						<td>{{ colaborador.get_funcao_display }}</td>
 						<td>{{ colaborador.active }}</td>
 						<td>
+							<a href="{% url "colaboradores" opc='view' pk=colaborador.codigo %}" class="mx-2">
+								<i class="fa fa-eye align-middle text-dark"></i>
+							</a>
 							<a href="{% url "colaboradores" opc='edit' pk=colaborador.codigo %}" class="mx-2">
 								<i class="fa fa-edit align-middle text-primary"></i>
 							</a>

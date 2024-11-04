@@ -654,9 +654,36 @@ def empresas(request, pk=False, opc=False):
 
   # se nao foi um post de formulario
   else:
+    
+     # e opção é de visualização
+    if opc == "view":
+
+      # se passado o id
+      if pk:
+      
+        # filtra o id passado
+        empresa = Empresa.objects.filter(codigo=pk).first()
+
+        # instancia o formulario
+        form = EmpresaForm(instance=empresa, prefix="form", disable_fields=True) 
+
+        # instancia o formulario de item 
+        form_valores = ValoresForm(prefix="form_valores")
+
+        # instancia o grid de itens já cadastrados 
+        historico = Valores.objects.filter(codigo=pk, tipo="Empresa").order_by("-valor_id")
+
+        # monta o contexto para o template
+        context = {
+          "visualiza": True, 
+          "form": form,
+          "form_valores": form_valores,
+          "historico": historico,
+          }
+        return render(request, "projects/empresas.html", context)
 
     # solicitada operação de criação de nova empresa
-    if opc == "insert":
+    elif opc == "insert":
 
       # insntancia um formulario de nova empresa
       form = NewEmpresaForm(prefix="form")
@@ -894,7 +921,6 @@ def grupos(request, pk=False, opc=False, grupo=False):
     context = {"grupos": filter, "filter": filter}
     return render(request, "projects/grupos.html", context)
 
-
 def itemGrupo(request, pk=False, opc=False):
   
   # se vindo de submit do MODAL da pagina de grupos
@@ -936,7 +962,6 @@ def itemGrupo(request, pk=False, opc=False):
       item.save()
       
   return redirect(url)
-  
 
 @login_required(login_url="/index")
 @nivel_access_required(view_name="clientes")
@@ -1256,8 +1281,35 @@ def colaboradores(request, opc=False, pk=False):
         return render(request,"projects/colaboradores.html", context)
 
   else:
+    
+     # e opção é de visualização
+    if opc == "view":
 
-    if opc == "insert":
+      # se passado o id
+      if pk:
+      
+        # filtra o id passado
+        colaborador = Colaborador.objects.filter(codigo=pk).first()
+
+        # instancia o formulario
+        form = ColaboradorForm(instance=colaborador, prefix="form", disable_fields=True) 
+
+        # instancia o formulario de item 
+        form_valores = ValoresForm(prefix="form_valores")
+
+        # instancia o grid de itens já cadastrados 
+        historico = Valores.objects.filter(codigo=pk, tipo="Colaborador").order_by("-valor_id")
+
+        # monta o contexto para o template
+        context = {
+          "visualiza": True, 
+          "form": form,
+          "form_valores": form_valores,
+          "historico": historico,
+          }
+        return render(request, "projects/colaboradores.html", context)
+
+    elif opc == "insert":
       form = ColaboradorForm(prefix="form")
       form_valores = ValoresForm(prefix="form_valores", initial={'data': datetime.today})
 
