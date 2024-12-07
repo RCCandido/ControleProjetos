@@ -9,7 +9,7 @@ def empresas_test_function(user):
   # se usuario ativo e possui um perfil
   if user.active and user.perfil_id:
     
-    if temAcesso(user.perfil_id, "1"):
+    if hasAccess(user.perfil_id, "1"):
       return True
   
   return False
@@ -19,7 +19,7 @@ def grupos_test_function(user):
   # se usuario ativo e possui um perfil
   if user.active and user.perfil_id:
     
-    if temAcesso(user.perfil_id, "2"):
+    if hasAccess(user.perfil_id, "2"):
       return True
   
   return False
@@ -29,7 +29,7 @@ def usuarios_test_function(user):
   # se usuario ativo e possui um perfil
   if user.active and user.perfil_id:
     
-    if temAcesso(user.perfil_id, "3"):
+    if hasAccess(user.perfil_id, "3"):
       return True
   
   return False
@@ -39,7 +39,7 @@ def clientes_test_function(user):
   # se usuario ativo e possui um perfil
   if user.active and user.perfil_id:
     
-    if temAcesso(user.perfil_id, "4"):
+    if hasAccess(user.perfil_id, "4"):
       return True
   
   return False
@@ -49,7 +49,7 @@ def servicos_test_function(user):
   # se usuario ativo e possui um perfil
   if user.active and user.perfil_id:
     
-    if temAcesso(user.perfil_id, "5"):
+    if hasAccess(user.perfil_id, "5"):
       return True
   
   return False
@@ -59,7 +59,7 @@ def colaboradores_test_function(user):
   # se usuario ativo e possui um perfil
   if user.active and user.perfil_id:
     
-    if temAcesso(user.perfil_id, "6"):
+    if hasAccess(user.perfil_id, "6"):
       return True
   
   return False
@@ -186,7 +186,8 @@ def nivel_access_required(view_name):
       return decorator
 
 
-def temAcesso(perfil, rotina):
+# Verifica se o usuário tem acesso à rotina do menu conforme o perfil de acesso
+def hasAccess(perfil, rotina):
   ##("1", "Empresas")
   ##("2", "Grupos")
   ##("3", "Usuários")

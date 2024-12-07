@@ -2,6 +2,7 @@ import random
 import re
 
 from django.shortcuts import render, redirect, HttpResponse
+from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -184,6 +185,12 @@ def home(request):
 @nivel_access_required(view_name="usuarios")
 def usuarios(request, opc=False, pk=False):
   
+  # verifica se tem permissão da ação
+  if opc:
+    if not hasAccessOpc(opc=opc, rotina="3", user=request.user):
+      messages.error(request, "Usuário sem permissão para esta ação.")
+      return redirect("usuarios")
+
   # envio submit POST
   if request.method == "POST":
     
@@ -260,7 +267,7 @@ def usuarios(request, opc=False, pk=False):
       usuario = Usuario.objects.filter(email=pk).first()
 
       # cria um formulario instaciado como usuario
-      form = UsuarioForm(instance=usuario, disable_fields=True)
+      form = UsuarioForm(instance=usuario)
 
       # monta o contexto para o template
       context = {"visualiza": True, "form": form}
@@ -344,6 +351,12 @@ def usuarios(request, opc=False, pk=False):
 @nivel_access_required(view_name="servicos")
 def servicos(request, opc=False, pk=False):
   
+  # verifica se tem permissão da ação
+  if opc:
+    if not hasAccessOpc(opc=opc, rotina="5", user=request.user):
+      messages.error(request, "Usuário sem permissão para esta ação.")
+      return redirect("servicos")
+
   if request.method == "POST":
     
     if opc == "insert":
@@ -457,7 +470,7 @@ def servicos(request, opc=False, pk=False):
       if pk:
 
         servico = Servicos.objects.filter(codigo=pk).first()
-        form = ServicosForm(instance=servico, disable_fields=True)
+        form = ServicosForm(instance=servico)
         items = ItemServico.objects.filter(codigo=pk)
         form_item = ItemServicoForm()
         
@@ -468,7 +481,6 @@ def servicos(request, opc=False, pk=False):
           "form_item": form_item,
           }
         return render(request, "projects/servicos.html", context)
-
 
     elif opc == "insert":
       
@@ -512,6 +524,7 @@ def servicos(request, opc=False, pk=False):
         return render(request, "projects/servicos.html", context)
 
     elif opc == "delete":
+
       if pk:
         servico = Servicos.objects.filter(codigo=pk).first()
         
@@ -542,6 +555,12 @@ def adicionar_item_servico(request):
 @nivel_access_required(view_name="empresas")
 def empresas(request, pk=False, opc=False):
   
+  # verifica se tem permissão da ação
+  if opc:
+    if not hasAccessOpc(opc=opc, rotina="1", user=request.user):
+      messages.error(request, "Usuário sem permissão para esta ação.")
+      return redirect("empresas")
+
   # se vindo de um submit
   if request.method == "POST":
     
@@ -665,7 +684,7 @@ def empresas(request, pk=False, opc=False):
         empresa = Empresa.objects.filter(codigo=pk).first()
 
         # instancia o formulario
-        form = EmpresaForm(instance=empresa, prefix="form", disable_fields=True) 
+        form = EmpresaForm(instance=empresa, prefix="form") 
 
         # instancia o formulario de item 
         form_valores = ValoresForm(prefix="form_valores")
@@ -753,6 +772,12 @@ def empresas(request, pk=False, opc=False):
 @nivel_access_required(view_name="grupos")
 def grupos(request, pk=False, opc=False, grupo=False):
   
+  # verifica se tem permissão da ação
+  if opc:
+    if not hasAccessOpc(opc=opc, rotina="2", user=request.user):
+      messages.error(request, "Usuário sem permissão para esta ação.")
+      return redirect("grupos")
+
   if request.method == "POST":
 
     # se operação de insert vindo de um submit POST
@@ -825,7 +850,7 @@ def grupos(request, pk=False, opc=False, grupo=False):
         grupo = Grupos.objects.filter(codigo=pk).first()
 
         # instancia o formulario
-        form = GruposForm(instance=grupo, prefix="form", disable_fields=True)
+        form = GruposForm(instance=grupo, prefix="form")
 
         # instancia o formulario de item 
         form_item = ItemGrupoForm(prefix="form_item")
@@ -967,6 +992,12 @@ def itemGrupo(request, pk=False, opc=False):
 @nivel_access_required(view_name="clientes")
 def clientes(request, opc=False, pk=False):
   
+  # verifica se tem permissão da ação
+  if opc:
+    if not hasAccessOpc(opc=opc, rotina="4", user=request.user):
+      messages.error(request, "Usuário sem permissão para esta ação.")
+      return redirect("clientes")
+
   if request.method == "POST":
     
     if opc == "insert":
@@ -1089,7 +1120,7 @@ def clientes(request, opc=False, pk=False):
         cliente = Cliente.objects.filter(codigo=pk).first()
 
         # instancia o formulario
-        form = ClienteForm(instance=cliente, prefix="form", disable_fields=True) 
+        form = ClienteForm(instance=cliente, prefix="form") 
 
         # instancia o formulario de item 
         form_valores = ValoresForm(prefix="form_valores")
@@ -1163,6 +1194,12 @@ def clientes(request, opc=False, pk=False):
 @nivel_access_required(view_name="colaboradores")
 def colaboradores(request, opc=False, pk=False):
   
+  # verifica se tem permissão da ação
+  if opc:
+    if not hasAccessOpc(opc=opc, rotina="6", user=request.user):
+      messages.error(request, "Usuário sem permissão para esta ação.")
+      return redirect("colaboradores")
+
   if request.method == "POST":
    
     if opc == "insert":
@@ -1233,9 +1270,9 @@ def colaboradores(request, opc=False, pk=False):
       comissaoAnterior = colaborador.comissao
       registraValor = False
 
-      form = ColaboradorForm(request.POST, instance=colaborador, prefix="form")
       form_valores = ValoresForm(request.POST, prefix="form_valores")
-      if form.is_valid() and form_valores.is_valid():
+      form = ColaboradorForm(request.POST, instance=colaborador, prefix="form")
+      if not form.is_valid():
 
         if valorHoraAnterior != form.cleaned_data["valor_hora"] or valorFixoAnterior != form.cleaned_data["valor_fixo"] or comissaoAnterior != form.cleaned_data["comissao"]:
           registraValor = True
@@ -1272,12 +1309,15 @@ def colaboradores(request, opc=False, pk=False):
           valor.save()
 
         return redirect("colaboradores")
+
       else:
+        
         context = {
           "altera": True,
           "form": form,
           "form_valores": form_valores,
-          }
+          'msgerro': form.errors
+        }
         return render(request,"projects/colaboradores.html", context)
 
   else:
@@ -1292,7 +1332,7 @@ def colaboradores(request, opc=False, pk=False):
         colaborador = Colaborador.objects.filter(codigo=pk).first()
 
         # instancia o formulario
-        form = ColaboradorForm(instance=colaborador, prefix="form", disable_fields=True) 
+        form = ColaboradorForm(instance=colaborador, prefix="form") 
 
         # instancia o formulario de item 
         form_valores = ValoresForm(prefix="form_valores")
@@ -1607,3 +1647,28 @@ def cargainicial(request):
       empresa.save()
 
   return redirect("home")
+
+
+# Função que verifica se a Ação clicada é permitida ao usuário logado conforme o grupo
+def hasAccessOpc(opc, rotina, user):
+  
+  # obtem o grupo do usuario
+  grupo = ItemGrupo.objects.filter(grupo_id=user.perfil_id, rotina=rotina).first() 
+  
+  # se nao tem grupo, não permite nada
+  if not grupo:
+    return False
+
+  # nao permite inserção
+  if opc == "insert" and grupo.inclusao != "S":
+    return False
+  
+  # nao permite edição
+  if opc == "edit" and grupo.edicao != "S":
+    return False
+  
+  # nao permite exclusão
+  if opc == "delete" and grupo.exclusao != "S":
+    return False
+
+  return True

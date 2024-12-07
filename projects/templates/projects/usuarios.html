@@ -15,7 +15,7 @@
 			</a>
 		{% endif %}
 
-		<a class="mycancel" href="{% url "usuarios" %}">
+		<a class="mycancel" href="{% url "usuarios" %}" {% if visualiza %} style="top: 80px;" {% endif %}>
 			<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
 				<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
 			</svg>
@@ -120,7 +120,10 @@
 								<a href="{% url "usuarios" opc='edit' pk=user.email %}" class="mx-2">
 									<i class="fa fa-edit align-middle text-primary"></i>
 								</a>
-								<a href="{% url "usuarios" opc='delete' pk=user.email %}">
+								<a
+									onclick="javascript:return confirmDeleteItem('{{ user.firstname }}');" 
+									href="{% url "usuarios" opc='delete' pk=user.email %}"
+								>
 									<i class="fa fa-times fs-5 align-middle text-danger"></i>
 								</a>
 							</td>
@@ -132,14 +135,25 @@
 		
 	{% endif %}
 	
-<script>
-	document.getElementById ("id_name").placeholder = "Nome ou E-mail";
+	<script>
+		document.getElementById ("id_name").placeholder = "Nome ou E-mail";
 
-	function limparCampos(){
-		document.getElementById('id_name').value='';
-		document.getElementById('id_email').value='';
-		document.getElementById('form_filtro').submit();
-	}
-</script>
+		function limparCampos(){
+			document.getElementById('id_name').value='';
+			document.getElementById('id_email').value='';
+			document.getElementById('form_filtro').submit();
+		}
+	</script>
+
+	<script type="text/javascript">
+		function confirmDeleteItem(username){
+			if( confirm('Deseja realmente excluir o usuário ' + username + '?' )){
+				return true
+			}else{
+				return false	
+			}
+		}
+	</script>
+
 
 {% endblock content %}
